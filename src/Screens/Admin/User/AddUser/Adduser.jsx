@@ -165,7 +165,7 @@ const AddUser = () => {
               expirationDate: user?.selectedOrgUser?.expiration_date ?? "2099-12-31", // Use nullish coalescing to fallback to default date
             }
             : {
-              counterLimit: selectedCustomer?.counter_limit ?? 0, // Fallback to 0 if undefined
+              counterLimit: selectedCustomer?.counter_limit ?? "super-admin", // Fallback to 0 if undefined
               expirationDate: selectedCustomer?.expiration_date ?? "2099-12-31", // Fallback to default date
             }),
         };

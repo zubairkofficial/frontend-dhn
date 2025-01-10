@@ -4,7 +4,8 @@ import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import Helpers from "../../Config/Helpers";
-import loginLogo from "./../../login_logo.svg"; // Import the SVG
+// import loginLogo from "../../assets/images/logo/dhn-logo.jpeg"; // Adjusted import path
+
 
 const Login = () => {
   const defaultUser = {
@@ -76,7 +77,13 @@ const Login = () => {
   return (
     <section className="bg-white min-h-screen flex items-center justify-center">
       <div className="w-full max-w-md">
+        <div className="flex justify-center mb-6">
+          <img src="/assets/images/logo/dhn-logo.jpeg" alt="Login Logo" className="w-52 h-auto" />
+
+        </div>
+
         <div className="bg-white shadow-lg rounded-lg p-8">
+
           {/* Card body with form */}
           <h2 className="text-2xl font-bold mb-6 text-center">
             {Helpers.getTranslationValue("Login")}

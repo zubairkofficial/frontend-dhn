@@ -15,39 +15,36 @@ function FreeDataProcess() {
     const [isEmailSending, setIsEmailSending] = useState(false);
     const fileInputRef = useRef(null);
 
-    useEffect(() => {
-        setHeaderData({ title: Helpers.getTranslationValue('Kostenloser Datenprozess'), desc: 'Dieses Tool ist für kostenlose Benutzer unter dem Cretschmar-Administrator verfügbar' });
-        const checkUsageCount = async () => {
-            try {
-                const response = await axios.get(
-                    `${Helpers.apiUrl}check-usage-count/FreeDataProcess`, Helpers.authHeaders
-                );
+    const checkUsageCount = async () => {
+        try {
+            const response = await axios.get(
+                `${Helpers.apiUrl}check-usage-count/FreeDataProcess`, Helpers.authHeaders
+            );
 
-                if (response.status === 200) {
-                    const { available_count } = response.data;
-                    if (available_count <= 0) {
-                        setCanUpload(false);
-                        Helpers.toast("error", Helpers.getTranslationValue("error_usage_limit"));
-                    } else {
-                        setCanUpload(true);
-                    }
-                }
-            } catch (error) {
-                // Check if the error is a 403 status
-                if (error.response && error.response.status === 403) {
-                    setCanUpload(false); // Disable the file selection
+            if (response.status === 200) {
+                const { available_count } = response.data;
+                if (available_count <= 0) {
+                    setCanUpload(false);
                     Helpers.toast("error", Helpers.getTranslationValue("error_usage_limit"));
                 } else {
-                    // Handle other errors
-                    Helpers.toast("error", Helpers.getTranslationValue("error_check_usage"));
-                    setCanUpload(false); // Optionally disable if there's an unknown error
+                    setCanUpload(true);
                 }
             }
-        };
+        } catch (error) {
+            if (error.response && error.response.status === 403) {
+                setCanUpload(false);
+                Helpers.toast("error", Helpers.getTranslationValue("error_usage_limit"));
+            } else {
+                Helpers.toast("error", Helpers.getTranslationValue("error_check_usage"));
+                setCanUpload(false);
+            }
+        }
+    };
 
+    useEffect(() => {
+        setHeaderData({ title: Helpers.getTranslationValue('Kostenloser Datenprozess'), desc: 'Dieses Tool ist für kostenlose Benutzer unter dem Cretschmar-Administrator verfügbar' });
         checkUsageCount();
     }, [setHeaderData]);
-
 
     const handleFileChange = (event) => {
         const files = Array.from(event.target.files);
@@ -88,14 +85,12 @@ function FreeDataProcess() {
                     newStatuses[file.name].status = "Completed";
                     setFileStatuses({ ...newStatuses });
 
-                    // Parse and process data from the response
                     const parsedData = response.data.data.map(item => {
                         try {
-                            // If item is an object, use it directly
                             return { data: item || {} };
                         } catch (parseError) {
                             console.error("Error processing item:", item, parseError);
-                            return { data: {} }; // Return empty object in case of error
+                            return { data: {} };
                         }
                     });
 
@@ -112,6 +107,7 @@ function FreeDataProcess() {
 
         setAllProcessedData(allData);
         Helpers.toast("success", Helpers.getTranslationValue('files_processed_msg'));
+        checkUsageCount();
     };
 
     const handleSendEmail = async () => {
@@ -119,16 +115,13 @@ function FreeDataProcess() {
         const MAX_CHAR_LIMIT = 32767;
         const data = [];
 
-        // Define the custom headers in your desired order
         const headers = [
             "Dateiname SDB", "Ausgabedatum bzw. letzte Änderung", "Flammpunkt (numerischer Wert)[°C]", "H Sätze durch Komma getrennt",
             "Hinweise/Bemerkungen/Sicherheitsbetrachtung (stoffspezifisch)", "LG Klasse", "WGK (numerischer Wert)", "Maßnahmen Lagerung Abschnitt 7.2", "Zusammenlagerverbot Abschnitt 10.5"
         ];
         data.push(headers);
 
-        // Define a mapping from headers to data keys
         const headerMapping = {
-
             "Dateiname SDB": "Dateiname SDB",
             "Ausgabedatum bzw. letzte Änderung": "Ausgabedatum bzw. letzte Änderung",
             "Flammpunkt (numerischer Wert)[°C]": "Flammpunkt\n(numerischer Wert)\n[°C]",
@@ -140,22 +133,18 @@ function FreeDataProcess() {
             "Zusammenlagerverbot Abschnitt 10.5": "Zusammenlagerverbot\nAbschnitt 10.5"
         };
 
-
-
-        // Map the actual data based on the custom headers
         allProcessedData.forEach((fileData) => {
-            let rowData = Array(headers.length).fill(""); // Initialize row data with empty strings
+            let rowData = Array(headers.length).fill("");
 
             headers.forEach((header, index) => {
                 const key = headerMapping[header];
-                let cellData = fileData.data[key] || ""; // Use empty string as default value
+                let cellData = fileData.data[key] || "";
 
-                // If the content exceeds the max character limit, split it across rows
                 while (cellData.length > MAX_CHAR_LIMIT) {
                     rowData[index] = cellData.slice(0, MAX_CHAR_LIMIT);
                     data.push([...rowData]);
                     cellData = cellData.slice(MAX_CHAR_LIMIT);
-                    rowData = Array(headers.length).fill(""); // Start a new row with empty strings
+                    rowData = Array(headers.length).fill("");
                 }
                 rowData[index] = cellData;
             });
@@ -167,20 +156,17 @@ function FreeDataProcess() {
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Processed Data");
 
-        // Convert workbook to a Blob for upload
         const wbout = XLSX.write(wb, { type: "array", bookType: "xlsx" });
         const blob = new Blob([wbout], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
 
         const formData = new FormData();
-        formData.append("file", blob, "Processed_Files_Data.xlsx"); // Ensure the filename has the correct extension
+        formData.append("file", blob, "Processed_Files_Data.xlsx");
 
-        // Send the file to the backend
         try {
             const response = await axios.post(`${Helpers.apiUrl}send-processed-file`, formData, Helpers.authFileHeaders);
 
             Helpers.toast("success", response.data.message || "Die Datei wurde erfolgreich an Ihre E-Mail-Adresse gesendet.");
 
-            // Reset the form after download
             setSelectedFiles([]);
             setFileStatuses({});
             setAllProcessedData([]);
@@ -188,6 +174,7 @@ function FreeDataProcess() {
                 fileInputRef.current.value = '';
             }
             setIsEmailSending(false);
+            checkUsageCount();
         } catch (error) {
             setIsEmailSending(false);
             console.error("Error sending file:", error);
