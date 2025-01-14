@@ -19,7 +19,7 @@ const EditOrganizationalUser = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        // console.log('isCustomerAdmin:', isCustomerAdmin);
+        // console.error('isCustomerAdmin:', isCustomerAdmin);
         fetchUserData();
     }, []);
 
@@ -29,7 +29,6 @@ const EditOrganizationalUser = () => {
                 `${Helpers.apiUrl}user/${id}`,
                 Helpers.authHeaders
             );
-            console.log(response.data.user); // Check the entire user object
             setUser(response.data.user);
         } catch (error) {
             Helpers.toast("error", "Error fetching user data.");

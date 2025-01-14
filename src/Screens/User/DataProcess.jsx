@@ -21,8 +21,6 @@ function DataProcess() {
   const [canUpload, setCanUpload] = useState(true);
   const [allProcessedData, setAllProcessedData] = useState([]);
   const [processedCount, setProcessedCount] = useState(0);
-  const [userCounterLimit, setUserCounterLimit] = useState(0);
-  const [availableCount, setAvailableCount] = useState(0);
   const fileInputRef = useRef(null);
 
   const checkUsageCount = async () => {
@@ -34,8 +32,6 @@ function DataProcess() {
 
       if (response.status === 200) {
         const { userCounterLimit, available_count } = response.data;
-        setUserCounterLimit(userCounterLimit);
-        setAvailableCount(available_count);
         if (available_count <= 0) {
           setCanUpload(false);
           Helpers.toast(
@@ -356,15 +352,7 @@ function DataProcess() {
 
   return (
     <div className="w-full bg-white py-5 mx-auto">
-      <div className="flex items-center justify-between px-10">
-        <span className="text-red-500 font-medium flex-1 text-left">
-          Progress: {availableCount}/{userCounterLimit}
-        </span>
-        <h2 className="text-center text-2xl font-semibold mb-8 flex-1">
-          {Helpers.getTranslationValue("Data Process")}
-        </h2>
-        <div className="flex-1"></div>
-      </div>
+      <h2 className="text-center text-2xl font-semibold mb-8">{Helpers.getTranslationValue('Data Process')}</h2>
 
       <div className="flex flex-col items-center px-10">
         <input
@@ -388,7 +376,7 @@ function DataProcess() {
               }}
             ></div>
             <span className="absolute inset-0 flex justify-center items-center text-sm font-medium">
-              {processedCount}/{selectedFiles.length} Files Processed
+              {processedCount}/{selectedFiles.length} SDB verabeitet
             </span>
           </div>
         )}

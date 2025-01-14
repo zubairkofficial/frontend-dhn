@@ -17,7 +17,6 @@ function Transcription() {
   const [success, setSuccess] = useState(false);
   const [text, setText] = useState("");
   const [summary, setSummary] = useState("");
-  const [summaryId, setSummaryId] = useState("");
 
   const [date, setDate] = useState("");
   const [theme, setTheme] = useState("");
@@ -33,7 +32,6 @@ function Transcription() {
       // setEmail(location.state.email || "");
       setText(location.state.text || "");
       setSummary(location.state.summary || "");
-      setSummaryId(location.state.summary_id || "");
     }
   }, [location.state]);
 
@@ -49,7 +47,7 @@ function Transcription() {
         
   //       // setEmail(userData.email || ""); // Set email from the user's data if email exists
   //     } catch (error) {
-  //       console.log(error);
+  //       console.error(error);
   //       Helpers.toast('error', error.message);
   //     }
   //   };
@@ -98,7 +96,7 @@ function Transcription() {
         setParticipants(participants);
 
       } catch (error) {
-        console.log(error);
+        console.error(error);
         Helpers.toast('error', error.message);
       }
     };

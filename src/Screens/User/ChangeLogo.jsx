@@ -26,7 +26,7 @@ const ChangeLogo = () => {
           setPreview(Helpers.serverImage(response.data.logo)); // Use the helper method to generate the full URL
         }
       } catch (error) {
-        console.log("No logo found or error fetching logo",error);
+        console.error("No logo found or error fetching logo",error);
       }
     };
 
