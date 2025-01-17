@@ -81,7 +81,7 @@ const Dashboard = () => {
         ) : (
           <>
             {/* Render services only if shouldDisplayServices is true */}
-            {              filteredServices.length > 0 ? (
+            {filteredServices.length > 0 ? (
                 filteredServices.map((service) => (
                   <div key={service.id} className="w-full p-2">
                     {service.status === 1 ? ( // Check if the service is enabled

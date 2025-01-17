@@ -27,6 +27,7 @@ const AllUsers = () => {
   const [contractSolutionCount, setContractSolutionCount] = useState(null);
   const [dataProcessCount, setDataProcessCount] = useState(null);
   const [freeDataProcessCount, setFreeDataProcessCount] = useState(null);
+  const [cloneDataProcessCount, setCloneDataProcessCount] = useState(null);
   const [loadingModal, setLoadingModal] = useState(true);
   const [modalError, setModalError] = useState(null);
 
@@ -122,6 +123,7 @@ const AllUsers = () => {
         setContractSolutionCount(response.data.contract_solution_count);
         setDataProcessCount(response.data.data_process_count);
         setFreeDataProcessCount(response.data.free_data_process_count);
+        setCloneDataProcessCount(response.data.clone_process_count);
       } else {
         throw new Error("Failed to fetch user usage data");
       }
@@ -227,7 +229,8 @@ const AllUsers = () => {
                   {documentCount === undefined &&
                     contractSolutionCount === undefined &&
                     dataProcessCount === undefined &&
-                    freeDataProcessCount === undefined ? (
+                    freeDataProcessCount === undefined &&
+                    cloneDataProcessCount === undefined ? (
                     <p className="text-gray-500">
                       Keine Werkzeugnutzung gefunden
                     </p>
@@ -298,6 +301,19 @@ const AllUsers = () => {
                               </td>
                               <td className="px-6 py-4 text-sm text-gray-600 font-bold">
                                 {freeDataProcessCount}
+                              </td>
+                            </tr>
+                          )}
+                          {cloneDataProcessCount !== undefined && (
+                            <tr className="hover:bg-gray-50">
+                              <td className="px-6 py-4 border-b text-sm text-gray-600 font-bold">
+                                5
+                              </td>
+                              <td className="px-6 py-4 text-sm text-gray-600 font-bold">
+                              Klon der Sicherheitsdatenblattanalyse
+                              </td>
+                              <td className="px-6 py-4 text-sm text-gray-600 font-bold">
+                                {cloneDataProcessCount}
                               </td>
                             </tr>
                           )}

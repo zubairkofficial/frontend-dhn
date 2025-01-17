@@ -31,6 +31,7 @@ import Tools from "./Screens/Admin/Tools/Tools";
 import AddTool from "./Screens/Admin/Tools/AddTool";
 import EditTool from "./Screens/Admin/Tools/EditTool";
 import DataProcess from "./Screens/User/DataProcess";
+import CloneDataProcess from "./Screens/User/CloneDataProcess";
 import ChangeLogo from "./Screens/User/ChangeLogo";
 import Settings from "./Screens/User/Settings";
 import OrganizationalUserTable from "./Components/OrganizationalUserTable";
@@ -227,6 +228,7 @@ const App = () => {
             )}
             {hasServiceAccess(3) && <Route path="/contract_automation_solution" element={<Auth><ContractAutomationSolution /></Auth>} />}
             {hasServiceAccess(4) && <Route path="/data_process" element={<Auth><DataProcess /></Auth>} />}
+            {hasServiceAccess(7) && <Route path="/clone_data_process" element={<Auth><CloneDataProcess /></Auth>} />}
             {hasServiceAccess(5) && <Route path="/free-data-process" element={<Auth><FreeDataProcess /></Auth>} />}
 
             <Route path="/delivery-bills" element={<Auth><DeliveryBills /></Auth>} />

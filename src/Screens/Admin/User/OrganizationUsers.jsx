@@ -220,6 +220,19 @@ const OrganizationUsers = () => {
                         </td>
                       </tr>
                     )}
+                    {selectedUser.serviceIds.includes(7) && (
+                      <tr className="hover:bg-gray-50">
+                        <td className="px-6 py-4 text-sm text-gray-600 font-bold">
+                          5
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-600 font-bold">
+                        Klon der Sicherheitsdatenblattanalyse
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-600 font-bold">
+                          {selectedUser.cloneDataProcessCount}
+                        </td>
+                      </tr>
+                    )}
                   </tbody>
                 </table>
               </div>
