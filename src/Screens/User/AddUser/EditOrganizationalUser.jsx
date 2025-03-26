@@ -45,8 +45,8 @@ const EditOrganizationalUser = () => {
         throw new Error(Helpers.getTranslationValue("user_not_found"));
       setUser(response.data.user);
       setServices(response.data.services);
-      console.log('get user data',response.data);
-      
+      console.log('get user data', response.data);
+
       setOrgs(response.data.orgs);
       setFormData({
         name: response.data.user.name,
@@ -81,10 +81,10 @@ const EditOrganizationalUser = () => {
         formData,
         Helpers.authHeaders
       );
-      
+
       if (response.status === 200) {
         Helpers.toast("success", Helpers.getTranslationValue("user_update_msg"));
-  
+
         // Redirect based on is_user_customer flag
         if (isUserCustomer === 1) {
           navigate(-1);
@@ -106,7 +106,7 @@ const EditOrganizationalUser = () => {
       }
     }
   };
-  
+
 
   const OrgsOptions = orgs.map((org) => ({
     value: org.id,
@@ -187,7 +187,7 @@ const EditOrganizationalUser = () => {
                       {Helpers.getTranslationValue("Services")}
                     </label>
                     <Select
-                    
+
                       options={services.map((service) => ({
                         label: service.name,
                         value: service.id,
@@ -293,12 +293,32 @@ const EditOrganizationalUser = () => {
                   </dl>
                 </div>
                 <div className="flex justify-end space-x-3">
-                  <Link
-                    to="/admin/dashboard"
+                  <button
+                    className="bg-gray-200 py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    onClick={() => {
+                      setIsEditing(false);
+                      if (isUserCustomer === 1) {
+                        navigate("/customer-user-table");
+                      } else {
+                        navigate("/org-user-table");
+                      }
+                    }}
+                  >
+                    {Helpers.getTranslationValue("Back")}
+                  </button>
+                  {/* <Link
+                    to="/customer-user-table"
                     className="bg-gray-200 py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                     onClick={() => setIsEditing(false)}
                   >
                     {Helpers.getTranslationValue("Back")}
+                  </Link> */}
+                  <Link
+                    to={`/reset-normal-user-password/${id}`} // Use curly braces and backticks for template literals
+                    className="mr-2 py-2 px-4 text-white bg-success-300 hover:bg-success-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    onClick={() => setIsEditing(false)}
+                  >
+                    {Helpers.getTranslationValue('Passwort zurücksetzen')}
                   </Link>
                   <button
                     type="submit"

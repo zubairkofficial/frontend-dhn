@@ -217,7 +217,18 @@ const AddUser = () => {
       }
     }
   };
+ // Function to validate the selected date
+ const validateDate = (date) => {
+  const minDate = new Date();
+  const maxDate = new Date("2099-12-31");
+  const selectedDate = new Date(date);
 
+  if (selectedDate < minDate || selectedDate > maxDate) {
+    Helpers.toast("error", "Selected date is out of range.");
+    return false;
+  }
+  return true;
+};
   return (
     <section className="bg-white">
       <div className="flex flex-col lg:flex-row justify-between lg:px-12">
@@ -438,8 +449,13 @@ const AddUser = () => {
                           type="date"
                           required
                           className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
-                          value={user.expirationDate || "2099-12-31"}
-                          onChange={(e) => handleChange("expirationDate")(e.target.value)}
+                          value={user.expirationDate || new Date().toISOString().split('T')[0]}
+                          onChange={(e) => {
+                            const isValid = validateDate(e.target.value);
+                            if (isValid) {
+                              handleChange("expirationDate")(e.target.value);
+                            }
+                          }}
                         />
                       </div>
                     </div>

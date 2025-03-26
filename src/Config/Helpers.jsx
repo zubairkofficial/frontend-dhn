@@ -5,7 +5,7 @@ class Helpers {
   static localhost = "http://127.0.0.1:8000";
   static server = "https://dhnapi.cyberifyportfolio.com";
   static testServer = "https://dhntestapi.cyberifyportfolio.com";
-  static basePath = `${this.localhost}`;
+  static basePath = `${this.server}`;
   static apiUrl = `${this.basePath}/api/`;
 
   static authUser = JSON.parse(localStorage.getItem("user") ?? "{}");
