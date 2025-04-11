@@ -13,6 +13,7 @@
         "bootstrap": "^5.3.3",
         "buffer": "^6.0.3",
         "chart.js": "^4.4.3",
+        "dhn-digital": "file:",
         "exceljs": "^4.4.0",
         "file-saver": "^2.0.5",
         "notyf": "^3.10.0",

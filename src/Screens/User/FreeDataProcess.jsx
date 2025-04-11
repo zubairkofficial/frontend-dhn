@@ -79,7 +79,7 @@ function FreeDataProcess() {
             setFileStatuses({ ...newStatuses });
 
             try {
-                const response = await axios.post(`${Helpers.apiUrl}freeDataProcess`, formData, Helpers.authFileHeaders);
+                const response = await axios.post(`${Helpers.apiUrl}data-process`, formData, Helpers.authFileHeaders);
 
                 if (response.status === 200 && response.data && response.data.data) {
                     newStatuses[file.name].status = "Completed";
