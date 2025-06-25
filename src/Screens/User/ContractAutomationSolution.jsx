@@ -29,6 +29,7 @@ function ContractAutomationSolution() {
         const response = await axios.get(
           `${Helpers.apiUrl}check-usage-count/ContractSolutions`, Helpers.authHeaders
         );
+console.log('ContractSolutions');
 
         if (response.status === 200) {
           const { available_count } = response.data;

@@ -63,6 +63,7 @@ import ResetOrganizationalUserPassword from "./Screens/Admin/User/AddUser/ResetO
 import ResetNormalUserPassword from "./Screens/Admin/User/AddUser/ResetNormalUserPassword";
 import GetProcessedData from "./Screens/User/GetProcessedData";
 import AllProcessedData from "./Screens/User/Layout/AllProcessedData";
+import Werthenbach from "./Screens/User/Werthenbach";
 
 const Auth = ({ children, isAuth = true, isAdmin = false }) => {
   let user = Helpers.getItem("user", true);
@@ -138,7 +139,7 @@ const NotFound = () => {
     } else {
       <Navigate to="/" />;
     }
-  }, [Navigate]);
+  }, []);
 
   return (
     <section className="bg-no-repeat bg-cover bg-notfound-light">
@@ -170,13 +171,13 @@ const App = () => {
 
     // Retrieve is_user_customer from localStorage
 
-    if (isUserOrg == "1") {
+    if (isUserOrg === "1") {
       setIsOrganizationalUser(true);
     } else {
       setIsOrganizationalUser(false);
     }
 
-    if (isUserCustomer == "1") {
+    if (isUserCustomer === "1") {
       setIsCustomerAdmin(true); // Set Customer Admin to true if is_user_customer is 1
     } else {
       setIsCustomerAdmin(false);
@@ -192,7 +193,12 @@ const App = () => {
     const user = Helpers.getItem("user", true);
     if (user && user.services) {
       // Check if the service ID exists in the user's services array
+      //  console.log('user services',user.services.includes(serviceId));
+      //  console.log('user services ids',serviceId);
+
       return user.services.includes(serviceId);
+     
+      
     }
     return false;
   };
@@ -329,6 +335,17 @@ const App = () => {
                 element={
                   <Auth>
                     <CloneDataProcess />
+                  </Auth>
+                }
+              />
+            )}
+
+              {hasServiceAccess(8) && (
+              <Route
+                path="/werthenbach"
+                element={
+                  <Auth>
+                    <Werthenbach />
                   </Auth>
                 }
               />

@@ -29,6 +29,7 @@ function CloneDataProcess() {
         `${Helpers.apiUrl}check-usage-count/CloneDataProcess`,
         Helpers.authHeaders
       );
+console.log('CloneDataProcess');
 
       if (response.status === 200) {
         const { userCounterLimit, available_count } = response.data;

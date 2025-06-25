@@ -30,6 +30,7 @@ function DataProcess() {
         `${Helpers.apiUrl}check-usage-count/DataProcess`,
         Helpers.authHeaders
       );
+console.log('DataProcess');
 
       if (response.status === 200) {
         const { userCounterLimit, available_count } = response.data;
