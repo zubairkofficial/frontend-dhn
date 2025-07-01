@@ -96,9 +96,9 @@ function GetWerthenbachData({ refresh }) {
 
         // Define headers in the desired order
         const headers = [
-            "Lagerkunde",
-            "Artikel Nr.(Länge beachten)",
-            "Materialkurztext",
+            // "Lagerkunde",
+            // "Artikel Nr.(Länge beachten)",
+            // "Materialkurztext",
             "Produktname",
             "Hersteller",
             "Dateiname SDB",
@@ -109,7 +109,7 @@ function GetWerthenbachData({ refresh }) {
 
             "H Sätze durch Komma getrennt",
             "Flammpunkt (numerischer Wert)[°C]",
-            "Nr./Kategorie gem. Anhang I, 12. BImSchV 2017",
+            // "Nr./Kategorie gem. Anhang I, 12. BImSchV 2017",
             "UN Nr",
             "Gefahrensymbole",
             "Gefahrgutklasse (Länge beachten)",
@@ -124,7 +124,8 @@ function GetWerthenbachData({ refresh }) {
             "Maßnahmen Lagerung Abschnitt 7.2",
             "Zusammenlagerverbot Abschnitt 10.5",
             "Main Ingredients",
-            "Section - PreText",
+            "UFI",
+            "Section - FirstPage",
             "Section - 1",
             "Section - 2",
             "Section - 2|2.2",
@@ -134,9 +135,11 @@ function GetWerthenbachData({ refresh }) {
             "Section - 7|7.2",
             "Section - 9|9.1",
             "Section - 10|10.5",
-            "Section - 15",
             "Section - 14",
+            "Section - 15",
+            
             "Section-Missing-Count",
+            "Message",
         ];
 
         // Add headers with styles
@@ -163,34 +166,34 @@ function GetWerthenbachData({ refresh }) {
         });
 
         // Add static row below headers
-        const staticRow = [
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "14",
-            "1-HZWMSC",
-            "1-HZDWGK",
-            "3-HARIZIN",
-            "1-H2FLSP 3n",
-            "",
-            "1-HZUNNR 6n",
-            "2-HECODE",
-            "4-HMKLAS",
-            "4-HMVPAK",
-            "4-HMTNCD",
-            "1-HZGSDE / 4-HMGSDE",
-            "4-HMLQTP",
-        ];
-        worksheet.addRow(staticRow);
+        // const staticRow = [
+        //     "",
+        //     "",
+        //     "",
+        //     "",
+        //     "",
+        //     "",
+        //     "14",
+        //     "1-HZWMSC",
+        //     "1-HZDWGK",
+        //     "3-HARIZIN",
+        //     "1-H2FLSP 3n",
+        //     "",
+        //     "1-HZUNNR 6n",
+        //     "2-HECODE",
+        //     "4-HMKLAS",
+        //     "4-HMVPAK",
+        //     "4-HMTNCD",
+        //     "1-HZGSDE / 4-HMGSDE",
+        //     "4-HMLQTP",
+        // ];
+        // worksheet.addRow(staticRow);
 
         // Header Mapping - Your stored data uses different field names
         const headerMapping = {
-            Lagerkunde: "Lagerkunde",
-            "Artikel Nr.(Länge beachten)": "Artikel Nr.\n(Länge beachten)",
-            Materialkurztext: "Materialkurztext",
+            // Lagerkunde: "Lagerkunde",
+            // "Artikel Nr.(Länge beachten)": "Artikel Nr.\n(Länge beachten)",
+            // Materialkurztext: "Materialkurztext",
             Produktname: "Produktname",
             Hersteller: "Hersteller",
             "Dateiname SDB": "Dateiname SDB",
@@ -201,8 +204,8 @@ function GetWerthenbachData({ refresh }) {
             "H Sätze durch Komma getrennt": "H Sätze\ndurch Komma getrennt",
             "Flammpunkt (numerischer Wert)[°C]":
                 "Flammpunkt\n(numerischer Wert)\n[°C]",
-            "Nr./Kategorie gem. Anhang I, 12. BImSchV 2017":
-                "Nr./Kategorie gem. Anhang I, 12. BImSchV 2017",
+            // "Nr./Kategorie gem. Anhang I, 12. BImSchV 2017":
+            //     "Nr./Kategorie gem. Anhang I, 12. BImSchV 2017",
             "UN Nr": "UN Nr",
             Gefahrensymbole: "Gefahrensymbole",
             "Gefahrgutklasse (Länge beachten)": "Gefahrgutklasse (Länge beachten)",
@@ -220,7 +223,8 @@ function GetWerthenbachData({ refresh }) {
             "Zusammenlagerverbot Abschnitt 10.5":
                 "Zusammenlagerverbot\nAbschnitt 10.5",
             "Main Ingredients": "Main Ingredients",
-            "Section - PreText": "Section - PreText",
+            "UFI" : "UFI",
+            "Section - FirstPage": "Section - FirstPage",
             "Section - 1": "Section - 1",
             "Section - 2": "Section - 2",
             "Section - 2|2.2": "Section - 2|2.2",
@@ -230,9 +234,11 @@ function GetWerthenbachData({ refresh }) {
             "Section - 7|7.2": "Section - 7|7.2",
             "Section - 9|9.1": "Section - 9|9.1",
             "Section - 10|10.5": "Section - 10|10.5",
-            "Section - 15": "Section - 15",
+            
             "Section - 14": "Section - 14",
+            "Section - 15": "Section - 15",
             "Section-Missing-Count": "Section-Missing-Count",
+            "Message" : "Message",
         };
 
         // Map data correctly using headerMapping
@@ -283,9 +289,9 @@ function GetWerthenbachData({ refresh }) {
         const worksheet = workbook.addWorksheet("Filtered Data");
 
         const headers = [
-            "Lagerkunde",
-            "Artikel Nr.(Länge beachten)",
-            "Materialkurztext",
+            // "Lagerkunde",
+            // "Artikel Nr.(Länge beachten)",
+            // "Materialkurztext",
             "Produktname",
             "Hersteller",
             "Dateiname SDB",
@@ -294,7 +300,7 @@ function GetWerthenbachData({ refresh }) {
             "WGK(numerischer Wert)",
             "H Sätze durch Komma getrennt",
             "Flammpunkt (numerischer Wert)[°C]",
-            "Nr./Kategorie gem. Anhang I, 12. BImSchV 2017",
+            // "Nr./Kategorie gem. Anhang I, 12. BImSchV 2017",
             "UN Nr",
             "Gefahrensymbole",
             "Gefahrgutklasse (Länge beachten)",
@@ -307,7 +313,8 @@ function GetWerthenbachData({ refresh }) {
             "Maßnahmen Lagerung Abschnitt 7.2",
             "Zusammenlagerverbot Abschnitt 10.5",
             "Main Ingredients",
-            "Section - PreText",
+            "UFI",
+            "Section - FirstPage",
             "Section - 1",
             "Section - 2",
             "Section - 2|2.2",
@@ -317,9 +324,11 @@ function GetWerthenbachData({ refresh }) {
             "Section - 7|7.2",
             "Section - 9|9.1",
             "Section - 10|10.5",
+             "Section - 14",
             "Section - 15",
-            "Section - 14",
+           
             "Section-Missing-Count",
+            "Message",
         ];
         worksheet.addRow(headers);
         worksheet.getRow(1).eachCell((cell) => {
@@ -342,28 +351,28 @@ function GetWerthenbachData({ refresh }) {
             };
         });
 
-        const staticRow = [
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "14",
-            "1-HZWMSC",
-            "1-HZDWGK",
-            "3-HARIZIN",
-            "1-H2FLSP 3n",
-            "",
-            "1-HZUNNR 6n",
-            "2-HECODE",
-            "4-HMKLAS",
-            "4-HMVPAK",
-            "4-HMTNCD",
-            "1-HZGSDE / 4-HMGSDE",
-            "4-HMLQTP",
-        ];
-        worksheet.addRow(staticRow);
+        // const staticRow = [
+        //     "",
+        //     "",
+        //     "",
+        //     "",
+        //     "",
+        //     "",
+        //     "14",
+        //     "1-HZWMSC",
+        //     "1-HZDWGK",
+        //     "3-HARIZIN",
+        //     "1-H2FLSP 3n",
+        //     "",
+        //     "1-HZUNNR 6n",
+        //     "2-HECODE",
+        //     "4-HMKLAS",
+        //     "4-HMVPAK",
+        //     "4-HMTNCD",
+        //     "1-HZGSDE / 4-HMGSDE",
+        //     "4-HMLQTP",
+        // ];
+        // worksheet.addRow(staticRow);
 
         // Filter data based on the start and end date
         const filteredData = getFilteredData();
@@ -375,9 +384,9 @@ function GetWerthenbachData({ refresh }) {
         }
 
         const headerMapping = {
-            Lagerkunde: "Lagerkunde",
-            "Artikel Nr.(Länge beachten)": "Artikel Nr.\n(Länge beachten)",
-            Materialkurztext: "Materialkurztext",
+            // Lagerkunde: "Lagerkunde",
+            // "Artikel Nr.(Länge beachten)": "Artikel Nr.\n(Länge beachten)",
+            // Materialkurztext: "Materialkurztext",
             Produktname: "Produktname",
             Hersteller: "Hersteller",
             "Dateiname SDB": "Dateiname SDB",
@@ -387,8 +396,8 @@ function GetWerthenbachData({ refresh }) {
             "H Sätze durch Komma getrennt": "H Sätze\ndurch Komma getrennt",
             "Flammpunkt (numerischer Wert)[°C]":
                 "Flammpunkt\n(numerischer Wert)\n[°C]",
-            "Nr./Kategorie gem. Anhang I, 12. BImSchV 2017":
-                "Nr./Kategorie gem. Anhang I, 12. BImSchV 2017",
+            // "Nr./Kategorie gem. Anhang I, 12. BImSchV 2017":
+            //     "Nr./Kategorie gem. Anhang I, 12. BImSchV 2017",
             "UN Nr": "UN Nr",
             Gefahrensymbole: "Gefahrensymbole",
             "Gefahrgutklasse (Länge beachten)": "Gefahrgutklasse (Länge beachten)",
@@ -404,7 +413,8 @@ function GetWerthenbachData({ refresh }) {
             "Zusammenlagerverbot Abschnitt 10.5":
                 "Zusammenlagerverbot\nAbschnitt 10.5",
             "Main Ingredients": "Main Ingredients",
-            "Section - PreText": "Section - PreText",
+            "UFI" : "UFI",
+            "Section - FirstPage": "Section - FirstPage",
             "Section - 1": "Section - 1",
             "Section - 2": "Section - 2",
             "Section - 2|2.2": "Section - 2|2.2",
@@ -414,9 +424,11 @@ function GetWerthenbachData({ refresh }) {
             "Section - 7|7.2": "Section - 7|7.2",
             "Section - 9|9.1": "Section - 9|9.1",
             "Section - 10|10.5": "Section - 10|10.5",
+             "Section - 14": "Section - 14",
             "Section - 15": "Section - 15",
-            "Section - 14": "Section - 14",
+           
             "Section-Missing-Count": "Section-Missing-Count",
+            "Message" : "Message",
         };
 
         // Add filtered data rows to the worksheet

@@ -159,9 +159,9 @@ function Werthenbach() {
 
         // Define the custom headers in your desired order
         const headers = [
-            "Lagerkunde",
-            "Artikel Nr.(Länge beachten)",
-            "Materialkurztext",
+            // "Lagerkunde",
+            // "Artikel Nr.(Länge beachten)",
+            // "Materialkurztext",
             "Produktname",
             "Hersteller",
             "Dateiname SDB",
@@ -186,7 +186,9 @@ function Werthenbach() {
             "Maßnahmen Lagerung Abschnitt 7.2",
             "Zusammenlagerverbot Abschnitt 10.5",
             "Main Ingredients",
-            "Section - PreText",
+            "UFI",
+            "Section - FirstPage",
+
             "Section - 1",
             "Section - 2",
             "Section - 2|2.2",
@@ -196,9 +198,11 @@ function Werthenbach() {
             "Section - 7|7.2",
             "Section - 9|9.1",
             "Section - 10|10.5",
-            "Section - 15",
             "Section - 14",
+            "Section - 15",
+
             "Section-Missing-Count",
+            "Message",
         ];
 
         // Add headers to the worksheet with styles
@@ -220,33 +224,33 @@ function Werthenbach() {
         });
 
         // Add the static row data below the header row
-        const staticRow = [
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "14",
-            "1-HZWMSC",
-            "1-HZDWGK",
-            "3-HARIZIN",
-            "1-H2FLSP 3n",
-            "",
-            "1-HZUNNR 6n",
-            "2-HECODE",
-            "4-HMKLAS",
-            "4-HMVPAK",
-            "4-HMTNCD",
-            "1-HZGSDE / 4-HMGSDE",
-            "4-HMLQTP",
-        ];
-        worksheet.addRow(staticRow);
+        // const staticRow = [
+        //     "",
+        //     "",
+        //     "",
+        //     "",
+        //     "",
+        //     "",
+        //     "14",
+        //     "1-HZWMSC",
+        //     "1-HZDWGK",
+        //     "3-HARIZIN",
+        //     "1-H2FLSP 3n",
+        //     "",
+        //     "1-HZUNNR 6n",
+        //     "2-HECODE",
+        //     "4-HMKLAS",
+        //     "4-HMVPAK",
+        //     "4-HMTNCD",
+        //     "1-HZGSDE / 4-HMGSDE",
+        //     "4-HMLQTP",
+        // ];
+        // worksheet.addRow(staticRow);
 
         const headerMapping = {
-            Lagerkunde: "Lagerkunde",
-            "Artikel Nr.(Länge beachten)": "Artikel Nr.\n(Länge beachten)",
-            Materialkurztext: "Materialkurztext",
+            // Lagerkunde: "Lagerkunde",
+            // "Artikel Nr.(Länge beachten)": "Artikel Nr.\n(Länge beachten)",
+            // Materialkurztext: "Materialkurztext",
             Produktname: "Produktname",
             Hersteller: "Hersteller",
             "Dateiname SDB": "Dateiname SDB",
@@ -276,7 +280,8 @@ function Werthenbach() {
             "Zusammenlagerverbot Abschnitt 10.5":
                 "Zusammenlagerverbot\nAbschnitt 10.5",
             "Main Ingredients": "Main Ingredients",
-            "Section - PreText": "Section - PreText",
+            "UFI": "UFI",
+            "Section - FirstPage": "Section - FirstPage",
             "Section - 1": "Section - 1",
             "Section - 2": "Section - 2",
             "Section - 2|2.2": "Section - 2|2.2",
@@ -286,9 +291,11 @@ function Werthenbach() {
             "Section - 7|7.2": "Section - 7|7.2",
             "Section - 9|9.1": "Section - 9|9.1",
             "Section - 10|10.5": "Section - 10|10.5",
-            "Section - 15": "Section - 15",
+
             "Section - 14": "Section - 14",
+            "Section - 15": "Section - 15",
             "Section-Missing-Count": "Section-Missing-Count",
+            "Message": "Message",
         };
 
         // Add data rows and apply yellow fill if `Section-Missing-Count` > 0
@@ -296,9 +303,10 @@ function Werthenbach() {
             let rowData = headers.map(
                 (header) => fileData.data[headerMapping[header]] || ""
             );
-            const sectionMissingCount = parseInt(
-                rowData[headers.indexOf("Section-Missing-Count")] || 0
+           const sectionMissingCount = parseInt(
+                rowData[headers.indexOf("Section-Missing-Count")] || ""
             );
+
 
             const newRow = worksheet.addRow(rowData);
 
