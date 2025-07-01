@@ -340,7 +340,7 @@ const App = () => {
               />
             )}
 
-              {hasServiceAccess(8) && (
+              {hasServiceAccess(9) && (
               <Route
                 path="/werthenbach"
                 element={
