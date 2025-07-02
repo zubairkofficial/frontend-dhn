@@ -171,7 +171,7 @@ function Werthenbach() {
             "Signalwort",
             "H Sätze durch Komma getrennt",
             "Flammpunkt (numerischer Wert)[°C]",
-            "Nr./Kategorie gem. Anhang I, 12. BImSchV 2017",
+            // "Nr./Kategorie gem. Anhang I, 12. BImSchV 2017",
             "UN Nr",
             "Gefahrensymbole",
             "Gefahrgutklasse (Länge beachten)",
@@ -261,8 +261,8 @@ function Werthenbach() {
             "H Sätze durch Komma getrennt": "H Sätze\ndurch Komma getrennt",
             "Flammpunkt (numerischer Wert)[°C]":
                 "Flammpunkt\n(numerischer Wert)\n[°C]",
-            "Nr./Kategorie gem. Anhang I, 12. BImSchV 2017":
-                "Nr./Kategorie gem. Anhang I, 12. BImSchV 2017",
+            // "Nr./Kategorie gem. Anhang I, 12. BImSchV 2017":
+            //     "Nr./Kategorie gem. Anhang I, 12. BImSchV 2017",
             "UN Nr": "UN Nr",
             Gefahrensymbole: "Gefahrensymbole",
             "Gefahrgutklasse (Länge beachten)": "Gefahrgutklasse (Länge beachten)",
