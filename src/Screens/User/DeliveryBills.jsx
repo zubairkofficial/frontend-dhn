@@ -7,7 +7,6 @@ import Helpers from "../../Config/Helpers";
 
 function DeliveryBills() {
   const [file, setFile] = useState(null);
-  const [title, setTitle] = useState("");
   const [fromDate, setFromDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [uploading, setUploading] = useState(false);

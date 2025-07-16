@@ -11,7 +11,6 @@ const EditTool = () => {
         image: null,
     });
     const [imagePreview, setImagePreview] = useState(null);
-    const [error, setError] = useState(null);
     const [fieldErrors, setFieldErrors] = useState({});
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
@@ -23,20 +22,14 @@ const EditTool = () => {
     const fetchTool = async () => {
         setLoading(true);
         try {
-            const response = await axios.get(`${Helpers.apiUrl}tools/${id}`, Helpers.authHeaders);
-            
-            // Assuming response.data contains the tool data directly
-            const toolData = response.data;
-    
-            // Set formData with the fetched tool data
+            const {data} = await axios.get(`${Helpers.apiUrl}tools/${id}`, Helpers.authHeaders);
             setFormData({
-                name: toolData.name,
-                description: toolData.description,
-                image: null, // Do not set the image file here; handle separately
+                name: data.name,
+                description: data.description,
+                image: null,
             });
     
-            // Set image preview URL
-            setImagePreview(`${Helpers.basePath}/images/${toolData.image}`);
+            setImagePreview(`${Helpers.basePath}/images/${data.image}`);
         } catch (error) {
             Helpers.toast('error', "Failed to fetch tool.");
             console.error("Fetch Tool Error:", error);
@@ -67,26 +60,23 @@ const EditTool = () => {
     const handleSave = async (e) => {
         e.preventDefault();
         setFieldErrors({});
-        setError(null);
         setLoading(true);
     
         const formDataToSend = new FormData();
-        formDataToSend.append("_method", "PUT"); // Method override
+        formDataToSend.append("_method", "PUT");
         formDataToSend.append("name", formData.name);
         formDataToSend.append("description", formData.description);
     
-        // Only append the image if it has been changed (i.e., it's a File object)
         if (formData.image instanceof File) {
             formDataToSend.append("image", formData.image);
         }
     
         try {
-            const response = await axios.post(`${Helpers.apiUrl}tools/${id}`, formDataToSend, Helpers.authFileHeaders);
+            await axios.post(`${Helpers.apiUrl}tools/${id}`, formDataToSend, Helpers.authFileHeaders);
             Helpers.toast('success', "Tool updated successfully.");
             navigate("/admin/tools");
         } catch (error) {
             if (error.response?.status === 400 || error.response?.status === 422) {
-                // Display specific validation error messages
                 const errors = error.response.data;
                 for (const [key, messages] of Object.entries(errors)) {
                     messages.forEach(message => Helpers.toast('error', message));
@@ -151,7 +141,7 @@ const EditTool = () => {
                     />
                     {imagePreview && (
                         <div className="mt-4">
-                            <img
+                            <image
                                 src={imagePreview}
                                 alt="Image Preview"
                                 className="h-40 w-auto object-cover rounded-lg border"

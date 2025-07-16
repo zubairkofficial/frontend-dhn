@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import { FaEye, FaPencilAlt, FaTrashAlt, FaUsers } from "react-icons/fa";
+import { FaEye, FaPencilAlt, FaTrashAlt } from "react-icons/fa";
 import Helpers from "../../../Config/Helpers";
 import Pagination from "../../../Components/Pagination";
 
 const NormalUsers = () => {
-  const { userId } = useParams(); // Get userId from the route parameters
+  const { userId } = useParams();
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -16,9 +16,7 @@ const NormalUsers = () => {
   const itemsPerPage = 10;
   const navigate = useNavigate();
 
-  // Modal state management for viewing user usage
   const [showModal, setShowModal] = useState(false);
-  const [selectedUserId, setSelectedUserId] = useState(null);
   const [documentCount, setDocumentCount] = useState(null);
   const [contractSolutionCount, setContractSolutionCount] = useState(null);
   const [dataProcessCount, setDataProcessCount] = useState(null);
@@ -55,12 +53,11 @@ const NormalUsers = () => {
         throw new Error("Failed to fetch normal users.");
       }
 
-      // Ensure data is an array
       const usersData = Array.isArray(response.data.normal_users)
         ? response.data.normal_users
         : [];
       setUsers(usersData);
-      setFilteredUsers(usersData); // Set both users and filteredUsers to the response data
+      setFilteredUsers(usersData);
       setLoading(false);
     } catch (error) {
       setError(error.message);
@@ -70,7 +67,6 @@ const NormalUsers = () => {
 
 
   const handleShowModal = async (userId) => {
-    setSelectedUserId(userId);
     setShowModal(true);
     setLoadingModal(true);
     setModalError(null);
@@ -98,7 +94,6 @@ const NormalUsers = () => {
 
   const handleCloseModal = () => {
     setShowModal(false);
-    setSelectedUserId(null);
     setDocumentCount(null);
     setContractSolutionCount(null);
     setDataProcessCount(null);
@@ -106,13 +101,11 @@ const NormalUsers = () => {
   };
 
   const handleEdit = (userId) => {
-    // alert(userId)
     navigate(`/admin/edit-user/${userId}`);
   };
 
   const handleDelete = async (id) => {
     try {
-      // alert(id)
       const response = await axios.delete(
         `${Helpers.apiUrl}delete/${id}`,
         Helpers.authHeaders
@@ -149,7 +142,6 @@ const NormalUsers = () => {
 
   return (
     <section className="w-full h-full">
-      {/* Modal for displaying user usage */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="fixed inset-0 bg-gray-100 opacity-75"></div>
@@ -184,7 +176,6 @@ const NormalUsers = () => {
                 <p className="text-red-500">Fehler: {modalError}</p>
               ) : (
                 <>
-                  {/* Check if all tools are undefined (i.e., no tools are available for the user) */}
                   {documentCount === undefined &&
                     contractSolutionCount === undefined &&
                     dataProcessCount === undefined &&

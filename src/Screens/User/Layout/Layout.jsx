@@ -164,7 +164,7 @@ const Layout = () => {
                   </li>
                   {isUserOrganizational === 1 && (
                     <li className="item py-[11px] text-black ">
-                      <a
+                      <button
                         onClick={handleUserManageClick}
                         className="cursor-pointer"
                       >
@@ -218,7 +218,7 @@ const Layout = () => {
                             </span>
                           </div>
                         </div>
-                      </a>
+                      </button>
                     </li>
                   )}
                   <li className="item py-[11px] text-black ">
@@ -253,7 +253,7 @@ const Layout = () => {
                     </Link>
                   </li>
                   <li className="item py-[11px] text-black ">
-                    <a onClick={handleLogout} className="cursor-pointer">
+                    <button onClick={handleLogout} className="cursor-pointer">
                       <div className="flex items-center justify-between">
                         <div className="flex space-x-2.5 items-center">
                           <span className="item-ico">
@@ -292,7 +292,7 @@ const Layout = () => {
                           </span>
                         </div>
                       </div>
-                    </a>
+                    </button>
                   </li>
                 </ul>
               </div>
@@ -345,7 +345,7 @@ const Layout = () => {
                       </li>
                       {isUserOrganizational === 1 && (
                         <li className="item py-[11px] text-black ">
-                          <a
+                          <button
                             onClick={handleUserManageClick}
                             className="cursor-pointer"
                           >
@@ -394,7 +394,7 @@ const Layout = () => {
                                 </span>
                               </div>
                             </div>
-                          </a>
+                          </button>
                         </li>
                       )}
                       <li className="item py-[11px] px-[43px]">
@@ -422,7 +422,10 @@ const Layout = () => {
                         </Link>
                       </li>
                       <li className="item py-[11px] px-[43px]">
-                        <a onClick={handleLogout} className="cursor-pointer">
+                        <button
+                          onClick={handleLogout}
+                          className="cursor-pointer"
+                        >
                           <span className="item-ico">
                             <svg
                               width="21"
@@ -454,7 +457,7 @@ const Layout = () => {
                               />
                             </svg>
                           </span>
-                        </a>
+                        </button>
                       </li>
                     </ul>
                   </div>

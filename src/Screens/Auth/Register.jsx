@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { loadCaptchaEnginge, LoadCanvasTemplate, validateCaptcha } from 'react-simple-captcha';
-import Helpers from "../../Config/Helpers"; // Assuming you have this helper for translations and toasts
+import Helpers from "../../Config/Helpers";
 import './LoginCustomer.css'; 
 
 const Register = () => {
@@ -14,8 +14,7 @@ const Register = () => {
   const navigate = useNavigate();
 
   React.useEffect(() => {
-    // Load captcha engine on component mount
-    loadCaptchaEnginge(6); // Load a 6-character captcha
+    loadCaptchaEnginge(6);
   }, []);
 
   const handleChange = (e) => {
@@ -25,22 +24,18 @@ const Register = () => {
   const handleRegister = async (e) => {
     e.preventDefault();
 
-    // Check if checkbox is selected
     if (!isCheckboxChecked) {
       setErrors({ checkbox: "Bitte akzeptieren Sie die Datenschutzbestimmungen" });
       return;
     }
 
-    // Validate captcha
     if (!validateCaptcha(captchaInput)) {
       setErrors({ captcha: "Captcha ist falsch" });
       return;
     }
 
-    // Reset errors
     setErrors({});
 
-    // Validate passwords match
     if (user.password !== user.confirmPassword) {
       setErrors({ confirmPassword: "Passwörter stimmen nicht überein" });
       return;
@@ -48,13 +43,12 @@ const Register = () => {
 
     try {
       setIsLoading(true);
-      const response = await axios.post(`${Helpers.apiUrl}auth/register-customer`, {
+      await axios.post(`${Helpers.apiUrl}auth/register-customer`, {
         name: user.name,
         email: user.email,
         password: user.password,
       });
 
-      // On successful registration
       Helpers.toast("success", Helpers.getTranslationValue("register_success"));
       navigate("/login");
     } catch (error) {

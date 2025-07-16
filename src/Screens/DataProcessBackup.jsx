@@ -50,22 +50,19 @@ function DataProcess() {
             newStatuses[file.name] = { status: "In Progress" };
             setFileStatuses({ ...newStatuses });
     
-            try {
-                const token = localStorage.getItem('token');
-    
+            try {    
                 const response = await axios.post(`${Helpers.apiUrl}data-process`, formData, Helpers.authFileHeaders);
     
                 if (response.status === 200 && response.data && response.data.data) {
                     newStatuses[file.name].status = "Completed";
                     setFileStatuses({ ...newStatuses });
     
-                    // Parse and process data from the response
                     const parsedData = response.data.data.map(item => {
                         try {
                             return { data: item || {} };
                         } catch (parseError) {
                             console.error("Error processing item:", item, parseError);
-                            return { data: {} }; // Return empty object in case of error
+                            return { data: {} };
                         }
                     });
     
@@ -87,7 +84,6 @@ function DataProcess() {
     const handleDownload = () => {
         const data = [];
     
-        // Define the custom headers in your desired order
         const headers = [
             "Lagerkunde", "Artikel Nr.(Länge beachten)", "Materialkurztext", "Produktname", "Hersteller", "Dateiname SDB", "Ausgabedatum bzw. letzte Änderung", "LG Klasse", "WGK(numerischer Wert)", "H Sätze durch Komma getrennt",
             "Flammpunkt (numerischer Wert)[°C]", "Nr./Kategorie gem. Anhang I, 12. BImSchV 2017", "UN Nr", "Gefahrensymbole", "Gefahrgutklasse (Länge beachten)", "Verpackungsgruppe","Tunnelcode",
@@ -98,11 +94,9 @@ function DataProcess() {
         ];
         data.push(headers);
     
-        // Add static row starting from column D and skipping column L
         const staticRow = ["", "", "", "", "","","14", "1-HZWMSC", "1-HZDWGK", "3-HARIZIN", "1-H2FLSP 3n","", "1-HZUNNR 6n", "2-HECODE", "4-HMKLAS", "4-HMVPAK", "4-HMTNCD", "1-HZGSDE / 4-HMGSDE","4-HMLQTP"];
         data.push(staticRow);
     
-        // Define a mapping from headers to data keys
         const headerMapping = {
             "Lagerkunde": "Lagerkunde",
             "Artikel Nr.(Länge beachten)": "Artikel Nr.\n(Länge beachten)",
@@ -112,9 +106,9 @@ function DataProcess() {
             "Dateiname SDB": "Dateiname SDB",
             "Ausgabedatum bzw. letzte Änderung": "Ausgabedatum bzw. letzte Änderung",
             "LG Klasse": "LG Klasse",
-            "WGK(numerischer Wert)": "WGK\n(numerischer Wert)", // Make sure this matches the API response key
+            "WGK(numerischer Wert)": "WGK\n(numerischer Wert)",
             "H Sätze durch Komma getrennt": "H Sätze\ndurch Komma getrennt",
-            "Flammpunkt (numerischer Wert)[°C]": "Flammpunkt\n(numerischer Wert)\n[°C]", // Mapping "Flammpunkt" from data
+            "Flammpunkt (numerischer Wert)[°C]": "Flammpunkt\n(numerischer Wert)\n[°C]",
             "Nr./Kategorie gem. Anhang I, 12. BImSchV 2017" : "Nr./Kategorie gem. Anhang I, 12. BImSchV 2017",
             "UN Nr": "UN Nr",
             "Gefahrensymbole": "Gefahrensymbole",
@@ -144,32 +138,28 @@ function DataProcess() {
             "Section - 14": "Section - 14"
         };
     
-        // Map the actual data based on the custom headers
         allProcessedData.forEach((fileData) => {
             const rowData = [];
             headers.forEach((header, index) => {
                 if (index < 3) {
-                    rowData.push(""); // Fill initial columns with empty values
+                    rowData.push("");
                 } else {
-                    // Use the header mapping to get the correct data key
                     const key = headerMapping[header];
                     rowData.push(fileData.data[key] || ""); // Use empty string as default value
                 }
             });
-             // Ensure column L is empty
-            rowData[11] = ""; // Adjust index based on header order
+            rowData[11] = "";
     
             data.push(rowData);
         });
     
         const ws = XLSX.utils.aoa_to_sheet(data);
     
-        // Ensure header row is bold and has custom styling
         const headerStyle = {
-            font: { bold: true, sz: 14 }, // Bold and increase the font size
+            font: { bold: true, sz: 14 },
             alignment: { horizontal: 'center', vertical: 'center' },
             border: {
-                top: { style: "thick" }, // Use 'thick' for better visibility
+                top: { style: "thick" },
                 bottom: { style: "thick" },
                 left: { style: "thick" },
                 right: { style: "thick" },

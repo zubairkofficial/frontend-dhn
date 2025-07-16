@@ -1,4 +1,3 @@
-// UserTypeSelector.js
 import React from "react";
 
 const UserTypeSelector = ({ user, handleChange }) => {

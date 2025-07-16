@@ -7,7 +7,7 @@ import Helpers from "../../../Config/Helpers";
 import Pagination from "../../../Components/Pagination";
 
 const AllUsers = () => {
-  const { userId } = useParams(); // Get userId from the route parameters
+  const { userId } = useParams();
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -20,9 +20,7 @@ const AllUsers = () => {
   const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
 
-  // Modal state management for viewing user usage
   const [showModal, setShowModal] = useState(false);
-  const [selectedUserId, setSelectedUserId] = useState(null);
   const [documentCount, setDocumentCount] = useState(null);
   const [contractSolutionCount, setContractSolutionCount] = useState(null);
   const [dataProcessCount, setDataProcessCount] = useState(null);
@@ -54,7 +52,6 @@ const AllUsers = () => {
     );
   }, [searchTerm, users]);
 
-  // Fetch normal users assigned to an organization using the new API
   const fetchCustomerNormalUsers = async () => {
     try {
       const response = await axios.get(
@@ -64,12 +61,11 @@ const AllUsers = () => {
       if (response.status !== 200) {
         throw new Error("Failed to fetch normal users.");
       }
-      // Ensure data is an array
       const usersData = Array.isArray(response.data.all_users)
         ? response.data.all_users
         : [];
       setUsers(usersData);
-      setFilteredUsers(usersData); // Set both users and filteredUsers to the response data
+      setFilteredUsers(usersData);
       setLoading(false);
     } catch (error) {
       setError(error.message);
@@ -106,9 +102,7 @@ const AllUsers = () => {
     navigate(`/admin/edit-user/${userId}`);
   };
 
-  // Function to show the modal and fetch user usage data
   const handleShowModal = async (userId) => {
-    setSelectedUserId(userId);
     setShowModal(true);
     setLoadingModal(true);
     setModalError(null);
@@ -136,7 +130,6 @@ const AllUsers = () => {
 
   const handleCloseModal = () => {
     setShowModal(false);
-    setSelectedUserId(null);
     setDocumentCount(null);
     setContractSolutionCount(null);
     setDataProcessCount(null);
@@ -225,7 +218,6 @@ const AllUsers = () => {
                 <p className="text-red-500">Fehler: {modalError}</p>
               ) : (
                 <>
-                  {/* Check if all tools are undefined (i.e., no tools are available for the user) */}
                   {documentCount === undefined &&
                     contractSolutionCount === undefined &&
                     dataProcessCount === undefined &&
@@ -251,7 +243,6 @@ const AllUsers = () => {
                           </tr>
                         </thead>
                         <tbody>
-                          {/* Display 0 if the tool is available but count is 0 */}
                           {documentCount !== undefined && (
                             <tr className="hover:bg-gray-50">
                               <td className="px-6 py-4 border-b text-sm text-gray-600 font-bold">
@@ -336,7 +327,6 @@ const AllUsers = () => {
         </div>
       )}
 
-      {/* Table and Search Logic */}
       <div className="bg-white p-4 rounded-lg shadow-md">
         <div className="flex justify-between space-x-2 mb-4">
           <div className="mb-4 ">

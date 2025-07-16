@@ -60,7 +60,6 @@ const EditService = () => {
         if (file) {
             setImage(file);
 
-            // For previewing the selected image
             const reader = new FileReader();
             reader.onloadend = () => {
                 setImagePreview(reader.result);

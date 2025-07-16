@@ -1,17 +1,12 @@
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom"; // Import Link for navigation
+import { useState } from "react";
+import { Link } from "react-router-dom";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import Helpers from "../../Config/Helpers";
-import loginLogo from "./../../login_logo.svg"; // Import the SVG
+import loginLogo from "./../../login_logo.svg";
 import "./LoginCustomer.css";
 const CustomerLogin = () => {
-  const defaultUser = {
-    email: "",
-    password: "",
-  };
-
   const [user, setUser] = useState({ email: "", password: "" });
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});

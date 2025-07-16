@@ -9,14 +9,14 @@ import { useHeader } from "../../../../Components/HeaderContext";
 const AddUser = () => {
   const { setHeaderData } = useHeader();
   const [organizationalUsers, setOrganizationalUsers] = useState([]);
-  const [customerAdmins, setCustomerAdmins] = useState([]); // State to hold customer admins
-  const [showOrgUsersDropdown, setShowOrgUsersDropdown] = useState(false); // Control visibility of second dropdown
+  const [customerAdmins, setCustomerAdmins] = useState([]);
+  const [showOrgUsersDropdown, setShowOrgUsersDropdown] = useState(false);
   const [customerUsersCount, setCustomerUsersCount] = useState(0);
   const [selectedCustomer, setSelectedCustomer] = useState({
     id: "",
     org_id: "",
     services: [],
-  }); // Store org_id and services for selected customer admin
+  });
 
   const [user, setUser] = useState({
     name: "",
@@ -25,7 +25,7 @@ const AddUser = () => {
     org_id: "",
     services: [],
     is_user_organizational: 0,
-    is_user_customer: 0, // 0 for normal user, 1 for customer admin
+    is_user_customer: 0,
     showPassword: false,
     creator_id: "",
   });
@@ -40,7 +40,7 @@ const AddUser = () => {
       desc: Helpers.getTranslationValue("Dashboard_Desc"),
     });
     fetchServices();
-    fetchCustomerAdmins(); // Fetch customer admins
+    fetchCustomerAdmins();
     fetchOrgs();
   }, []);
 
@@ -50,7 +50,7 @@ const AddUser = () => {
         `${Helpers.apiUrl}getAllCustomerAdmins`,
         Helpers.authHeaders
       );
-      setCustomerAdmins(response.data.data); // Store customer admins in state
+      setCustomerAdmins(response.data.data);
     } catch (error) {
       Helpers.toast("error", error.message);
     }
@@ -87,7 +87,6 @@ const AddUser = () => {
     }));
   };
 
-  // Fetch organizational users for the selected customer admin
   const fetchOrganizationalUsers = async (customerId) => {
     try {
       const response = await axios.get(
@@ -95,21 +94,20 @@ const AddUser = () => {
         Helpers.authHeaders
       );
       setOrganizationalUsers(response.data.organization_users || []);
-      setShowOrgUsersDropdown(true); // Show the organizational users dropdown after fetching the data
+      setShowOrgUsersDropdown(true);
       setCustomerUsersCount(
         response.data.organization_users
-          .map(user => user.current_usage)  // Extract `current_usage` for each user
-          .reduce((acc, usage) => acc + usage, 0)  // Sum up all the `current_usage` values
+          .map(user => user.current_usage)
+          .reduce((acc, usage) => acc + usage, 0)
       );
     } catch (error) {
       Helpers.toast("error", error.message);
     }
   };
 
-  // Handle customer admin selection
   const handleSelectCustomerAdmin = async (selectedValues) => {
     const selectedCustomerId = selectedValues[0]?.value;
-    await fetchOrganizationalUsers(selectedCustomerId); // Fetch organizational users after customer admin is selected
+    await fetchOrganizationalUsers(selectedCustomerId);
 
     const selectedCustomerAdmin = customerAdmins.find(
       (admin) => admin.id === selectedCustomerId
@@ -141,14 +139,12 @@ const AddUser = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent default form submission behavior
+    e.preventDefault();
 
     try {
       let payload;
       let apiUrl;
-      // Conditionally build payload and select API route
       if (user.is_user_organizational === 0 && user.is_user_customer === 0) {
-        // Normal user
         payload = {
           name: user.name,
           email: user.email,
@@ -156,22 +152,21 @@ const AddUser = () => {
           is_user_organizational: 0,
           is_user_customer: 0,
           creator_id: user.creator_id,
-          parent_id: selectedCustomer.id, // The customer admin (ID)
-          org_id: selectedCustomer.org_id, // Use org_id from selected customer admin
+          parent_id: selectedCustomer.id,
+          org_id: selectedCustomer.org_id,
           services: selectedCustomer.services.map((service) => service),
           ...(user.is_user_organizational === 1
             ? {
-              counterLimit: user?.selectedOrgUser?.counter_limit ?? 0, // Use nullish coalescing to fallback to 0
-              expirationDate: user?.selectedOrgUser?.expiration_date ?? "2099-12-31", // Use nullish coalescing to fallback to default date
+              counterLimit: user?.selectedOrgUser?.counter_limit ?? 0,
+              expirationDate: user?.selectedOrgUser?.expiration_date ?? "2099-12-31",
             }
             : {
-              counterLimit: selectedCustomer?.counter_limit ?? "super-admin", // Fallback to 0 if undefined
-              expirationDate: selectedCustomer?.expiration_date ?? "2099-12-31", // Fallback to default date
+              counterLimit: selectedCustomer?.counter_limit ?? "super-admin",
+              expirationDate: selectedCustomer?.expiration_date ?? "2099-12-31",
             }),
         };
         apiUrl = `${Helpers.apiUrl}register_user`;
       } else if (user.is_user_customer === 1) {
-        // Customer admin
         payload = {
           name: user.name,
           email: user.email,
@@ -183,7 +178,6 @@ const AddUser = () => {
         };
         apiUrl = `${Helpers.apiUrl}auth/register-customer-admin`;
       } else {
-        // Organizational user
         payload = {
           name: user.name,
           email: user.email,
@@ -217,7 +211,6 @@ const AddUser = () => {
       }
     }
   };
- // Function to validate the selected date
  const validateDate = (date) => {
   const minDate = new Date();
   const maxDate = new Date("2099-12-31");
@@ -338,7 +331,6 @@ const AddUser = () => {
                   </div>
                 </div>
 
-                {/* Normal user dropdown for selecting customer admin */}
                 {user.is_user_organizational === 0 && user.is_user_customer === 0 && (
                   <>
                     <div>
@@ -358,7 +350,6 @@ const AddUser = () => {
                       />
                     </div>
 
-                    {/* Show second dropdown only after selecting customer admin */}
                     {showOrgUsersDropdown && (
                       <div>
                         <label
@@ -380,7 +371,6 @@ const AddUser = () => {
                   </>
                 )}
 
-                {/* Organizational user selects customer admin */}
                 {user.is_user_organizational === 1 && (
                   <>
                     <div>
@@ -461,7 +451,6 @@ const AddUser = () => {
                     </div>
                   </>
                 )}
-                {/* Customer admin service selection */}
                 {user.is_user_customer === 1 && (
                   <>
                     <label
@@ -482,7 +471,6 @@ const AddUser = () => {
                       className="text-base border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-0 p-2"
                     />
 
-                    {/* Conditionally render Voice Protocol Organization when services include 2 */}
                     {user.services.includes(2) && (
                       <div>
                         <label

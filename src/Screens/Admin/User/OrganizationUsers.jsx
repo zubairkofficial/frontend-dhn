@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { FaEye, FaPencilAlt, FaTrashAlt, FaUsers } from "react-icons/fa"; // Added FaUsers icon
+import { FaEye, FaPencilAlt, FaTrashAlt, FaUsers } from "react-icons/fa";
 import Helpers from "../../../Config/Helpers";
 import Pagination from "../../../Components/Pagination";
 
 const OrganizationUsers = () => {
-  const { customerId } = useParams(); // Get customerId from the route parameters
+  const { customerId } = useParams();
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -16,7 +16,6 @@ const OrganizationUsers = () => {
   const itemsPerPage = 10;
   const navigate = useNavigate();
 
-  // Modal state management for viewing user usage
   const [showModal, setShowModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
 
@@ -57,7 +56,7 @@ const OrganizationUsers = () => {
         ? response.data.organization_users
         : [];
       setUsers(usersData);
-      setFilteredUsers(usersData); // Set both users and filteredUsers to the response data
+      setFilteredUsers(usersData);
       setLoading(false);
     } catch (error) {
       setError(error.message);
@@ -66,7 +65,7 @@ const OrganizationUsers = () => {
   };
 
   const handleShowModal = (user) => {
-    setSelectedUser(user); // Set the selected user with the counts to the state
+    setSelectedUser(user);
     setShowModal(true);
   };
 
@@ -75,13 +74,11 @@ const OrganizationUsers = () => {
     setSelectedUser(null);
   };
   const handleEdit = (userId) => {
-    // alert(userId)
     navigate(`/admin/edit-user/${userId}`);
   };
 
   const handleDelete = async (id) => {
     try {
-      // alert(id)
       const response = await axios.delete(
         `${Helpers.apiUrl}delete/${id}`,
         Helpers.authHeaders
@@ -122,7 +119,6 @@ const OrganizationUsers = () => {
 
   return (
     <section className="w-full h-full">
-      {/* Modal for displaying user usage */}
       {showModal && selectedUser && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="fixed inset-0 bg-gray-100 opacity-75"></div>
@@ -167,7 +163,6 @@ const OrganizationUsers = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {/* Conditionally render rows based on service IDs */}
                     {selectedUser.serviceIds.includes(1) && (
                       <tr className="hover:bg-gray-50">
                         <td className="px-6 py-4 text-sm text-gray-600 font-bold">

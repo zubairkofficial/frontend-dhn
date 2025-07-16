@@ -8,16 +8,15 @@ const ResetUserPassword = () => {
   const { setHeaderData } = useHeader();
   const { id } = useParams();
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [formData, setFormData] = useState({
     newPassword: "",
-    password_confirmation: "", // Change this to match the backend
+    password_confirmation: "",
   });
   const navigate = useNavigate();
 
   useEffect(() => {
     setHeaderData({ title: Helpers.getTranslationValue('Passwort zurücksetzen'), desc: Helpers.getTranslationValue('Reset Password Description') });
-    setLoading(false); // No need to fetch user data for just resetting password
+    setLoading(false);
   }, [id]);
 
   const handleChange = (e) => {
@@ -27,18 +26,17 @@ const ResetUserPassword = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (formData.newPassword !== formData.password_confirmation) { // Check against the new field name
+    if (formData.newPassword !== formData.password_confirmation) {
       Helpers.toast("error", "Passwords do not match.");
       return;
     }
 
     try {
-      // alert(formData.newPassword)
       const response = await axios.post(
-        `${Helpers.apiUrl}reset-user-password/${id}`, // Adjust the API endpoint as necessary
+        `${Helpers.apiUrl}reset-user-password/${id}`,
         { 
           password: formData.newPassword,
-          password_confirmation: formData.password_confirmation, // Send the confirmation password
+          password_confirmation: formData.password_confirmation,
         },
         Helpers.authHeaders
       );
@@ -65,9 +63,6 @@ const ResetUserPassword = () => {
         <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500"></div>
       </div>
     );
-
-  if (error)
-    return <div className="text-center text-red-500 mt-5">{error}</div>;
 
   return (
     <div className="bg-gray-100 py-5">
@@ -105,10 +100,10 @@ const ResetUserPassword = () => {
                   </label>
                   <input
                     type="password"
-                    name="password_confirmation" // Updated field name
-                    id="password_confirmation" // Updated field name
+                    name="password_confirmation"
+                    id="password_confirmation"
                     placeholder={Helpers.getTranslationValue('Confirm Password')}
-                    value={formData.password_confirmation} // Updated field name
+                    value={formData.password_confirmation}
                     onChange={handleChange}
                     className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                     required

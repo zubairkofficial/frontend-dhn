@@ -31,7 +31,6 @@ const AddService = () => {
         if (file) {
             setImage(file);
 
-            // For previewing the selected image
             const reader = new FileReader();
             reader.onloadend = () => {
                 setImagePreview(reader.result);
@@ -88,7 +87,6 @@ const AddService = () => {
             navigate("/admin/services");
         } catch (error) {
             if (error.response && error.response.status === 401) {
-                // Token might be invalid or expired
                 localStorage.removeItem('authToken');
                 Helpers.toast('error', 'Session expired or invalid token. Please log in again.');
                 navigate('/login');

@@ -1,7 +1,5 @@
 import React from "react";
 import { Modal, Spinner, Button } from "react-bootstrap";
-//import 'bootstrap/dist/css/bootstrap.min.css';
-
 
 const UserUsageModal = ({
   showModal,

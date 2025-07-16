@@ -9,8 +9,8 @@ const EditOrg = () => {
     const { setHeaderData } = useHeader();
     const { id } = useParams();
     const [org, setOrg] = useState(null);
-    const [instructions, setInstructions] = useState([]); // All available instructions
-    const [selectedInstructions, setSelectedInstructions] = useState([]); // Instructions assigned to this org
+    const [instructions, setInstructions] = useState([]);
+    const [selectedInstructions, setSelectedInstructions] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
@@ -23,7 +23,7 @@ const EditOrg = () => {
     useEffect(() => {
         setHeaderData({ title: Helpers.getTranslationValue('Organizations'), desc: Helpers.getTranslationValue('org_desc') });
         fetchOrg();
-        fetchInstructions(); // Fetch available instructions
+        fetchInstructions();
     }, [id]);
 
     const fetchOrg = async () => {
@@ -59,13 +59,6 @@ const EditOrg = () => {
         setFormData(prevFormData => ({
             ...prevFormData,
             [name]: value,
-        }));
-    };
-
-    const handleInstructionsChange = (values) => {
-        setSelectedInstructions((prev) => ({
-            ...prev,
-            selectedInstructions: values.map((v) => v.value),
         }));
     };
 

@@ -9,19 +9,19 @@ const AddOrg = () => {
         name: "",
         prompt: "",
     });
-    const [instructions, setInstructions] = useState([]); // All available instructions
-    const [selectedInstructions, setSelectedInstructions] = useState([]); // IDs of selected instructions
+    const [instructions, setInstructions] = useState([]);
+    const [selectedInstructions, setSelectedInstructions] = useState([]);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetchInstructions(); // Fetch available instructions
+        fetchInstructions();
     }, []);
 
     const fetchInstructions = async () => {
         try {
             const response = await axios.get(`${Helpers.apiUrl}instructions`, Helpers.authHeaders);
-            setInstructions(response.data); // Assuming response.data is an array of instructions
+            setInstructions(response.data);
         } catch (error) {
             setError(Helpers.getTranslationValue('fetch_instructions_error'));
         }
@@ -36,7 +36,7 @@ const AddOrg = () => {
     };
 
     const handleInstructionsChange = (values) => {
-        setSelectedInstructions(values.map((v) => v.value)); // Update selected instructions
+        setSelectedInstructions(values.map((v) => v.value));
     };
 
     const handleSubmit = async (e) => {
@@ -46,11 +46,10 @@ const AddOrg = () => {
                 `${Helpers.apiUrl}add-org`,
                 {
                     ...formData,
-                    instructions: selectedInstructions, // Include selected instructions
+                    instructions: selectedInstructions,
                 },
                 Helpers.authHeaders
             );
-            // Redirect to /admin/orgs on success
             Helpers.toast("success", Helpers.getTranslationValue('org_add_success'));
             navigate("/admin/orgs");
         } catch (error) {

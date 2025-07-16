@@ -1,18 +1,10 @@
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom"; // Import Link for navigation
+import { useState } from "react";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import Helpers from "../../Config/Helpers";
-// import loginLogo from "../../assets/images/logo/dhn-logo.jpeg"; // Adjusted import path
-
 
 const Login = () => {
-  const defaultUser = {
-    email: "",
-    password: "",
-  };
-
   const [user, setUser] = useState({ email: "", password: "" });
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
@@ -39,17 +31,9 @@ const Login = () => {
         const loginTimestamp = new Date().getTime();
         Helpers.setItem("loginTimestamp", loginTimestamp);
 
-        // Extract is_user_customer and is_user_org from response data
-        const isUserOrg = response.data.user.is_user_organizational;
-        const isUserCustomer = response.data.user.is_user_customer;
-
         if (response.data.user.user_type === 1) {
           window.location.href = "/admin/dashboard";
-        }
-        //  else if ((isUserCustomer === 0 || isUserCustomer === null || isUserCustomer === undefined) && isUserOrg === 1) {
-        //   window.location.href = "/org-user-table";
-        // } else {
-        else {
+        }else {
           window.location.href = "/";
         }
         setIsLoading(false);

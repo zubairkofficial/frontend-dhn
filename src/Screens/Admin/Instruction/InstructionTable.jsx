@@ -9,7 +9,6 @@ const InstructionTable = () => {
     const [instructions, setInstructions] = useState([]);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
-    const [searchTerm, setSearchTerm] = useState("");
     const [currentPage, setCurrentPage] = useState(0);
     const itemsPerPage = 10;
     useEffect(() => {

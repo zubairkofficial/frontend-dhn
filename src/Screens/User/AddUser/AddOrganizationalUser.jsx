@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-// Import react-switch or use a custom toggle
 import axios from "axios";
 
 import Helpers from "../../../Config/Helpers";
@@ -17,8 +16,6 @@ const AddOrganizationalUser = () => {
     counterLimit: Helpers.authUser.counter_limit,
     expirationDate: Helpers.authUser.expiration_date,
   });
-  const [services, setServices] = useState([]);
-  const [orgs, setOrgs] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -28,42 +25,14 @@ const AddOrganizationalUser = () => {
     const user_services = user.services;
     const user_org_id = user.org_id;
 
-    // Set the creator_id (user_id) in the state
     setUser((prevUser) => ({
       ...prevUser,
       creator_id: user_id,
       services: user_services,
-      org_id: user_org_id,// Set the creator_id from localStorage
+      org_id: user_org_id,
     }));
 
-    // fetchServices();
-    fetchOrgs();
   }, []);
-
-  const fetchServices = async () => {
-    try {
-      const response = await axios.get(
-        `${Helpers.apiUrl}active-services`,
-        Helpers.authHeaders
-      );
-      setServices(response.data);
-    } catch (error) {
-      const errorMessage = error.response ? error.response.data.message : Helpers.getTranslationValue("services_fetch_error");
-      Helpers.toast("error", errorMessage);
-    }
-  };
-
-  const fetchOrgs = async () => {
-    try {
-      const response = await axios.get(
-        `${Helpers.apiUrl}all-orgs`,
-        Helpers.authHeaders
-      );
-      setOrgs(response.data);
-    } catch (error) {
-      Helpers.toast("error", error.message);
-    }
-  };
 
   const handleChange = (name) => (value) => {
     setUser({ ...user, [name]: value });
@@ -73,10 +42,9 @@ const AddOrganizationalUser = () => {
     e.preventDefault();
 
     try {
-      // Post request with user data including creator_id
       const response = await axios.post(
         `${Helpers.apiUrl}register_user`,
-        user, // This user object contains creator_id
+        user,
         Helpers.authHeaders
       );
       if (response.status === 201 || response.status === 200) {
@@ -87,7 +55,6 @@ const AddOrganizationalUser = () => {
       }
     } catch (error) {
       if (error.response && error.response.data && error.response.data.errors) {
-        // Iterate through each field's errors and display them
         Object.keys(error.response.data.errors).forEach((field) => {
           error.response.data.errors[field].forEach((errorMessage) => {
             Helpers.toast("error", `Error: ${errorMessage}`);
@@ -98,9 +65,6 @@ const AddOrganizationalUser = () => {
       }
     }
   };
-
-
-
 
   return (
     <section className="bg-white">

@@ -388,7 +388,7 @@ const Layout = () => {
                     </Link>
                   </li> */}
                   <li className="item py-[11px] text-black ">
-                    <a onClick={handleLogout} className="cursor-pointer">
+                    <button onClick={handleLogout} className="cursor-pointer">
                       <div className="flex items-center justify-between">
                         <div className="flex space-x-2.5 items-center">
                           <span className="item-ico">
@@ -427,7 +427,7 @@ const Layout = () => {
                           </span>
                         </div>
                       </div>
-                    </a>
+                    </button>
                   </li>
                 </ul>
               </div>

@@ -24,7 +24,6 @@ const EditOrganizationalUser = () => {
   });
   const navigate = useNavigate();
 
-  // Get `is_user_customer` from localStorage
   const isUserCustomer = JSON.parse(localStorage.getItem("user")).is_user_customer;
 
   useEffect(() => {
@@ -83,7 +82,6 @@ const EditOrganizationalUser = () => {
       if (response.status === 200) {
         Helpers.toast("success", Helpers.getTranslationValue("user_update_msg"));
 
-        // Redirect based on is_user_customer flag
         if (isUserCustomer === 1) {
           navigate(-1);
         } else {

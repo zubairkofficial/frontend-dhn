@@ -1,4 +1,3 @@
-// Import necessary dependencies
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import { FaEye, FaPencilAlt, FaTrashAlt, FaUsers } from "react-icons/fa";
@@ -27,30 +26,24 @@ const Users = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const successMessage = location.state?.successMessage;
-
   const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
-
   const [totalModalUser, SetTotalModalUser] = useState(null);
   const [showTotalModal, setShowTotalModal] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [selectedUserId, setSelectedUserId] = useState(null);
   const [documentCount, setDocumentCount] = useState(null);
   const [contractSolutionCount, setContractSolutionCount] = useState(null);
   const [dataProcessCount, setDataProcessCount] = useState(null);
   const [freeDataProcessCount, setFreeDataProcessCount] = useState(null);
   const [cloneDataProcessCount, setCloneDataProcessCount] = useState(null);
-  const [loadingTotalModal, setLoadingTotalModal] = useState(false);
   const [loadingModal, setLoadingModal] = useState(true);
   const [modalError, setModalError] = useState(null);
 
   const handleTotalModal = async (user) => {
     setShowTotalModal(true);
-    setLoadingTotalModal(true);
     SetTotalModalUser(user);
   };
   const handleShowModal = async (userId) => {
-    setSelectedUserId(userId);
     setShowModal(true);
     setLoadingModal(true);
     setModalError(null);
@@ -78,7 +71,6 @@ const Users = () => {
 
   const handleCloseModal = () => {
     setShowModal(false);
-    setSelectedUserId(null);
     setDocumentCount(null);
     setContractSolutionCount(null);
     setDataProcessCount(null);
@@ -259,7 +251,6 @@ const Users = () => {
                 <p className="text-red-500">Fehler: {modalError}</p>
               ) : (
                 <>
-                  {/* Check if all tools are undefined (i.e., no tools are available for the user) */}
                   {documentCount === undefined &&
                   contractSolutionCount === undefined &&
                   dataProcessCount === undefined &&
@@ -285,7 +276,6 @@ const Users = () => {
                           </tr>
                         </thead>
                         <tbody>
-                          {/* Display 0 if the tool is available but count is 0 */}
                           {documentCount !== undefined && (
                             <tr className="hover:bg-gray-50">
                               <td className="px-6 py-4 border-b text-sm text-gray-600 font-bold">
