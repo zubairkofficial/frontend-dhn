@@ -45,8 +45,6 @@ const EditOrganizationalUser = () => {
         throw new Error(Helpers.getTranslationValue("user_not_found"));
       setUser(response.data.user);
       setServices(response.data.services);
-      console.log('get user data', response.data);
-
       setOrgs(response.data.orgs);
       setFormData({
         name: response.data.user.name,

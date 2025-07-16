@@ -38,7 +38,6 @@ const SummaryFormatter = ({ summary, error }) => {
       }
 
       if (parsedSummary && typeof parsedSummary === "object") {
-        console.log("✅ Parsed Summary:", parsedSummary);
         return (
           <div>
             {parsedSummary.general_information && (

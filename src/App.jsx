@@ -191,15 +191,9 @@ const App = () => {
 
   const hasServiceAccess = (serviceId) => {
     const user = Helpers.getItem("user", true);
-    if (user && user.services) {
-      // Check if the service ID exists in the user's services array
-      //  console.log('user services',user.services.includes(serviceId));
-      //  console.log('user services ids',serviceId);
-
-      return user.services.includes(serviceId);
-     
-      
-    }
+      if (user && user.services) {
+        return user.services.includes(serviceId);
+      }
     return false;
   };
   const fetchTranslations = async () => {

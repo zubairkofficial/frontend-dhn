@@ -30,8 +30,6 @@ function FileUpload() {
           `${Helpers.apiUrl}check-usage-count/Document`,
           Helpers.authHeaders
         );
-console.log('Document');
-
         if (response.status === 200) {
           const { available_count } = response.data;
           if (available_count <= 0) {

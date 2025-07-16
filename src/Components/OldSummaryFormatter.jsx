@@ -5,9 +5,6 @@ const OldSummaryFormatter = ({ summary }) => {
     try {
       // If summary is in JSON format
       const parsedSummary = JSON.parse(summary);
-      console.log("====================================");
-      console.log("parsedSummary", parsedSummary);
-      console.log("====================================");
       return Object.entries(parsedSummary).map(([key, value], index) => (
         <div key={index}>
           {key === "Verkaufsthemen"

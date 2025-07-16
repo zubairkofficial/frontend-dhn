@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Helpers from "../../Config/Helpers";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -57,7 +57,6 @@ const Voice = () => {
   }, [transcript]);
   const handleGenerateSummary = async (text, type) => {
     try {
-      // console.log("📝 Text received:", text);
       setState((prev) => ({ ...prev, isSummaryGenerating: true }));
 
       const response = await axios.post(
@@ -102,11 +101,6 @@ const Voice = () => {
         isSummaryGenerating: false,
       }));
 
-      // console.log("====================================");
-      // console.log("data", response.data);
-      console.log("summary", response.data.summary);
-      // console.log("====================================");
-
       Helpers.toast(
         "success",
         Helpers.getTranslationValue("summary_generated_successfully")
@@ -121,9 +115,6 @@ const Voice = () => {
         isSummaryGenerating: false,
       }));
       Helpers.toast("error", error.message);
-
-      // Display the error message on the page as well
-      console.log("Error:", error.message);
     }
   };
 

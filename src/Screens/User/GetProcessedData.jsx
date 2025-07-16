@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import PropTypes from "prop-types"; // Import PropTypes
+import PropTypes from "prop-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faDownload } from "@fortawesome/free-solid-svg-icons";
 import Modal from "react-modal";
 import ExcelJS from "exceljs";
 import saveAs from "file-saver";
 import Helpers from "../../Config/Helpers";
-import Login from "../Auth/Login";
 
 Modal.setAppElement("#root");
 
@@ -24,14 +23,6 @@ function GetProcessedData({ refresh }) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const userData = localStorage.getItem("user");
-
-    if (userData) {
-      const parsedUser = JSON.parse(userData);
-      // console.log("lastDownload", lastDownload);
-    } else {
-      console.log("No user data found in localStorage.");
-    }
     fetchData();
     fetchLastDownload();
   }, [refresh]);

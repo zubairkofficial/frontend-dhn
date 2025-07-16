@@ -31,14 +31,11 @@ function AllProcessedData() {
       let response;
 
       try {
-        // console.log("currentUser here", currentUser);
         if (currentUser && currentUser.user_type === 1) {
           response = await axios.get(
             `${Helpers.apiUrl}get-all-processed-data-customer/${userId}`,
             Helpers.authHeaders
           );
-
-          // console.log("data comes by customer", response.data.data);
         }
 
         if (
@@ -50,7 +47,6 @@ function AllProcessedData() {
             `${Helpers.apiUrl}get-all-processed-data-organization/${userId}`,
             Helpers.authHeaders
           );
-          // console.log("data comes by organziation", response.data.data);
         }
         if (
           currentUser.is_user_organizational === 1 &&
@@ -61,15 +57,11 @@ function AllProcessedData() {
             `${Helpers.apiUrl}get-all-processed-data-user/${userId}`,
             Helpers.authHeaders
           );
-          // console.log("data comes by user", response.data.data);
         }
 
         if (response && response.status === 200) {
           setUsers(response.data.users);
           setProcessedData(response.data.data);
-          // Remove this line to avoid setting a default user filter:
-          // setSelectedUser(userId);
-          // By default, selectedUser remains "" (empty string) so that all data is shown.
         }
       } catch (error) {
         console.error("Error fetching processed data:", error);
@@ -99,7 +91,6 @@ function AllProcessedData() {
     fetchLastDownload();
   }, [userId]);
 
-  // ✅ Apply both selected user and date filters in a single function
   const getFilteredData = () => {
     return processedData.filter((item) => {
       const itemDate = new Date(item.created_at);
@@ -127,7 +118,6 @@ function AllProcessedData() {
   };
 
   const handleDownloadFile = async (fileName, fileData) => {
-    // (Download one file code remains unchanged)
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet("Processed Data");
 

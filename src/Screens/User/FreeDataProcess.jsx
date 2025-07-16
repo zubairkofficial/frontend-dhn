@@ -20,8 +20,6 @@ function FreeDataProcess() {
             const response = await axios.get(
                 `${Helpers.apiUrl}check-usage-count/FreeDataProcess`, Helpers.authHeaders
             );
-console.log('FreeDataProcess');
-
 
             if (response.status === 200) {
                 const { available_count } = response.data;
