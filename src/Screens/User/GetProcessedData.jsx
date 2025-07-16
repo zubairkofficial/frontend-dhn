@@ -256,9 +256,8 @@ function GetProcessedData({ refresh }) {
       ? new Date(endDate).toISOString().slice(0, 10)
       : "";
 
-    // If the selected date range is for today, download all data for today
     if (selectedStartDate === today && selectedEndDate === today) {
-      alert("Downloading data for today's date!");
+      Helpers.toast("error", "Downloading data for today's date!");
       setStartDate(today);
       setEndDate(today);
     }
@@ -354,7 +353,7 @@ function GetProcessedData({ refresh }) {
 
     // If no matching records are found, show an alert
     if (filteredData.length === 0) {
-      alert("No matching records found for the selected filters!");
+      Helpers.toast("error", "No matching records found for the selected filters!");
       return;
     }
 

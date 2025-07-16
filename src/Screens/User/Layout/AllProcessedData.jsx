@@ -411,7 +411,7 @@ function AllProcessedData() {
     const filteredDownloadData = getFilteredData();
 
     if (filteredDownloadData.length === 0) {
-      alert("No matching records found for the selected filters!");
+      Helpers.toast("error", "No matching records found for the selected filters!");
       return;
     }
 

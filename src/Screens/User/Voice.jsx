@@ -120,7 +120,7 @@ const Voice = () => {
 
   const startDeepgramRecognition = async () => {
     if (!window.MediaRecorder) {
-      alert("MediaRecorder is not supported on this browser.");
+      Helpers.toast("error", "MediaRecorder is not supported on this browser.");
       return;
     }
 
@@ -164,7 +164,7 @@ const Voice = () => {
         stopMediaRecorder();
       };
       wsRef.current.onerror = () =>
-        alert("WebSocket connection failed. Please check your connection.");
+        Helpers.toast("error", "WebSocket connection failed. Please check your connection.");
     } catch (error) {
       setState((prev) => ({ ...prev, errorMessage: error.message }));
     }
@@ -185,7 +185,7 @@ const Voice = () => {
         };
         mediaRecorderRef.current.start(250);
       })
-      .catch((err) => alert("Error accessing microphone: " + err.message));
+      .catch((err) => Helpers.toast("error", "Error accessing microphone: " + err.message));
   };
 
   const stopMediaRecorder = () => {
