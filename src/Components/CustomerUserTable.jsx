@@ -28,7 +28,6 @@ const CustomerUserTable = () => {
   const successMessage = location.state?.successMessage;
 
   const [showModal, setShowModal] = useState(false);
-  const [selectedUserId, setSelectedUserId] = useState(null);
   const [documentCount, setDocumentCount] = useState(null);
   const [contractSolutionCount, setContractSolutionCount] = useState(null);
   const [dataProcessCount, setDataProcessCount] = useState(null);
@@ -38,7 +37,6 @@ const CustomerUserTable = () => {
   const [modalError, setModalError] = useState(null);
 
   const handleShowModal = async (userId) => {
-    setSelectedUserId(userId);
     setShowModal(true);
     setLoadingModal(true);
     setModalError(null);
@@ -66,15 +64,12 @@ const CustomerUserTable = () => {
 
   const handleCloseModal = () => {
     setShowModal(false);
-    setSelectedUserId(null);
     setDocumentCount(null);
     setContractSolutionCount(null);
     setDataProcessCount(null);
     setModalError(null);
   };
-  const user = Helpers.getItem("user");
-  const userObj = JSON.parse(user);
-  const userId = userObj.id;
+  const userId = Helpers.authUser.id;
   useEffect(() => {
     if (successMessage) {
       Helpers.toast("success", successMessage);

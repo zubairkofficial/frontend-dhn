@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { FaTrashAlt, FaPencilAlt, FaEye } from "react-icons/fa"; // Add FaEye for view usage
+import { FaTrashAlt, FaPencilAlt, FaEye } from "react-icons/fa";
 import axios from "axios";
 import Pagination from "./Pagination";
-import { Link, useNavigate } from "react-router-dom"; // Import useNavigate for navigation
+import { useNavigate } from "react-router-dom";
 import Helpers from "../Config/Helpers";
 import { useHeader } from "./HeaderContext";
 
 const OrganizationalUserTable = () => {
+  const navigate = useNavigate();
   const { setHeaderData } = useHeader();
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
@@ -15,11 +16,7 @@ const OrganizationalUserTable = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
   const itemsPerPage = 10;
-  const navigate = useNavigate(); // For navigating to the edit page
-
-  // Modal state management for viewing user usage
   const [showModal, setShowModal] = useState(false);
-  const [selectedUserId, setSelectedUserId] = useState(null);
   const [documentCount, setDocumentCount] = useState(null);
   const [contractSolutionCount, setContractSolutionCount] = useState(null);
   const [dataProcessCount, setDataProcessCount] = useState(null);
@@ -92,12 +89,10 @@ const OrganizationalUserTable = () => {
   };
 
   const handleEdit = (id) => {
-    navigate(`/edit-user/${id}`); // Navigate to the edit page
+    navigate(`/edit-user/${id}`);
   };
 
-  // Function to show the modal and fetch user usage data
   const handleShowModal = async (userId) => {
-    setSelectedUserId(userId);
     setShowModal(true);
     setLoadingModal(true);
     setModalError(null);
@@ -125,7 +120,6 @@ const OrganizationalUserTable = () => {
 
   const handleCloseModal = () => {
     setShowModal(false);
-    setSelectedUserId(null);
     setDocumentCount(null);
     setContractSolutionCount(null);
     setDataProcessCount(null);
@@ -136,7 +130,6 @@ const OrganizationalUserTable = () => {
   const indexOfFirstUser = currentPage * itemsPerPage;
   const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
 
-  // Function to handle the redirection based on local storage value
   const handleAddUserRedirect = () => {
     const isUserCustomer = localStorage.getItem("is_user_customer");
     if (isUserCustomer === "1") {
@@ -166,7 +159,6 @@ const OrganizationalUserTable = () => {
 
   return (
     <section className="w-full h-full">
-      {/* Modal for displaying user usage */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="fixed inset-0 bg-gray-100 opacity-75"></div>
@@ -201,7 +193,6 @@ const OrganizationalUserTable = () => {
                 <p className="text-red-500">Fehler: {modalError}</p>
               ) : (
                 <>
-                  {/* Check if all tools are undefined (i.e., no tools are available for the user) */}
                   {documentCount === undefined &&
                   contractSolutionCount === undefined &&
                   dataProcessCount === undefined &&
@@ -227,7 +218,6 @@ const OrganizationalUserTable = () => {
                           </tr>
                         </thead>
                         <tbody>
-                          {/* Display 0 if the tool is available but count is 0 */}
                           {documentCount !== undefined && (
                             <tr className="hover:bg-gray-50">
                               <td className="px-6 py-4 border-b text-sm text-gray-600 font-bold">
@@ -350,7 +340,6 @@ const OrganizationalUserTable = () => {
               </div>
             </div>
           </div>
-          {/* Redirect based on is_user_customer */}
           <button
             onClick={handleAddUserRedirect}
             className="h-10 px-5 mb-2 text-white transition-colors duration-150 bg-success-300 rounded-lg focus:shadow-outline hover:bg-success-300 flex items-center justify-center w-1/3 md:w-1/3"
@@ -422,19 +411,19 @@ const OrganizationalUserTable = () => {
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium flex items-center">
                         <button
                           className="bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600"
-                          onClick={() => handleEdit(user.id)} // Edit Button
+                          onClick={() => handleEdit(user.id)}
                         >
                           <FaPencilAlt className="text-black" />
                         </button>
                         <button
                           className="bg-red-500 text-white p-2 rounded-lg hover:bg-red-600 ml-2"
-                          onClick={() => handleDelete(user.id)} // Delete Button
+                          onClick={() => handleDelete(user.id)}
                         >
                           <FaTrashAlt className="text-black" />
                         </button>
                         <button
                           className="bg-green-500 text-white p-2 rounded-lg hover:bg-green-600 ml-2"
-                          onClick={() => handleShowModal(user.id)} // View Document Usage
+                          onClick={() => handleShowModal(user.id)}
                         >
                           <FaEye className="text-black" />
                         </button>

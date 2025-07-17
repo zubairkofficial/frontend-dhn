@@ -73,9 +73,7 @@ function FileUpload() {
       return;
     }
 
-    let json = localStorage.getItem("user");
-    let userObj = JSON.parse(json);
-    let userId = userObj.id;
+    let userId = Helpers.authUser.id;
     const newStatuses = { ...fileStatuses };
 
     for (let i = 0; i < selectedFiles.length; i++) {

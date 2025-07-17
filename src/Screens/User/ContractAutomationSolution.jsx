@@ -72,9 +72,7 @@ function ContractAutomationSolution() {
     }
 
     const newStatuses = { ...fileStatuses };
-    let json = localStorage.getItem("user");
-    let userObj = JSON.parse(json);
-    let userId = userObj.id;
+    let userId = Helpers.authUser.id;
     for (let i = 0; i < selectedFiles.length; i++) {
       const file = selectedFiles[i];
       const formData = new FormData();

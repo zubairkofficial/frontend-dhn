@@ -6,7 +6,8 @@ import Helpers from "../Config/Helpers";
 import Pagination from "./Pagination";
 
 const CustomerChildTable = () => {
-  const { userId } = useParams(); // Get userId from the route parameters
+  const navigate = useNavigate();
+  const { userId } = useParams();
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -14,11 +15,7 @@ const CustomerChildTable = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
   const itemsPerPage = 10;
-  const navigate = useNavigate();
-
-  // Modal state management for viewing user usage
   const [showModal, setShowModal] = useState(false);
-  const [selectedUserId, setSelectedUserId] = useState(null);
   const [documentCount, setDocumentCount] = useState(null);
   const [contractSolutionCount, setContractSolutionCount] = useState(null);
   const [dataProcessCount, setDataProcessCount] = useState(null);
@@ -86,7 +83,6 @@ const CustomerChildTable = () => {
 
   // Function to show the modal and fetch user usage data
   const handleShowModal = async (userId) => {
-    setSelectedUserId(userId);
     setShowModal(true);
     setLoadingModal(true);
     setModalError(null);
@@ -114,7 +110,6 @@ const CustomerChildTable = () => {
 
   const handleCloseModal = () => {
     setShowModal(false);
-    setSelectedUserId(null);
     setDocumentCount(null);
     setContractSolutionCount(null);
     setDataProcessCount(null);

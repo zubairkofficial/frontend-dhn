@@ -24,11 +24,9 @@ const AddCustomerAdmin = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const userObj = localStorage.getItem("user");
-    const user = JSON.parse(userObj);
-    const user_id = user.id;
-    const user_services = user.services;
-    const user_org_id = user.org_id;
+    const user_id = Helpers.authUser.id;
+    const user_services = Helpers.authUser.services;
+    const user_org_id = Helpers.authUser.org_id;
     setUser((prevUser) => ({
       ...prevUser,
       creator_id: user_id,
@@ -76,8 +74,7 @@ const AddCustomerAdmin = () => {
     e.preventDefault();
 
     // Retrieve data dynamically from localStorage
-    const userObj = localStorage.getItem("user");
-    const userData = JSON.parse(userObj);
+    const userData = Helpers.authUser;
     // Construct payload directly
     const payload = {
       ...user, // This spreads the original user object data

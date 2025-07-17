@@ -64,6 +64,8 @@ import ResetNormalUserPassword from "./Screens/Admin/User/AddUser/ResetNormalUse
 import GetProcessedData from "./Screens/User/GetProcessedData";
 import AllProcessedData from "./Screens/User/Layout/AllProcessedData";
 import Werthenbach from "./Screens/User/Werthenbach";
+import Scheren from "./Screens/User/Scheren";
+import AllScherenData from "./Screens/User/Layout/AllScherenData";
 
 const Auth = ({ children, isAuth = true, isAdmin = false }) => {
   let user = Helpers.getItem("user", true);
@@ -129,7 +131,7 @@ const Auth = ({ children, isAuth = true, isAdmin = false }) => {
 
 const NotFound = () => {
   useEffect(() => {
-    const user = Helpers.getItem("user", true);
+    const user = Helpers.authUser;
     const token = Helpers.getItem("token");
 
     if (!user || !token) {
@@ -190,7 +192,7 @@ const App = () => {
   }, []);
 
   const hasServiceAccess = (serviceId) => {
-    const user = Helpers.getItem("user", true);
+    const user = Helpers.authUser;
       if (user && user.services) {
         return user.services.includes(serviceId);
       }
@@ -334,12 +336,22 @@ const App = () => {
               />
             )}
 
-              {hasServiceAccess(9) && (
+            {hasServiceAccess(8) && (
               <Route
                 path="/werthenbach"
                 element={
                   <Auth>
                     <Werthenbach />
+                  </Auth>
+                }
+              />
+            )}
+            {hasServiceAccess(9) && (
+              <Route
+                path="/scheren"
+                element={
+                  <Auth>
+                    <Scheren />
                   </Auth>
                 }
               />
@@ -359,6 +371,14 @@ const App = () => {
               element={
                 <Auth>
                   <AllProcessedData />
+                </Auth>
+              }
+            />
+            <Route
+              path="/user/all-scheren-data/:userId"
+              element={
+                <Auth>
+                  <AllScherenData />
                 </Auth>
               }
             />

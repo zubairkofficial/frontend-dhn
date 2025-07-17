@@ -35,9 +35,7 @@ function DataProcess() {
             Helpers.toast("error", Helpers.getTranslationValue('file_select_first'));
             return;
         }
-        let json = localStorage.getItem("user");
-        let userObj = JSON.parse(json);
-        let userId = userObj.id
+        let userId = Helpers.authUser.id;
         const newStatuses = { ...fileStatuses };
         let allData = [];
     

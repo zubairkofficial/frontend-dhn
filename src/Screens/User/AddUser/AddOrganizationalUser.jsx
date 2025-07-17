@@ -19,11 +19,9 @@ const AddOrganizationalUser = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const userObj = localStorage.getItem("user");
-    const user = JSON.parse(userObj);
-    const user_id = user.id;
-    const user_services = user.services;
-    const user_org_id = user.org_id;
+    const user_id = Helpers.authUser.id;
+    const user_services = Helpers.authUser.services;
+    const user_org_id = Helpers.authUser.org_id;
 
     setUser((prevUser) => ({
       ...prevUser,

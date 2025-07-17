@@ -12,21 +12,21 @@ import {
 import { useHeader } from "../../Components/HeaderContext";
 import ExcelJS from "exceljs";
 import saveAs from "file-saver";
+import GetScherenData from "./GetScherenData";
 
-function CloneDataProcess() {
+const Scheren = () => {
   const { setHeaderData } = useHeader();
-
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [fileStatuses, setFileStatuses] = useState({});
   const [canUpload, setCanUpload] = useState(true);
   const [allProcessedData, setAllProcessedData] = useState([]);
   const [processedCount, setProcessedCount] = useState(0);
   const fileInputRef = useRef(null);
-
+  const [refreshProcessedData, setRefreshProcessedData] = useState(false);
   const checkUsageCount = async () => {
     try {
       const response = await axios.get(
-        `${Helpers.apiUrl}check-usage-count/CloneDataProcess`,
+        `${Helpers.apiUrl}check-usage-count/Scheren`,
         Helpers.authHeaders
       );
 
@@ -60,7 +60,7 @@ function CloneDataProcess() {
   };
   useEffect(() => {
     setHeaderData({
-      title: Helpers.getTranslationValue("Data Process"),
+      title: Helpers.getTranslationValue("Scheren"),
       desc: "",
     });
 
@@ -102,7 +102,7 @@ function CloneDataProcess() {
 
       try {
         const response = await axios.post(
-          `${Helpers.apiUrl}clone-data-process`,
+          `${Helpers.apiUrl}scheren-data-process`,
           formData,
           Helpers.authFileHeaders
         );
@@ -143,6 +143,9 @@ function CloneDataProcess() {
       "success",
       Helpers.getTranslationValue("files_processed_msg")
     );
+
+    // Trigger GetProcessedData to refresh
+    setRefreshProcessedData((prev) => !prev);
   };
 
   const handleDownload = async () => {
@@ -152,39 +155,43 @@ function CloneDataProcess() {
     // Define the custom headers in your desired order
     const headers = [
       "Produktname",
-      "Hersteller",
       "Dateiname SDB",
-      "Ausgabedatum bzw. letzte Änderung",
       "LG Klasse",
-      "WGK(numerischer Wert)",
-      "H Sätze durch Komma getrennt",
-      "Flammpunkt (numerischer Wert)[°C]",
-      "Nr./Kategorie gem. Anhang I, 12. BImSchV 2017",
+      "WGK\n(numerischer Wert)",
+      "H Sätze & Kategorie\ndurch Komma getrennt",
+      "Flammpunkt\n(numerischer Wert)\n[°C]",
       "UN Nr",
       "Gefahrensymbole",
       "Gefahrgutklasse (Länge beachten)",
       "Verpackungsgruppe",
       "Tunnelcode",
-      "N.A.G./NOS technische Benennung (Gefahraus-löser)",
+      "N.A.G./NOS technische Benennung",
+      "Gefahrauslöser",
+      "technische Benennung englisch",
+      "Gefahrauslöser englisch",
       "LQ (Spalte eingefügt)",
-      "Hinweise/Bemerkungen/Sicherheitsbetrachtung (stoffspezifisch)",
-      "Freigabe Störrfallbeauftragter",
-      "Maßnahmen Lagerung Abschnitt 7.2",
-      "Zusammenlagerverbot Abschnitt 10.5",
       "Main Ingredients",
-      "Section - PreText",
+      "Signalwort",
+      "P-Sätze",
+      "Störfallverordnung (Nr.)",
+      "Aggregatzustand",
+      "Transportgefahrenklassen",
+      "Umweltgefahren (ADR)",
+      "Umweltgefahren (IMDG)",
       "Section - 1",
-      "Section - 2",
       "Section - 2|2.2",
-      "Section - 3",
-      "Section - 5|5.1",
-      "Section - 7|7.2--15|15.1",
-      "Section - 7|7.2",
-      "Section - 9|9.1",
-      "Section - 10|10.5",
+      "Section - FirstPage",
+      "Section - 2",
+      "Section - 7|7.2--15",
       "Section - 15",
+      "Section - 9|9.1",
+      "Section - 5|5.1",
+      "Section - 7|7.2",
+      "Section - 10|10.5",
       "Section - 14",
+      "Section - 3",
       "Section-Missing-Count",
+      "Message",
     ];
 
     // Add headers to the worksheet with styles
@@ -205,46 +212,51 @@ function CloneDataProcess() {
       };
     });
 
+    // Add the static row data below the header row
+    const staticRow = Array(37).fill("");
+    worksheet.addRow(staticRow);
+
     const headerMapping = {
       Produktname: "Produktname",
-      Hersteller: "Hersteller",
       "Dateiname SDB": "Dateiname SDB",
-      "Ausgabedatum bzw. letzte Änderung": "Ausgabedatum bzw. letzte Änderung",
       "LG Klasse": "LG Klasse",
-      "WGK(numerischer Wert)": "WGK\n(numerischer Wert)",
-      "H Sätze durch Komma getrennt": "H Sätze\ndurch Komma getrennt",
-      "Flammpunkt (numerischer Wert)[°C]":
+      "WGK\n(numerischer Wert)": "WGK\n(numerischer Wert)",
+      "H Sätze & Kategorie\ndurch Komma getrennt":
+        "H Sätze & Kategorie\ndurch Komma getrennt",
+      "Flammpunkt\n(numerischer Wert)\n[°C]":
         "Flammpunkt\n(numerischer Wert)\n[°C]",
-      "Nr./Kategorie gem. Anhang I, 12. BImSchV 2017":
-        "Nr./Kategorie gem. Anhang I, 12. BImSchV 2017",
       "UN Nr": "UN Nr",
       Gefahrensymbole: "Gefahrensymbole",
       "Gefahrgutklasse (Länge beachten)": "Gefahrgutklasse (Länge beachten)",
       Verpackungsgruppe: "Verpackungsgruppe",
       Tunnelcode: "Tunnelcode",
-      "N.A.G./NOS technische Benennung (Gefahraus-löser)":
-        "N.A.G./NOS\ntechnische Benennung\n(Gefahraus-löser)",
+      "N.A.G./NOS technische Benennung": "N.A.G./NOS technische Benennung",
+      Gefahrauslöser: "Gefahrauslöser",
+      "technische Benennung englisch": "technische Benennung englisch",
+      "Gefahrauslöser englisch": "Gefahrauslöser englisch",
       "LQ (Spalte eingefügt)": "LQ (Spalte eingefügt)",
-      "Hinweise/Bemerkungen/Sicherheitsbetrachtung (stoffspezifisch)":
-        "Hinweise/Bemerkungen/Sicherheitsbetrachtung (stoffspezifisch)",
-      "Freigabe Störrfallbeauftragter": "Freigabe Störrfallbeauftragter",
-      "Maßnahmen Lagerung Abschnitt 7.2": "Maßnahmen Lagerung\nAbschnitt 7.2",
-      "Zusammenlagerverbot Abschnitt 10.5":
-        "Zusammenlagerverbot\nAbschnitt 10.5",
       "Main Ingredients": "Main Ingredients",
-      "Section - PreText": "Section - PreText",
+      Signalwort: "Signalwort",
+      "P-Sätze": "P-Sätze",
+      "Störfallverordnung (Nr.)": "Störfallverordnung (Nr.)",
+      Aggregatzustand: "Aggregatzustand",
+      Transportgefahrenklassen: "Transportgefahrenklassen",
+      "Umweltgefahren (ADR)": "Umweltgefahren (ADR)",
+      "Umweltgefahren (IMDG)": "Umweltgefahren (IMDG)",
       "Section - 1": "Section - 1",
-      "Section - 2": "Section - 2",
       "Section - 2|2.2": "Section - 2|2.2",
-      "Section - 3": "Section - 3",
-      "Section - 5|5.1": "Section - 5|5.1",
-      "Section - 7|7.2--15|15.1": "Section - 7|7.2--15",
-      "Section - 7|7.2": "Section - 7|7.2",
-      "Section - 9|9.1": "Section - 9|9.1",
-      "Section - 10|10.5": "Section - 10|10.5",
+      "Section - FirstPage": "Section - FirstPage",
+      "Section - 2": "Section - 2",
+      "Section - 7|7.2--15": "Section - 7|7.2--15",
       "Section - 15": "Section - 15",
+      "Section - 9|9.1": "Section - 9|9.1",
+      "Section - 5|5.1": "Section - 5|5.1",
+      "Section - 7|7.2": "Section - 7|7.2",
+      "Section - 10|10.5": "Section - 10|10.5",
       "Section - 14": "Section - 14",
+      "Section - 3": "Section - 3",
       "Section-Missing-Count": "Section-Missing-Count",
+      Message: "Message",
     };
 
     // Add data rows and apply yellow fill if `Section-Missing-Count` > 0
@@ -287,7 +299,7 @@ function CloneDataProcess() {
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     });
     saveAs(blob, "Processed_Files_Data.xlsx");
-
+    setRefreshProcessedData((prev) => !prev); // Trigger GetProcessedData to refresh
     setSelectedFiles([]);
     setFileStatuses({});
     setAllProcessedData([]);
@@ -320,7 +332,9 @@ function CloneDataProcess() {
 
   return (
     <div className="w-full bg-white py-5 mx-auto">
-      <h2 className="text-center text-2xl font-semibold mb-8">{Helpers.getTranslationValue('Data Process')}</h2>
+      <h2 className="text-center text-2xl font-semibold mb-8">
+        {Helpers.getTranslationValue("Scheren")}
+      </h2>
 
       <div className="flex flex-col items-center px-10">
         <input
@@ -391,8 +405,11 @@ function CloneDataProcess() {
           </button>
         )}
       </div>
+      <div className="mt-10">
+        <GetScherenData refresh={refreshProcessedData} />
+      </div>
     </div>
   );
-}
+};
 
-export default CloneDataProcess;
+export default Scheren;
