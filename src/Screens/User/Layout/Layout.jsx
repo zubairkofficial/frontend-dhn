@@ -37,7 +37,6 @@ const Layout = () => {
     fetchLogo();
   }, []);
 
-  // Function to update the logo state
   const updateLogo = (newLogoPath) => {
     setLogo(newLogoPath);
   };
@@ -557,7 +556,6 @@ const Layout = () => {
             <div className="2xl:flex 2xl:space-x-[48px]">
               <section className="2xl:flex-1 2xl:mb-0 mb-6 overflow-auto">
                 <Outlet context={{ updateLogo }} />
-                {/* Pass updateLogo function */}
               </section>
             </div>
           </main>

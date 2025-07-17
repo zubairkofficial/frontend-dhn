@@ -5,7 +5,7 @@ import axios from "axios";
 import "react-datepicker/dist/react-datepicker.css";
 import Helpers from "../../Config/Helpers";
 
-function DeliveryBills() {
+const DeliveryBills = () => {
   const [file, setFile] = useState(null);
   const [fromDate, setFromDate] = useState(null);
   const [endDate, setEndDate] = useState(null);

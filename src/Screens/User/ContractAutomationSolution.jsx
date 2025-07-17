@@ -10,7 +10,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useHeader } from "../../Components/HeaderContext";
 
-function ContractAutomationSolution() {
+const ContractAutomationSolution = () => {
   const { setHeaderData } = useHeader();
 
   const [selectedFiles, setSelectedFiles] = useState([]);

@@ -81,7 +81,6 @@ const CustomerChildTable = () => {
     navigate(`/edit-user/${userId}`);
   };
 
-  // Function to show the modal and fetch user usage data
   const handleShowModal = async (userId) => {
     setShowModal(true);
     setLoadingModal(true);

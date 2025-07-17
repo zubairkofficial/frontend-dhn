@@ -11,7 +11,7 @@ import Helpers from "../../Config/Helpers";
 
 Modal.setAppElement("#root");
 
-function GetScherenData({ refresh }) {
+const GetScherenData = ({ refresh }) => {
   // State declarations
   const [processedData, setProcessedData] = useState([]);
   const [selectedData, setSelectedData] = useState(null);
@@ -58,7 +58,6 @@ function GetScherenData({ refresh }) {
     }
   };
 
-  // Function to filter data based on date range
   const getFilteredData = () => {
     if (!startDate || !endDate) {
       return processedData; // No filter applied, return all data

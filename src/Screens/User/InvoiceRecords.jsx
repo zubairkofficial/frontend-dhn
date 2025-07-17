@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import Helpers from "../../Config/Helpers";
 
-function InvoiceRecords() {
+const InvoiceRecords = () => {
   const [invoiceHistory, setInvoiceHistory] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);

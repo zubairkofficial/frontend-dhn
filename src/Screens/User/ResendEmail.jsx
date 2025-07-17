@@ -5,7 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import Helpers from "../../Config/Helpers";
 import { useHeader } from "../../Components/HeaderContext";
 
-function ResendEmail() {
+const ResendEmail = () => {
   const { setHeaderData } = useHeader();
   useEffect(() => {
     setHeaderData({ title: Helpers.getTranslationValue('resend_email'), desc: "" });

@@ -5,7 +5,7 @@ import Helpers from "../../Config/Helpers";
 import { useHeader } from "../../Components/HeaderContext";
 import SummaryFormatter from "../../Components/SummaryFormatter";
 
-function Transcription() {
+const Transcription = () => {
   const { setHeaderData } = useHeader();
   useEffect(() => {
     setHeaderData({

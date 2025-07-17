@@ -61,8 +61,6 @@ const Dashboard = () => {
     }
   };
 
-
-  // Function to check if the service is enabled for the user
   const isServiceEnabled = (serviceId) => {
     return userServices.includes(serviceId);
   };

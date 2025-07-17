@@ -13,7 +13,7 @@ import { useHeader } from "../../Components/HeaderContext";
 import ExcelJS from "exceljs";
 import saveAs from "file-saver";
 
-function CloneDataProcess() {
+const CloneDataProcess = () => {
   const { setHeaderData } = useHeader();
 
   const [selectedFiles, setSelectedFiles] = useState([]);

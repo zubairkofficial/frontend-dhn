@@ -14,7 +14,7 @@ import ExcelJS from "exceljs";
 import saveAs from "file-saver";
 import GetWerthenbachData from "./GetWerthenbachData";
 
-function Werthenbach() {
+const Werthenbach = () => {
   const { setHeaderData } = useHeader();
 
   const [selectedFiles, setSelectedFiles] = useState([]);

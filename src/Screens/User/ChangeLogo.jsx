@@ -7,7 +7,7 @@ import { useHeader } from '../../Components/HeaderContext';
 
 const ChangeLogo = () => {
   const { setHeaderData } = useHeader();
-  const { updateLogo } = useOutletContext(); // Get the updateLogo function from Layout
+  const { updateLogo } = useOutletContext();
   const [logo, setLogo] = useState(null);
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -15,10 +15,8 @@ const ChangeLogo = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Set header data
     setHeaderData({ title: Helpers.getTranslationValue('settings'), desc: '' });
 
-    // Fetch current logo
     const fetchLogo = async () => {
       try {
         const response = await axios.get(`${Helpers.apiUrl}fetch-logo`, Helpers.authHeaders);

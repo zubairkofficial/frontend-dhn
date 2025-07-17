@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Helpers from "../../Config/Helpers";
 
-function InvoiceDetails() {
+const InvoiceDetails = () => {
   const location = useLocation();
   const { state } = location;
   const [matchedData, setMatchedData] = useState([]);

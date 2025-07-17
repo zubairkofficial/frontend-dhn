@@ -1,15 +1,14 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { BsX } from "react-icons/bs";
 import toast from "react-hot-toast";
 import Helpers from "../../Config/Helpers";
 import axios from "axios";
 
-function PastInvoices() {
+const PastInvoices = () => {
   const [files, setFiles] = useState([[]]);
   const [titles, setTitles] = useState([""]);
   const [uploading, setUploading] = useState(false);
-  const navigate = useNavigate();
 
   const handleFileChange = (event, index) => {
     const newFiles = [...files];

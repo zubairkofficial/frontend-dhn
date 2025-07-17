@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import Helpers from "../../Config/Helpers";
 
-function DetialsWithDate() {
+const DetialsWithDate = () => {
   const { uploadDate } = useParams();
   const [invoiceData, setInvoiceData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);

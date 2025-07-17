@@ -9,7 +9,7 @@ import Modal from "react-modal";
 import ExcelJS from "exceljs";
 import saveAs from "file-saver";
 
-function AllScherenData() {
+const AllScherenData = () => {
   const { userId } = useParams();
   const navigate = useNavigate();
   const [processedData, setProcessedData] = useState([]);

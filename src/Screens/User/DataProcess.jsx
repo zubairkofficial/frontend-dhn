@@ -14,7 +14,7 @@ import ExcelJS from "exceljs";
 import saveAs from "file-saver";
 import GetProcessedData from "./GetProcessedData";
 
-function DataProcess() {
+const DataProcess = () => {
   const { setHeaderData } = useHeader();
 
   const [selectedFiles, setSelectedFiles] = useState([]);

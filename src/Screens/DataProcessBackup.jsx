@@ -6,7 +6,7 @@ import { faCloudUploadAlt, faSpinner, faCheckCircle, faExclamationCircle, faDown
 import { useHeader } from '../../Components/HeaderContext';
 import * as XLSX from "xlsx";
 
-function DataProcess() {
+const DataProcess = () => {
     const { setHeaderData } = useHeader();
 
     useEffect(() => {

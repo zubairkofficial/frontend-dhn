@@ -6,7 +6,7 @@ import { faCloudUploadAlt, faSpinner, faCheckCircle, faExclamationCircle, faEnve
 import { useHeader } from '../../Components/HeaderContext';
 import * as XLSX from "xlsx";
 
-function FreeDataProcess() {
+const FreeDataProcess = () => {
     const { setHeaderData } = useHeader();
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [fileStatuses, setFileStatuses] = useState({});
