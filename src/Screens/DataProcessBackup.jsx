@@ -190,7 +190,7 @@ const DataProcess = () => {
     
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Processed Data");
-        XLSX.writeFile(wb, "Processed_Files_Data.xlsx");
+        XLSX.writeFile(wb, "Data_Process_Files.xlsx");
     
         // Reset the form after download
         setSelectedFiles([]);

@@ -158,7 +158,7 @@ const FreeDataProcess = () => {
         const blob = new Blob([wbout], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
 
         const formData = new FormData();
-        formData.append("file", blob, "Processed_Files_Data.xlsx");
+        formData.append("file", blob, "Free_Data_Process_Files.xlsx");
 
         try {
             const response = await axios.post(`${Helpers.apiUrl}send-processed-file`, formData, Helpers.authFileHeaders);

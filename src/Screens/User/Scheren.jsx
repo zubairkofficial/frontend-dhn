@@ -298,7 +298,7 @@ const Scheren = () => {
     const blob = new Blob([buffer], {
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     });
-    saveAs(blob, "Processed_Files_Data.xlsx");
+    saveAs(blob, "Scheren_Files.xlsx");
     setRefreshProcessedData((prev) => !prev); // Trigger GetProcessedData to refresh
     setSelectedFiles([]);
     setFileStatuses({});

@@ -320,7 +320,7 @@ const DataProcess = () => {
     const blob = new Blob([buffer], {
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     });
-    saveAs(blob, "Processed_Files_Data.xlsx");
+    saveAs(blob, "Data_Process_Files.xlsx");
     setRefreshProcessedData((prev) => !prev); // Trigger GetProcessedData to refresh
     setSelectedFiles([]);
     setFileStatuses({});
