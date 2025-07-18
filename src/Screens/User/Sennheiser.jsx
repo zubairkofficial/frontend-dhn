@@ -12,21 +12,21 @@ import {
 import { useHeader } from "../../Components/HeaderContext";
 import ExcelJS from "exceljs";
 import saveAs from "file-saver";
-import GetScherenData from "./GetScherenData";
+import GetSennheiserData from "./GetSennheiserData";
 
-const Scheren = () => {
+const Sennheiser = () => {
   const { setHeaderData } = useHeader();
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [fileStatuses, setFileStatuses] = useState({});
   const [canUpload, setCanUpload] = useState(true);
-  const [allScherenData, setAllScherenData] = useState([]);
-  const [scherenCount, setScherenCount] = useState(0);
+  const [allSennheiserData, setAllSennheiserData] = useState([]);
+  const [sennheiserCount, setSennheiserCount] = useState(0);
   const fileInputRef = useRef(null);
-  const [refreshScherenData, setRefreshScherenData] = useState(false);
+  const [refreshSennheiserData, setRefreshSennheiserData] = useState(false);
   const checkUsageCount = async () => {
     try {
       const response = await axios.get(
-        `${Helpers.apiUrl}check-usage-count/Scheren`,
+        `${Helpers.apiUrl}check-usage-count/Sennheiser`,
         Helpers.authHeaders
       );
 
@@ -60,7 +60,7 @@ const Scheren = () => {
   };
   useEffect(() => {
     setHeaderData({
-      title: Helpers.getTranslationValue("Scheren"),
+      title: Helpers.getTranslationValue("Sennheiser"),
       desc: "",
     });
 
@@ -77,7 +77,7 @@ const Scheren = () => {
 
     setSelectedFiles(files);
     setFileStatuses(newStatuses);
-    setScherenCount(0);
+    setSennheiserCount(0);
   };
 
   const handleFileUpload = async () => {
@@ -102,7 +102,7 @@ const Scheren = () => {
 
       try {
         const response = await axios.post(
-          `${Helpers.apiUrl}scheren-data-process`,
+          `${Helpers.apiUrl}sennheiser-data-process`,
           formData,
           Helpers.authFileHeaders
         );
@@ -135,62 +135,47 @@ const Scheren = () => {
       }
 
       count += 1;
-      setScherenCount(count);
+      setSennheiserCount(count);
     }
 
-    setAllScherenData(allData);
+    setAllSennheiserData(allData);
     Helpers.toast(
       "success",
       Helpers.getTranslationValue("files_processed_msg")
     );
 
-    setRefreshScherenData((prev) => !prev);
+    setRefreshSennheiserData((prev) => !prev);
   };
 
   const handleDownload = async () => {
     const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet("Scheren Data");
+    const worksheet = workbook.addWorksheet("Sennheiser Data");
 
     // Define the custom headers in your desired order
     const headers = [
-      "Produktname",
+      "ID Number",
       "Dateiname SDB",
-      "LG Klasse",
-      "WGK\n(numerischer Wert)",
-      "H Sätze & Kategorie\ndurch Komma getrennt",
-      "Flammpunkt\n(numerischer Wert)\n[°C]",
-      "UN Nr",
-      "Gefahrensymbole",
-      "Gefahrgutklasse (Länge beachten)",
-      "Verpackungsgruppe",
-      "Tunnelcode",
-      "N.A.G./NOS technische Benennung",
-      "Gefahrauslöser",
-      "technische Benennung englisch",
-      "Gefahrauslöser englisch",
-      "LQ (Spalte eingefügt)",
-      "Main Ingredients",
+      "Produktname",
+      "Hersteller",
+      "CAS Nummer bei reinen Stoffen",
+      "Ausgabedatum bzw. letzte Änderung",
+      "H Sätze durch Komma getrennt",
+      "Einstufung des Stoffs oder Gemischs",
+      "Einstufung gemäß der (EG) Verordnung 1272/2008 in der geänderten Fassung",
       "Signalwort",
+      "Ergänzende Hinweise",
       "P-Sätze",
-      "Störfallverordnung (Nr.)",
-      "Aggregatzustand",
-      "Transportgefahrenklassen",
-      "Umweltgefahren (ADR)",
-      "Umweltgefahren (IMDG)",
-      "Section - 1",
-      "Section - 2|2.2",
-      "Section - FirstPage",
-      "Section - 2",
-      "Section - 7|7.2--15",
-      "Section - 15",
-      "Section - 9|9.1",
-      "Section - 5|5.1",
-      "Section - 7|7.2",
-      "Section - 10|10.5",
-      "Section - 14",
-      "Section - 3",
+      "Sonstige Gefahren",
+      "LG Klasse",
+      "WGK(numerischer Wert)",
+      "Flammpunkt (numerischer Wert)",
+      "pH-Wert",
+      "Gemische",
+      "Zu überwachende Parameter",
+      "SVHC",
+      "CMR",
+      "Kostenstellenfreigabe",
       "Section-Missing-Count",
-      "Message",
     ];
 
     // Add headers to the worksheet with styles
@@ -212,50 +197,35 @@ const Scheren = () => {
     });
 
     const headerMapping = {
-      Produktname: "Produktname",
+      "ID Number": "ID Number",
       "Dateiname SDB": "Dateiname SDB",
-      "LG Klasse": "LG Klasse",
-      "WGK\n(numerischer Wert)": "WGK\n(numerischer Wert)",
-      "H Sätze & Kategorie\ndurch Komma getrennt":
-        "H Sätze & Kategorie\ndurch Komma getrennt",
-      "Flammpunkt\n(numerischer Wert)\n[°C]":
-        "Flammpunkt\n(numerischer Wert)\n[°C]",
-      "UN Nr": "UN Nr",
-      Gefahrensymbole: "Gefahrensymbole",
-      "Gefahrgutklasse (Länge beachten)": "Gefahrgutklasse (Länge beachten)",
-      Verpackungsgruppe: "Verpackungsgruppe",
-      Tunnelcode: "Tunnelcode",
-      "N.A.G./NOS technische Benennung": "N.A.G./NOS technische Benennung",
-      Gefahrauslöser: "Gefahrauslöser",
-      "technische Benennung englisch": "technische Benennung englisch",
-      "Gefahrauslöser englisch": "Gefahrauslöser englisch",
-      "LQ (Spalte eingefügt)": "LQ (Spalte eingefügt)",
-      "Main Ingredients": "Main Ingredients",
+      Produktname: "Produktname",
+      Hersteller: "Hersteller",
+      "CAS Nummer bei reinen Stoffen": "CAS Nummer bei reinen Stoffen",
+      "Ausgabedatum bzw. letzte Änderung": "Ausgabedatum bzw. letzte Änderung",
+      "H Sätze durch Komma getrennt": "H Sätze durch Komma getrennt",
+      "Einstufung des Stoffs oder Gemischs":
+        "Einstufung des Stoffs oder Gemischs",
+      "Einstufung gemäß der (EG) Verordnung 1272/2008 in der geänderten Fassung":
+        "Einstufung gemäß der (EG) Verordnung 1272/2008 in der geänderten Fassung",
       Signalwort: "Signalwort",
+      "Ergänzende Hinweise": "Ergänzende Hinweise",
       "P-Sätze": "P-Sätze",
-      "Störfallverordnung (Nr.)": "Störfallverordnung (Nr.)",
-      Aggregatzustand: "Aggregatzustand",
-      Transportgefahrenklassen: "Transportgefahrenklassen",
-      "Umweltgefahren (ADR)": "Umweltgefahren (ADR)",
-      "Umweltgefahren (IMDG)": "Umweltgefahren (IMDG)",
-      "Section - 1": "Section - 1",
-      "Section - 2|2.2": "Section - 2|2.2",
-      "Section - FirstPage": "Section - FirstPage",
-      "Section - 2": "Section - 2",
-      "Section - 7|7.2--15": "Section - 7|7.2--15",
-      "Section - 15": "Section - 15",
-      "Section - 9|9.1": "Section - 9|9.1",
-      "Section - 5|5.1": "Section - 5|5.1",
-      "Section - 7|7.2": "Section - 7|7.2",
-      "Section - 10|10.5": "Section - 10|10.5",
-      "Section - 14": "Section - 14",
-      "Section - 3": "Section - 3",
+      "Sonstige Gefahren": "Sonstige Gefahren",
+      "LG Klasse": "LG Klasse",
+      "WGK(numerischer Wert)": "WGK(numerischer Wert)",
+      "Flammpunkt (numerischer Wert)": "Flammpunkt (numerischer Wert)",
+      "pH-Wert": "pH-Wert",
+      Gemische: "Gemische",
+      "Zu überwachende Parameter": "Zu überwachende Parameter",
+      SVHC: "SVHC",
+      CMR: "CMR",
+      Kostenstellenfreigabe: "Kostenstellenfreigabe",
       "Section-Missing-Count": "Section-Missing-Count",
-      Message: "Message",
     };
 
     // Add data rows and apply yellow fill if `Section-Missing-Count` > 0
-    allScherenData.forEach((fileData) => {
+    allSennheiserData.forEach((fileData) => {
       let rowData = headers.map(
         (header) => fileData.data[headerMapping[header]] || ""
       );
@@ -278,26 +248,18 @@ const Scheren = () => {
     });
 
     // Set column widths
-    worksheet.columns = [
-      { width: 5 },
-      { width: 5 },
-      { width: 5 },
-      { width: 20 },
-      ...Array(headers.length - 4).fill({ width: 30 }),
-      { width: 5 },
-      { width: 30 },
-    ];
+    worksheet.columns = headers.map(() => ({ width: 30 }));
 
     // Write the workbook to a file
     const buffer = await workbook.xlsx.writeBuffer();
     const blob = new Blob([buffer], {
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     });
-    saveAs(blob, "Scheren_Files.xlsx");
-    setRefreshScherenData((prev) => !prev);
+    saveAs(blob, "Sennheiser_Files.xlsx");
+    setRefreshSennheiserData((prev) => !prev);
     setSelectedFiles([]);
     setFileStatuses({});
-    setAllScherenData([]);
+    setAllSennheiserData([]);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
@@ -328,7 +290,7 @@ const Scheren = () => {
   return (
     <div className="w-full bg-white py-5 mx-auto">
       <h2 className="text-center text-2xl font-semibold mb-8">
-        {Helpers.getTranslationValue("Scheren")}
+        {Helpers.getTranslationValue("Sennheiser")}
       </h2>
 
       <div className="flex flex-col items-center px-10">
@@ -349,11 +311,11 @@ const Scheren = () => {
             <div
               className="bg-green-500 h-6 rounded-full"
               style={{
-                width: `${(scherenCount / selectedFiles.length) * 100}%`,
+                width: `${(sennheiserCount / selectedFiles.length) * 100}%`,
               }}
             ></div>
             <span className="absolute inset-0 flex justify-center items-center text-sm font-medium">
-              {scherenCount}/{selectedFiles.length} SDB verabeitet
+              {sennheiserCount}/{selectedFiles.length} Sennheiser verabeitet
             </span>
           </div>
         )}
@@ -390,7 +352,7 @@ const Scheren = () => {
           <FontAwesomeIcon icon={faCloudUploadAlt} className="ml-2" />
         </button>
 
-        {allScherenData.length > 0 && (
+        {allSennheiserData.length > 0 && (
           <button
             onClick={handleDownload}
             className="flex justify-end text-white py-3 px-6 font-bold bg-success-300 hover:bg-success-300 transition-all rounded-lg"
@@ -401,10 +363,10 @@ const Scheren = () => {
         )}
       </div>
       <div className="mt-10">
-        <GetScherenData refresh={refreshScherenData} />
+        <GetSennheiserData refresh={refreshSennheiserData} />
       </div>
     </div>
   );
 };
 
-export default Scheren;
+export default Sennheiser;

@@ -66,6 +66,8 @@ import AllProcessedData from "./Screens/User/Layout/AllProcessedData";
 import Werthenbach from "./Screens/User/Werthenbach";
 import Scheren from "./Screens/User/Scheren";
 import AllScherenData from "./Screens/User/Layout/AllScherenData";
+import AllSennheiserData from "./Screens/User/Layout/AllSennheiserData";
+import Sennheiser from "./Screens/User/Sennheiser";
 
 const Auth = ({ children, isAuth = true, isAdmin = false }) => {
   let user = Helpers.getItem("user", true);
@@ -356,6 +358,16 @@ const App = () => {
                 }
               />
             )}
+            {hasServiceAccess(10) && (
+              <Route
+                path="/sennheiser"
+                element={
+                  <Auth>
+                    <Sennheiser />
+                  </Auth>
+                }
+              />
+            )}
             {hasServiceAccess(5) && (
               <Route
                 path="/free-data-process"
@@ -379,6 +391,14 @@ const App = () => {
               element={
                 <Auth>
                   <AllScherenData />
+                </Auth>
+              }
+            />
+            <Route
+              path="/user/all-sennheiser-data/:userId"
+              element={
+                <Auth>
+                  <AllSennheiserData />
                 </Auth>
               }
             />

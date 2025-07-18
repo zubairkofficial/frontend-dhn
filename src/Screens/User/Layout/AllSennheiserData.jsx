@@ -9,10 +9,10 @@ import Modal from "react-modal";
 import ExcelJS from "exceljs";
 import saveAs from "file-saver";
 
-const AllScherenData = () => {
+const AllSennheiserData = () => {
   const { userId } = useParams();
   const navigate = useNavigate();
-  const [scherenData, setScherenData] = useState([]);
+  const [sennheiserData, setSennheiserData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedData, setSelectedData] = useState(null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -27,13 +27,13 @@ const AllScherenData = () => {
   const [selectedUser, setSelectedUser] = useState("");
 
   useEffect(() => {
-    const fetchScherenData = async () => {
+    const fetchSennheiserData = async () => {
       let response;
 
       try {
         if (currentUser && currentUser.user_type === 1) {
           response = await axios.get(
-            `${Helpers.apiUrl}get-all-scheren-data-customer/${userId}`,
+            `${Helpers.apiUrl}get-all-sennheiser-data-customer/${userId}`,
             Helpers.authHeaders
           );
         }
@@ -44,7 +44,7 @@ const AllScherenData = () => {
           currentUser.user_type === 0
         ) {
           response = await axios.get(
-            `${Helpers.apiUrl}get-all-scheren-data-organization/${userId}`,
+            `${Helpers.apiUrl}get-all-sennheiser-data-organization/${userId}`,
             Helpers.authHeaders
           );
         }
@@ -54,14 +54,14 @@ const AllScherenData = () => {
           currentUser.user_type === 0
         ) {
           response = await axios.get(
-            `${Helpers.apiUrl}get-all-scheren-data-user/${userId}`,
+            `${Helpers.apiUrl}get-all-sennheiser-data-user/${userId}`,
             Helpers.authHeaders
           );
         }
 
         if (response && response.status === 200) {
           setUsers(response.data.users);
-          setScherenData(response.data.data);
+          setSennheiserData(response.data.data);
         }
       } catch (error) {
         console.error("Error fetching processed data:", error);
@@ -87,12 +87,12 @@ const AllScherenData = () => {
       }
     };
 
-    fetchScherenData();
+    fetchSennheiserData();
     fetchLastDownload();
   }, [userId]);
 
   const getFilteredData = () => {
-    return scherenData.filter((item) => {
+    return sennheiserData.filter((item) => {
       const itemDate = new Date(item.created_at);
       const start = startDate ? new Date(startDate).setHours(0, 0, 0, 0) : null;
       const end = endDate ? new Date(endDate).setHours(23, 59, 59, 999) : null;
@@ -119,47 +119,32 @@ const AllScherenData = () => {
 
   const handleDownloadFile = async (fileName, fileData) => {
     const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet("Scheren Data");
+    const worksheet = workbook.addWorksheet("Sennheiser Data");
 
     const headers = [
-      "Produktname",
+      "ID Number",
       "Dateiname SDB",
-      "LG Klasse",
-      "WGK\n(numerischer Wert)",
-      "H Sätze & Kategorie\ndurch Komma getrennt",
-      "Flammpunkt\n(numerischer Wert)\n[°C]",
-      "UN Nr",
-      "Gefahrensymbole",
-      "Gefahrgutklasse (Länge beachten)",
-      "Verpackungsgruppe",
-      "Tunnelcode",
-      "N.A.G./NOS technische Benennung",
-      "Gefahrauslöser",
-      "technische Benennung englisch",
-      "Gefahrauslöser englisch",
-      "LQ (Spalte eingefügt)",
-      "Main Ingredients",
+      "Produktname",
+      "Hersteller",
+      "CAS Nummer bei reinen Stoffen",
+      "Ausgabedatum bzw. letzte Änderung",
+      "H Sätze durch Komma getrennt",
+      "Einstufung des Stoffs oder Gemischs",
+      "Einstufung gemäß der (EG) Verordnung 1272/2008 in der geänderten Fassung.",
       "Signalwort",
+      "Ergänzende Hinweise",
       "P-Sätze",
-      "Störfallverordnung (Nr.)",
-      "Aggregatzustand",
-      "Transportgefahrenklassen",
-      "Umweltgefahren (ADR)",
-      "Umweltgefahren (IMDG)",
-      "Section - 1",
-      "Section - 2|2.2",
-      "Section - FirstPage",
-      "Section - 2",
-      "Section - 7|7.2--15",
-      "Section - 15",
-      "Section - 9|9.1",
-      "Section - 5|5.1",
-      "Section - 7|7.2",
-      "Section - 10|10.5",
-      "Section - 14",
-      "Section - 3",
+      "Sonstige Gefahren",
+      "LG Klasse",
+      "WGK(numerischer Wert)",
+      "Flammpunkt (numerischer Wert)",
+      "pH-Wert",
+      "Gemische",
+      "Zu überwachende Parameter",
+      "SVHC",
+      "CMR",
+      "Kostenstellenfreigabe",
       "Section-Missing-Count",
-      "Message",
     ];
 
     worksheet.addRow(headers);
@@ -184,50 +169,35 @@ const AllScherenData = () => {
       };
     });
 
-    const staticRow = Array(37).fill("");
+    const staticRow = Array(23).fill("");
     worksheet.addRow(staticRow);
 
     const headerMapping = {
-      Produktname: "Produktname",
+      "ID Number": "ID Number",
       "Dateiname SDB": "Dateiname SDB",
-      "LG Klasse": "LG Klasse",
-      "WGK\n(numerischer Wert)": "WGK\n(numerischer Wert)",
-      "H Sätze & Kategorie\ndurch Komma getrennt":
-        "H Sätze & Kategorie\ndurch Komma getrennt",
-      "Flammpunkt\n(numerischer Wert)\n[°C]":
-        "Flammpunkt\n(numerischer Wert)\n[°C]",
-      "UN Nr": "UN Nr",
-      Gefahrensymbole: "Gefahrensymbole",
-      "Gefahrgutklasse (Länge beachten)": "Gefahrgutklasse (Länge beachten)",
-      Verpackungsgruppe: "Verpackungsgruppe",
-      Tunnelcode: "Tunnelcode",
-      "N.A.G./NOS technische Benennung": "N.A.G./NOS technische Benennung",
-      Gefahrauslöser: "Gefahrauslöser",
-      "technische Benennung englisch": "technische Benennung englisch",
-      "Gefahrauslöser englisch": "Gefahrauslöser englisch",
-      "LQ (Spalte eingefügt)": "LQ (Spalte eingefügt)",
-      "Main Ingredients": "Main Ingredients",
+      Produktname: "Produktname",
+      Hersteller: "Hersteller",
+      "CAS Nummer bei reinen Stoffen": "CAS Nummer bei reinen Stoffen",
+      "Ausgabedatum bzw. letzte Änderung": "Ausgabedatum bzw. letzte Änderung",
+      "H Sätze durch Komma getrennt": "H Sätze durch Komma getrennt",
+      "Einstufung des Stoffs oder Gemischs":
+        "Einstufung des Stoffs oder Gemischs",
+      "Einstufung gemäß der (EG) Verordnung 1272/2008 in der geänderten Fassung":
+        "Einstufung gemäß der (EG) Verordnung 1272/2008 in der geänderten Fassung",
       Signalwort: "Signalwort",
+      "Ergänzende Hinweise": "Ergänzende Hinweise",
       "P-Sätze": "P-Sätze",
-      "Störfallverordnung (Nr.)": "Störfallverordnung (Nr.)",
-      Aggregatzustand: "Aggregatzustand",
-      Transportgefahrenklassen: "Transportgefahrenklassen",
-      "Umweltgefahren (ADR)": "Umweltgefahren (ADR)",
-      "Umweltgefahren (IMDG)": "Umweltgefahren (IMDG)",
-      "Section - 1": "Section - 1",
-      "Section - 2|2.2": "Section - 2|2.2",
-      "Section - FirstPage": "Section - FirstPage",
-      "Section - 2": "Section - 2",
-      "Section - 7|7.2--15": "Section - 7|7.2--15",
-      "Section - 15": "Section - 15",
-      "Section - 9|9.1": "Section - 9|9.1",
-      "Section - 5|5.1": "Section - 5|5.1",
-      "Section - 7|7.2": "Section - 7|7.2",
-      "Section - 10|10.5": "Section - 10|10.5",
-      "Section - 14": "Section - 14",
-      "Section - 3": "Section - 3",
+      "Sonstige Gefahren": "Sonstige Gefahren",
+      "LG Klasse": "LG Klasse",
+      "WGK(numerischer Wert)": "WGK(numerischer Wert)",
+      "Flammpunkt (numerischer Wert)": "Flammpunkt (numerischer Wert)",
+      "pH-Wert": "pH-Wert",
+      Gemische: "Gemische",
+      "Zu überwachende Parameter": "Zu überwachende Parameter",
+      SVHC: "SVHC",
+      CMR: "CMR",
+      Kostenstellenfreigabe: "Kostenstellenfreigabe",
       "Section-Missing-Count": "Section-Missing-Count",
-      Message: "Message",
     };
 
     const rowData = headers.map(
@@ -258,44 +228,29 @@ const AllScherenData = () => {
     const worksheet = workbook.addWorksheet("Filtered Data");
 
     const headers = [
-      "Produktname",
+      "ID Number",
       "Dateiname SDB",
-      "LG Klasse",
-      "WGK\n(numerischer Wert)",
-      "H Sätze & Kategorie\ndurch Komma getrennt",
-      "Flammpunkt\n(numerischer Wert)\n[°C]",
-      "UN Nr",
-      "Gefahrensymbole",
-      "Gefahrgutklasse (Länge beachten)",
-      "Verpackungsgruppe",
-      "Tunnelcode",
-      "N.A.G./NOS technische Benennung",
-      "Gefahrauslöser",
-      "technische Benennung englisch",
-      "Gefahrauslöser englisch",
-      "LQ (Spalte eingefügt)",
-      "Main Ingredients",
+      "Produktname",
+      "Hersteller",
+      "CAS Nummer bei reinen Stoffen",
+      "Ausgabedatum bzw. letzte Änderung",
+      "H Sätze durch Komma getrennt",
+      "Einstufung des Stoffs oder Gemischs",
+      "Einstufung gemäß der (EG) Verordnung 1272/2008 in der geänderten Fassung.",
       "Signalwort",
+      "Ergänzende Hinweise",
       "P-Sätze",
-      "Störfallverordnung (Nr.)",
-      "Aggregatzustand",
-      "Transportgefahrenklassen",
-      "Umweltgefahren (ADR)",
-      "Umweltgefahren (IMDG)",
-      "Section - 1",
-      "Section - 2|2.2",
-      "Section - FirstPage",
-      "Section - 2",
-      "Section - 7|7.2--15",
-      "Section - 15",
-      "Section - 9|9.1",
-      "Section - 5|5.1",
-      "Section - 7|7.2",
-      "Section - 10|10.5",
-      "Section - 14",
-      "Section - 3",
+      "Sonstige Gefahren",
+      "LG Klasse",
+      "WGK(numerischer Wert)",
+      "Flammpunkt (numerischer Wert)",
+      "pH-Wert",
+      "Gemische",
+      "Zu überwachende Parameter",
+      "SVHC",
+      "CMR",
+      "Kostenstellenfreigabe",
       "Section-Missing-Count",
-      "Message",
     ];
 
     worksheet.addRow(headers);
@@ -319,50 +274,35 @@ const AllScherenData = () => {
       };
     });
 
-    const staticRow = Array(37).fill("");
+    const staticRow = Array(23).fill("");
     worksheet.addRow(staticRow);
 
     const headerMapping = {
-      Produktname: "Produktname",
+      "ID Number": "ID Number",
       "Dateiname SDB": "Dateiname SDB",
-      "LG Klasse": "LG Klasse",
-      "WGK\n(numerischer Wert)": "WGK\n(numerischer Wert)",
-      "H Sätze & Kategorie\ndurch Komma getrennt":
-        "H Sätze & Kategorie\ndurch Komma getrennt",
-      "Flammpunkt\n(numerischer Wert)\n[°C]":
-        "Flammpunkt\n(numerischer Wert)\n[°C]",
-      "UN Nr": "UN Nr",
-      Gefahrensymbole: "Gefahrensymbole",
-      "Gefahrgutklasse (Länge beachten)": "Gefahrgutklasse (Länge beachten)",
-      Verpackungsgruppe: "Verpackungsgruppe",
-      Tunnelcode: "Tunnelcode",
-      "N.A.G./NOS technische Benennung": "N.A.G./NOS technische Benennung",
-      Gefahrauslöser: "Gefahrauslöser",
-      "technische Benennung englisch": "technische Benennung englisch",
-      "Gefahrauslöser englisch": "Gefahrauslöser englisch",
-      "LQ (Spalte eingefügt)": "LQ (Spalte eingefügt)",
-      "Main Ingredients": "Main Ingredients",
+      Produktname: "Produktname",
+      Hersteller: "Hersteller",
+      "CAS Nummer bei reinen Stoffen": "CAS Nummer bei reinen Stoffen",
+      "Ausgabedatum bzw. letzte Änderung": "Ausgabedatum bzw. letzte Änderung",
+      "H Sätze durch Komma getrennt": "H Sätze durch Komma getrennt",
+      "Einstufung des Stoffs oder Gemischs":
+        "Einstufung des Stoffs oder Gemischs",
+      "Einstufung gemäß der (EG) Verordnung 1272/2008 in der geänderten Fassung":
+        "Einstufung gemäß der (EG) Verordnung 1272/2008 in der geänderten Fassung",
       Signalwort: "Signalwort",
+      "Ergänzende Hinweise": "Ergänzende Hinweise",
       "P-Sätze": "P-Sätze",
-      "Störfallverordnung (Nr.)": "Störfallverordnung (Nr.)",
-      Aggregatzustand: "Aggregatzustand",
-      Transportgefahrenklassen: "Transportgefahrenklassen",
-      "Umweltgefahren (ADR)": "Umweltgefahren (ADR)",
-      "Umweltgefahren (IMDG)": "Umweltgefahren (IMDG)",
-      "Section - 1": "Section - 1",
-      "Section - 2|2.2": "Section - 2|2.2",
-      "Section - FirstPage": "Section - FirstPage",
-      "Section - 2": "Section - 2",
-      "Section - 7|7.2--15": "Section - 7|7.2--15",
-      "Section - 15": "Section - 15",
-      "Section - 9|9.1": "Section - 9|9.1",
-      "Section - 5|5.1": "Section - 5|5.1",
-      "Section - 7|7.2": "Section - 7|7.2",
-      "Section - 10|10.5": "Section - 10|10.5",
-      "Section - 14": "Section - 14",
-      "Section - 3": "Section - 3",
+      "Sonstige Gefahren": "Sonstige Gefahren",
+      "LG Klasse": "LG Klasse",
+      "WGK(numerischer Wert)": "WGK(numerischer Wert)",
+      "Flammpunkt (numerischer Wert)": "Flammpunkt (numerischer Wert)",
+      "pH-Wert": "pH-Wert",
+      Gemische: "Gemische",
+      "Zu überwachende Parameter": "Zu überwachende Parameter",
+      SVHC: "SVHC",
+      CMR: "CMR",
+      Kostenstellenfreigabe: "Kostenstellenfreigabe",
       "Section-Missing-Count": "Section-Missing-Count",
-      Message: "Message",
     };
 
     // Use the same filtering here as well
@@ -388,7 +328,7 @@ const AllScherenData = () => {
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     });
 
-    const fileName = `Scheren_Data_${new Date()
+    const fileName = `Sennheiser_Data_${new Date()
       .toISOString()
       .slice(0, 10)}.xlsx`;
     saveAs(blob, fileName);
@@ -431,7 +371,7 @@ const AllScherenData = () => {
       <div className="bg-white rounded-lg p-6 mx-auto">
         <div className="flex items-center justify-between border-b pb-4 mb-6">
           <h2 className="text-3xl font-bold text-gray-800">
-            All Scheren Data
+            All Sennheiser Data
           </h2>
           <button
             onClick={() => navigate(-1)}
@@ -468,7 +408,7 @@ const AllScherenData = () => {
         )}
       </div>
 
-      {scherenData.length > 0 ? (
+      {sennheiserData.length > 0 ? (
         <>
           <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center space-x-2">
@@ -558,12 +498,12 @@ const AllScherenData = () => {
             </ul>
           ) : (
             <p className="text-center text-gray-500">
-              No scheren data found.
+              No sennheiser data found.
             </p>
           )}
         </>
       ) : (
-        <p className="text-center text-gray-500">No scheren data found.</p>
+        <p className="text-center text-gray-500">No sennheiser data found.</p>
       )}
 
       {selectedData && (
@@ -603,10 +543,10 @@ const AllScherenData = () => {
       )}
     </div>
   );
-}
+};
 
-AllScherenData.propTypes = {
+AllSennheiserData.propTypes = {
   refresh: PropTypes.bool,
 };
 
-export default AllScherenData;
+export default AllSennheiserData;

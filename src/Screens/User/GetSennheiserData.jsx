@@ -11,9 +11,9 @@ import Helpers from "../../Config/Helpers";
 
 Modal.setAppElement("#root");
 
-const GetScherenData = ({ refresh }) => {
+const GetSennheiserData = ({ refresh }) => {
   // State declarations
-  const [scherenData, setScherenData] = useState([]);
+  const [sennheiserData, setSennheiserData] = useState([]);
   const [selectedData, setSelectedData] = useState(null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   // Date filter states
@@ -47,11 +47,11 @@ const GetScherenData = ({ refresh }) => {
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        `${Helpers.apiUrl}get-user-scheren-data`,
+        `${Helpers.apiUrl}get-user-sennheiser-data`,
         Helpers.authHeaders
       );
       if (response.status === 200) {
-        setScherenData(response.data.data);
+        setSennheiserData(response.data.data);
       }
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -60,7 +60,7 @@ const GetScherenData = ({ refresh }) => {
 
   const getFilteredData = () => {
     if (!startDate || !endDate) {
-      return scherenData; // No filter applied, return all data
+      return sennheiserData; // No filter applied, return all data
     }
 
     const start = new Date(startDate);
@@ -69,7 +69,7 @@ const GetScherenData = ({ refresh }) => {
     const end = new Date(endDate);
     end.setHours(23, 59, 59, 999); // Extend to the end of the day
 
-    return scherenData.filter((item) => {
+    return sennheiserData.filter((item) => {
       const itemDate = new Date(item.created_at); // Convert `created_at` to Date object
       return itemDate >= start && itemDate <= end;
     });
@@ -82,48 +82,33 @@ const GetScherenData = ({ refresh }) => {
 
   const handleDownloadFile = async (fileName, fileData) => {
     const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet("Scheren Data");
+    const worksheet = workbook.addWorksheet("Sennheiser Data");
 
     // Define headers in the desired order
     const headers = [
-      "Produktname",
+      "ID Number",
       "Dateiname SDB",
-      "LG Klasse",
-      "WGK\n(numerischer Wert)",
-      "H Sätze & Kategorie\ndurch Komma getrennt",
-      "Flammpunkt\n(numerischer Wert)\n[°C]",
-      "UN Nr",
-      "Gefahrensymbole",
-      "Gefahrgutklasse (Länge beachten)",
-      "Verpackungsgruppe",
-      "Tunnelcode",
-      "N.A.G./NOS technische Benennung",
-      "Gefahrauslöser",
-      "technische Benennung englisch",
-      "Gefahrauslöser englisch",
-      "LQ (Spalte eingefügt)",
-      "Main Ingredients",
+      "Produktname",
+      "Hersteller",
+      "CAS Nummer bei reinen Stoffen",
+      "Ausgabedatum bzw. letzte Änderung",
+      "H Sätze durch Komma getrennt",
+      "Einstufung des Stoffs oder Gemischs",
+      "Einstufung gemäß der (EG) Verordnung 1272/2008 in der geänderten Fassung",
       "Signalwort",
+      "Ergänzende Hinweise",
       "P-Sätze",
-      "Störfallverordnung (Nr.)",
-      "Aggregatzustand",
-      "Transportgefahrenklassen",
-      "Umweltgefahren (ADR)",
-      "Umweltgefahren (IMDG)",
-      "Section - 1",
-      "Section - 2|2.2",
-      "Section - FirstPage",
-      "Section - 2",
-      "Section - 7|7.2--15",
-      "Section - 15",
-      "Section - 9|9.1",
-      "Section - 5|5.1",
-      "Section - 7|7.2",
-      "Section - 10|10.5",
-      "Section - 14",
-      "Section - 3",
+      "Sonstige Gefahren",
+      "LG Klasse",
+      "WGK(numerischer Wert)",
+      "Flammpunkt (numerischer Wert)",
+      "pH-Wert",
+      "Gemische",
+      "Zu überwachende Parameter",
+      "SVHC",
+      "CMR",
+      "Kostenstellenfreigabe",
       "Section-Missing-Count",
-      "Message",
     ];
 
     // Add headers with styles
@@ -151,46 +136,31 @@ const GetScherenData = ({ refresh }) => {
 
     // Header Mapping - Your stored data uses different field names
     const headerMapping = {
-      Produktname: "Produktname",
+      "ID Number": "ID Number",
       "Dateiname SDB": "Dateiname SDB",
-      "LG Klasse": "LG Klasse",
-      "WGK\n(numerischer Wert)": "WGK\n(numerischer Wert)",
-      "H Sätze & Kategorie\ndurch Komma getrennt":
-        "H Sätze & Kategorie\ndurch Komma getrennt",
-      "Flammpunkt\n(numerischer Wert)\n[°C]":
-        "Flammpunkt\n(numerischer Wert)\n[°C]",
-      "UN Nr": "UN Nr",
-      Gefahrensymbole: "Gefahrensymbole",
-      "Gefahrgutklasse (Länge beachten)": "Gefahrgutklasse (Länge beachten)",
-      Verpackungsgruppe: "Verpackungsgruppe",
-      Tunnelcode: "Tunnelcode",
-      "N.A.G./NOS technische Benennung": "N.A.G./NOS technische Benennung",
-      Gefahrauslöser: "Gefahrauslöser",
-      "technische Benennung englisch": "technische Benennung englisch",
-      "Gefahrauslöser englisch": "Gefahrauslöser englisch",
-      "LQ (Spalte eingefügt)": "LQ (Spalte eingefügt)",
-      "Main Ingredients": "Main Ingredients",
+      Produktname: "Produktname",
+      Hersteller: "Hersteller",
+      "CAS Nummer bei reinen Stoffen": "CAS Nummer bei reinen Stoffen",
+      "Ausgabedatum bzw. letzte Änderung": "Ausgabedatum bzw. letzte Änderung",
+      "H Sätze durch Komma getrennt": "H Sätze durch Komma getrennt",
+      "Einstufung des Stoffs oder Gemischs":
+        "Einstufung des Stoffs oder Gemischs",
+      "Einstufung gemäß der (EG) Verordnung 1272/2008 in der geänderten Fassung":
+        "Einstufung gemäß der (EG) Verordnung 1272/2008 in der geänderten Fassung",
       Signalwort: "Signalwort",
+      "Ergänzende Hinweise": "Ergänzende Hinweise",
       "P-Sätze": "P-Sätze",
-      "Störfallverordnung (Nr.)": "Störfallverordnung (Nr.)",
-      Aggregatzustand: "Aggregatzustand",
-      Transportgefahrenklassen: "Transportgefahrenklassen",
-      "Umweltgefahren (ADR)": "Umweltgefahren (ADR)",
-      "Umweltgefahren (IMDG)": "Umweltgefahren (IMDG)",
-      "Section - 1": "Section - 1",
-      "Section - 2|2.2": "Section - 2|2.2",
-      "Section - FirstPage": "Section - FirstPage",
-      "Section - 2": "Section - 2",
-      "Section - 7|7.2--15": "Section - 7|7.2--15",
-      "Section - 15": "Section - 15",
-      "Section - 9|9.1": "Section - 9|9.1",
-      "Section - 5|5.1": "Section - 5|5.1",
-      "Section - 7|7.2": "Section - 7|7.2",
-      "Section - 10|10.5": "Section - 10|10.5",
-      "Section - 14": "Section - 14",
-      "Section - 3": "Section - 3",
+      "Sonstige Gefahren": "Sonstige Gefahren",
+      "LG Klasse": "LG Klasse",
+      "WGK(numerischer Wert)": "WGK(numerischer Wert)",
+      "Flammpunkt (numerischer Wert)": "Flammpunkt (numerischer Wert)",
+      "pH-Wert": "pH-Wert",
+      Gemische: "Gemische",
+      "Zu überwachende Parameter": "Zu überwachende Parameter",
+      SVHC: "SVHC",
+      CMR: "CMR",
+      Kostenstellenfreigabe: "Kostenstellenfreigabe",
       "Section-Missing-Count": "Section-Missing-Count",
-      Message: "Message",
     };
 
     // Map data correctly using headerMapping
@@ -240,44 +210,29 @@ const GetScherenData = ({ refresh }) => {
     const worksheet = workbook.addWorksheet("Filtered Data");
 
     const headers = [
-      "Produktname",
+      "ID Number",
       "Dateiname SDB",
-      "LG Klasse",
-      "WGK\n(numerischer Wert)",
-      "H Sätze & Kategorie\ndurch Komma getrennt",
-      "Flammpunkt\n(numerischer Wert)\n[°C]",
-      "UN Nr",
-      "Gefahrensymbole",
-      "Gefahrgutklasse (Länge beachten)",
-      "Verpackungsgruppe",
-      "Tunnelcode",
-      "N.A.G./NOS technische Benennung",
-      "Gefahrauslöser",
-      "technische Benennung englisch",
-      "Gefahrauslöser englisch",
-      "LQ (Spalte eingefügt)",
-      "Main Ingredients",
+      "Produktname",
+      "Hersteller",
+      "CAS Nummer bei reinen Stoffen",
+      "Ausgabedatum bzw. letzte Änderung",
+      "H Sätze durch Komma getrennt",
+      "Einstufung des Stoffs oder Gemischs",
+      "Einstufung gemäß der (EG) Verordnung 1272/2008 in der geänderten Fassung",
       "Signalwort",
+      "Ergänzende Hinweise",
       "P-Sätze",
-      "Störfallverordnung (Nr.)",
-      "Aggregatzustand",
-      "Transportgefahrenklassen",
-      "Umweltgefahren (ADR)",
-      "Umweltgefahren (IMDG)",
-      "Section - 1",
-      "Section - 2|2.2",
-      "Section - FirstPage",
-      "Section - 2",
-      "Section - 7|7.2--15",
-      "Section - 15",
-      "Section - 9|9.1",
-      "Section - 5|5.1",
-      "Section - 7|7.2",
-      "Section - 10|10.5",
-      "Section - 14",
-      "Section - 3",
+      "Sonstige Gefahren",
+      "LG Klasse",
+      "WGK(numerischer Wert)",
+      "Flammpunkt (numerischer Wert)",
+      "pH-Wert",
+      "Gemische",
+      "Zu überwachende Parameter",
+      "SVHC",
+      "CMR",
+      "Kostenstellenfreigabe",
       "Section-Missing-Count",
-      "Message",
     ];
     worksheet.addRow(headers);
     worksheet.getRow(1).eachCell((cell) => {
@@ -313,46 +268,31 @@ const GetScherenData = ({ refresh }) => {
     }
 
     const headerMapping = {
-      Produktname: "Produktname",
+      "ID Number": "ID Number",
       "Dateiname SDB": "Dateiname SDB",
-      "LG Klasse": "LG Klasse",
-      "WGK\n(numerischer Wert)": "WGK\n(numerischer Wert)",
-      "H Sätze & Kategorie\ndurch Komma getrennt":
-        "H Sätze & Kategorie\ndurch Komma getrennt",
-      "Flammpunkt\n(numerischer Wert)\n[°C]":
-        "Flammpunkt\n(numerischer Wert)\n[°C]",
-      "UN Nr": "UN Nr",
-      Gefahrensymbole: "Gefahrensymbole",
-      "Gefahrgutklasse (Länge beachten)": "Gefahrgutklasse (Länge beachten)",
-      Verpackungsgruppe: "Verpackungsgruppe",
-      Tunnelcode: "Tunnelcode",
-      "N.A.G./NOS technische Benennung": "N.A.G./NOS technische Benennung",
-      Gefahrauslöser: "Gefahrauslöser",
-      "technische Benennung englisch": "technische Benennung englisch",
-      "Gefahrauslöser englisch": "Gefahrauslöser englisch",
-      "LQ (Spalte eingefügt)": "LQ (Spalte eingefügt)",
-      "Main Ingredients": "Main Ingredients",
+      Produktname: "Produktname",
+      Hersteller: "Hersteller",
+      "CAS Nummer bei reinen Stoffen": "CAS Nummer bei reinen Stoffen",
+      "Ausgabedatum bzw. letzte Änderung": "Ausgabedatum bzw. letzte Änderung",
+      "H Sätze durch Komma getrennt": "H Sätze durch Komma getrennt",
+      "Einstufung des Stoffs oder Gemischs":
+        "Einstufung des Stoffs oder Gemischs",
+      "Einstufung gemäß der (EG) Verordnung 1272/2008 in der geänderten Fassung.":
+        "Einstufung gemäß der (EG) Verordnung 1272/2008 in der geänderten Fassung.",
       Signalwort: "Signalwort",
+      "Ergänzende Hinweise": "Ergänzende Hinweise",
       "P-Sätze": "P-Sätze",
-      "Störfallverordnung (Nr.)": "Störfallverordnung (Nr.)",
-      Aggregatzustand: "Aggregatzustand",
-      Transportgefahrenklassen: "Transportgefahrenklassen",
-      "Umweltgefahren (ADR)": "Umweltgefahren (ADR)",
-      "Umweltgefahren (IMDG)": "Umweltgefahren (IMDG)",
-      "Section - 1": "Section - 1",
-      "Section - 2|2.2": "Section - 2|2.2",
-      "Section - FirstPage": "Section - FirstPage",
-      "Section - 2": "Section - 2",
-      "Section - 7|7.2--15": "Section - 7|7.2--15",
-      "Section - 15": "Section - 15",
-      "Section - 9|9.1": "Section - 9|9.1",
-      "Section - 5|5.1": "Section - 5|5.1",
-      "Section - 7|7.2": "Section - 7|7.2",
-      "Section - 10|10.5": "Section - 10|10.5",
-      "Section - 14": "Section - 14",
-      "Section - 3": "Section - 3",
+      "Sonstige Gefahren": "Sonstige Gefahren",
+      "LG Klasse": "LG Klasse",
+      "WGK(numerischer Wert)": "WGK(numerischer Wert)",
+      "Flammpunkt (numerischer Wert)": "Flammpunkt (numerischer Wert)",
+      "pH-Wert": "pH-Wert",
+      Gemische: "Gemische",
+      "Zu überwachende Parameter": "Zu überwachende Parameter",
+      SVHC: "SVHC",
+      CMR: "CMR",
+      Kostenstellenfreigabe: "Kostenstellenfreigabe",
       "Section-Missing-Count": "Section-Missing-Count",
-      Message: "Message",
     };
 
     // Add filtered data rows to the worksheet
@@ -368,7 +308,7 @@ const GetScherenData = ({ refresh }) => {
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     });
 
-    const fileName = `Scheren_Data_${new Date()
+    const fileName = `Sennheiser_Data_${new Date()
       .toISOString()
       .slice(0, 10)}.xlsx`;
     saveAs(blob, fileName);
@@ -512,7 +452,7 @@ const GetScherenData = ({ refresh }) => {
         </ul>
       ) : (
         <p className="text-center text-gray-500">
-          No scheren data found for the selected date range.
+          No sennheiser data found for the selected date range.
         </p>
       )}
 
@@ -555,8 +495,8 @@ const GetScherenData = ({ refresh }) => {
   );
 };
 
-GetScherenData.propTypes = {
+GetSennheiserData.propTypes = {
   refresh: PropTypes.bool.isRequired, // Declare the prop
 };
 
-export default GetScherenData;
+export default GetSennheiserData;
