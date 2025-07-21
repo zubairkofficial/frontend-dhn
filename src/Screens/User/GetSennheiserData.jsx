@@ -267,6 +267,14 @@ const GetSennheiserData = ({ refresh }) => {
       return;
     }
 
+    const produktnameCounts = filteredData.reduce((acc, item) => {
+      const produktname = item.data["Produktname"];
+      if (produktname) {
+        acc[produktname] = (acc[produktname] || 0) + 1;
+      }
+      return acc;
+    }, {});
+
     const headerMapping = {
       "ID Number": "ID Number",
       "Dateiname SDB": "Dateiname SDB",
@@ -300,7 +308,17 @@ const GetSennheiserData = ({ refresh }) => {
       const rowData = headers.map(
         (header) => file.data[headerMapping[header]] || ""
       );
-      worksheet.addRow(rowData);
+      const newRow = worksheet.addRow(rowData);
+      const produktname = file.data["Produktname"];
+      if (produktname && produktnameCounts[produktname] > 1) {
+        newRow.eachCell((cell) => {
+          cell.fill = {
+            type: "pattern",
+            pattern: "solid",
+            fgColor: { argb: "ADD8E6" }, // Light Blue
+          };
+        });
+      }
     });
 
     const buffer = await workbook.xlsx.writeBuffer();
@@ -345,12 +363,23 @@ const GetSennheiserData = ({ refresh }) => {
   // Derive filtered data for display
   const filteredData = getFilteredData();
 
+  // Find duplicates based on 'Produktname'
+  const produktnameCounts = filteredData.reduce((acc, item) => {
+    const produktname = item.data?.["Produktname"];
+    if (produktname) {
+      acc[produktname] = (acc[produktname] || 0) + 1;
+    }
+    return acc;
+  }, {});
+
   return (
     <div className="w-full bg-white py-5 px-10 mx-auto">
       <div className="bg-white rounded-lg p-6 mx-auto">
         {/* Page Header */}
         <div className="flex items-center justify-between border-b pb-4 mb-6">
-          <h2 className="text-3xl font-bold text-gray-800">All Scheren Data</h2>
+          <h2 className="text-3xl font-bold text-gray-800">
+            All Sennheiser Data
+          </h2>
           <button
             onClick={() => navigate(-1)}
             className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-all"
@@ -422,33 +451,43 @@ const GetSennheiserData = ({ refresh }) => {
 
       {filteredData.length > 0 ? (
         <ul className="space-y-4">
-          {filteredData.map((item) => (
-            <li
-              key={item.id}
-              className="bg-gray-100 p-4 rounded-lg flex justify-between items-center shadow-sm"
-            >
-              <div>
-                <p className="font-semibold">
-                  File Name: {truncateText(item.file_name)}
-                </p>
-                <p>Product Name: {truncateText(item.data["Produktname"])}</p>
-              </div>
-              <div className="space-x-2">
-                <button
-                  onClick={() => handleView(item.data)}
-                  className="bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600"
-                >
-                  View <FontAwesomeIcon icon={faEye} />
-                </button>
-                <button
-                  onClick={() => handleDownloadFile(item.file_name, item.data)}
-                  className="text-white py-2 px-4 font-bold bg-success-300 hover:bg-success-300 transition-all rounded-lg"
-                >
-                  Download <FontAwesomeIcon icon={faDownload} />
-                </button>
-              </div>
-            </li>
-          ))}
+          {filteredData.map((item) => {
+            const produktname = item.data?.["Produktname"];
+            const isDuplicate =
+              produktname && produktnameCounts[produktname] > 1;
+
+            return (
+              <li
+                key={item.id}
+                className={`p-4 rounded-lg flex justify-between items-center shadow-sm ${
+                  isDuplicate ? "bg-blue-200" : "bg-gray-100"
+                }`}
+              >
+                <div>
+                  <p className="font-semibold">
+                    File Name: {truncateText(item.file_name)}
+                  </p>
+                  <p>Product Name: {truncateText(item.data["Produktname"])}</p>
+                </div>
+                <div className="space-x-2">
+                  <button
+                    onClick={() => handleView(item.data)}
+                    className="bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600"
+                  >
+                    View <FontAwesomeIcon icon={faEye} />
+                  </button>
+                  <button
+                    onClick={() =>
+                      handleDownloadFile(item.file_name, item.data)
+                    }
+                    className="text-white py-2 px-4 font-bold bg-success-300 hover:bg-success-300 transition-all rounded-lg"
+                  >
+                    Download <FontAwesomeIcon icon={faDownload} />
+                  </button>
+                </div>
+              </li>
+            );
+          })}
         </ul>
       ) : (
         <p className="text-center text-gray-500">

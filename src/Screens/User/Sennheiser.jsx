@@ -224,6 +224,14 @@ const Sennheiser = () => {
       "Section-Missing-Count": "Section-Missing-Count",
     };
 
+    const produktnameCounts = allSennheiserData.reduce((acc, fileData) => {
+      const produktname = fileData.data?.["Produktname"];
+      if (produktname) {
+        acc[produktname] = (acc[produktname] || 0) + 1;
+      }
+      return acc;
+    }, {});
+
     // Add data rows and apply yellow fill if `Section-Missing-Count` > 0
     allSennheiserData.forEach((fileData) => {
       let rowData = headers.map(
@@ -234,9 +242,19 @@ const Sennheiser = () => {
       );
 
       const newRow = worksheet.addRow(rowData);
-
-      // Apply yellow fill if `Section-Missing-Count` > 0
-      if (sectionMissingCount > 0) {
+      const produktname = fileData.data?.["Produktname"];
+      const isDuplicate = produktname && produktnameCounts[produktname] > 1;
+      // Apply blue fill if rows are duplicate
+      if (isDuplicate) {
+        newRow.eachCell((cell) => {
+          cell.fill = {
+            type: "pattern",
+            pattern: "solid",
+            fgColor: { argb: "ADD8E6" },
+          };
+        });
+      } else if (sectionMissingCount > 0) {
+        // Apply yellow fill if `Section-Missing-Count` > 0
         newRow.eachCell((cell) => {
           cell.fill = {
             type: "pattern",
