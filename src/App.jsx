@@ -68,6 +68,8 @@ import Scheren from "./Screens/User/Scheren";
 import AllScherenData from "./Screens/User/Layout/AllScherenData";
 import AllSennheiserData from "./Screens/User/Layout/AllSennheiserData";
 import Sennheiser from "./Screens/User/Sennheiser";
+import AllVerbundData from "./Screens/User/Layout/AllVerbundData";
+import Verbund from "./Screens/User/Verbund";
 
 const Auth = ({ children, isAuth = true, isAdmin = false }) => {
   let user = Helpers.getItem("user", true);
@@ -368,6 +370,16 @@ const App = () => {
                 }
               />
             )}
+            {hasServiceAccess(11) && (
+              <Route
+                path="/verbund"
+                element={
+                  <Auth>
+                    <Verbund />
+                  </Auth>
+                }
+              />
+            )}
             {hasServiceAccess(5) && (
               <Route
                 path="/free-data-process"
@@ -399,6 +411,14 @@ const App = () => {
               element={
                 <Auth>
                   <AllSennheiserData />
+                </Auth>
+              }
+            />
+            <Route
+              path="/user/all-verbund-data/:userId"
+              element={
+                <Auth>
+                  <AllVerbundData />
                 </Auth>
               }
             />
