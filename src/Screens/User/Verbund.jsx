@@ -60,7 +60,7 @@ const Verbund = () => {
   };
   useEffect(() => {
     setHeaderData({
-      title: Helpers.getTranslationValue("Sennheiser"),
+      title: Helpers.getTranslationValue("Verbund"),
       desc: "",
     });
 
@@ -456,7 +456,7 @@ const Verbund = () => {
   return (
     <div className="w-full bg-white py-5 mx-auto">
       <h2 className="text-center text-2xl font-semibold mb-8">
-        {Helpers.getTranslationValue("Sennheiser")}
+        {Helpers.getTranslationValue("Verbund")}
       </h2>
 
       <div className="flex flex-col items-center px-10">
