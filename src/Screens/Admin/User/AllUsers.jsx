@@ -236,7 +236,11 @@ const AllUsers = () => {
                     contractSolutionCount === undefined &&
                     dataProcessCount === undefined &&
                     freeDataProcessCount === undefined &&
-                    cloneDataProcessCount === undefined ? (
+                    cloneDataProcessCount === undefined &&
+                    werthenbachCount === undefined &&
+                    scherenCount === undefined &&
+                    sennheiserCount === undefined &&
+                    verbundCount === undefined ? (
                     <p className="text-gray-500">
                       Keine Werkzeugnutzung gefunden
                     </p>

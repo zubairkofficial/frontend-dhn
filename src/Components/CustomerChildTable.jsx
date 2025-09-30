@@ -192,7 +192,11 @@ const CustomerChildTable = () => {
                     contractSolutionCount === undefined &&
                     dataProcessCount === undefined &&
                     freeDataProcessCount === undefined &&
-                    cloneDataProcessCount === undefined ? (
+                    cloneDataProcessCount === undefined &&
+                    werthenbachCount === undefined &&
+                    scherenCount === undefined &&
+                    sennheiserCount === undefined &&
+                    verbundCount === undefined ? (
                     <p className="text-gray-500">
                       Keine Werkzeugnutzung gefunden
                     </p>
@@ -323,12 +327,11 @@ const CustomerChildTable = () => {
                               <td className="px-6 py-4 border-b text-sm text-gray-600 font-bold">
                                 9
                               </td>
-                            </tr>
-                          )}
-                          {verbundCount !== undefined && (
-                            <tr className="hover:bg-gray-50">
-                              <td className="px-6 py-4 border-b text-sm text-gray-600 font-bold">
-                                10
+                              <td className="px-6 py-4 text-sm text-gray-600 font-bold">
+                                Verbund
+                              </td>
+                              <td className="px-6 py-4 text-sm text-gray-600 font-bold">
+                                {verbundCount}
                               </td>
                             </tr>
                           )}
