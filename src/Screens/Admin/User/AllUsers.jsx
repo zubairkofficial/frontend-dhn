@@ -26,6 +26,10 @@ const AllUsers = () => {
   const [dataProcessCount, setDataProcessCount] = useState(null);
   const [freeDataProcessCount, setFreeDataProcessCount] = useState(null);
   const [cloneDataProcessCount, setCloneDataProcessCount] = useState(null);
+  const [werthenbachCount, setWerthenbachCount] = useState(null);
+  const [scherenCount, setScherenCount] = useState(null);
+  const [sennheiserCount, setSennheiserCount] = useState(null);
+  const [verbundCount, setVerbundCount] = useState(null);
   const [loadingModal, setLoadingModal] = useState(true);
   const [modalError, setModalError] = useState(null);
 
@@ -118,6 +122,10 @@ const AllUsers = () => {
         setDataProcessCount(response.data.data_process_count);
         setFreeDataProcessCount(response.data.free_data_process_count);
         setCloneDataProcessCount(response.data.clone_process_count);
+        setWerthenbachCount(response.data.werthenbach_count);
+        setScherenCount(response.data.scheren_count);
+        setSennheiserCount(response.data.sennheiser_count);
+        setVerbundCount(response.data.verbund_count);
       } else {
         throw new Error("Failed to fetch user usage data");
       }
@@ -133,6 +141,12 @@ const AllUsers = () => {
     setDocumentCount(null);
     setContractSolutionCount(null);
     setDataProcessCount(null);
+    setFreeDataProcessCount(null);
+    setCloneDataProcessCount(null);
+    setWerthenbachCount(null);
+    setScherenCount(null);
+    setSennheiserCount(null);
+    setVerbundCount(null);
     setModalError(null);
   };
 
@@ -305,6 +319,58 @@ const AllUsers = () => {
                               </td>
                               <td className="px-6 py-4 text-sm text-gray-600 font-bold">
                                 {cloneDataProcessCount}
+                              </td>
+                            </tr>
+                          )}
+                          {werthenbachCount !== undefined && (
+                            <tr className="hover:bg-gray-50">
+                              <td className="px-6 py-4 border-b text-sm text-gray-600 font-bold">
+                                6
+                              </td>
+                              <td className="px-6 py-4 text-sm text-gray-600 font-bold">
+                                Werthenbach
+                              </td>
+                              <td className="px-6 py-4 text-sm text-gray-600 font-bold">
+                                {werthenbachCount}
+                              </td>
+                            </tr>
+                          )}
+                          {scherenCount !== undefined && (
+                            <tr className="hover:bg-gray-50">
+                              <td className="px-6 py-4 border-b text-sm text-gray-600 font-bold">
+                                7
+                              </td>
+                              <td className="px-6 py-4 text-sm text-gray-600 font-bold">
+                                Scheren
+                              </td>
+                              <td className="px-6 py-4 text-sm text-gray-600 font-bold">
+                                {scherenCount}
+                              </td>
+                            </tr>
+                          )}
+                          {sennheiserCount !== undefined && (
+                            <tr className="hover:bg-gray-50">
+                              <td className="px-6 py-4 border-b text-sm text-gray-600 font-bold">
+                                8
+                              </td>
+                              <td className="px-6 py-4 text-sm text-gray-600 font-bold">
+                                Sennheiser
+                              </td>
+                              <td className="px-6 py-4 text-sm text-gray-600 font-bold">
+                                {sennheiserCount}
+                              </td>
+                            </tr>
+                          )}
+                          {verbundCount !== undefined && (
+                            <tr className="hover:bg-gray-50">
+                              <td className="px-6 py-4 border-b text-sm text-gray-600 font-bold">
+                                9
+                              </td>
+                              <td className="px-6 py-4 text-sm text-gray-600 font-bold">
+                                Verbund
+                              </td>
+                              <td className="px-6 py-4 text-sm text-gray-600 font-bold">
+                                {verbundCount}
                               </td>
                             </tr>
                           )}
