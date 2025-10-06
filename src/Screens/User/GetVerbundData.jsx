@@ -222,13 +222,13 @@ const GetVerbundData = ({ refresh }) => {
       "N.A.G./NOS technische Benennung (Gefahraus-löser)":
         "N.A.G./NOS technische Benennung (Gefahraus-löser)",
       "H-Sätze (mit EUH) (durch Komma getrennt) (aus Kap.2)":
-        "H-Sätze (mit EUH) (durch Komma getrennt) (aus Kap.2)",
+        "H-Sätze (mit EUH)\n(durch Komma getrennt)\n(aus Kap.2)",
       "H-Sätze (mit EUH) (durch Komma getrennt) (aus Gesamtdatei)":
-        "H-Sätze (mit EUH) (durch Komma getrennt) (aus Gesamtdatei)",
+        "H-Sätze (mit EUH)\n(durch Komma getrennt)\n(aus Gesamtdatei)",
       "P-Sätze (durch Komma getrennt) (aus Kap.2)":
-        "P-Sätze (durch Komma getrennt) (aus Kap.2)",
+        "P-Sätze\n(durch Komma getrennt)\n(aus Kap.2)",
       "P-Sätze (durch Komma getrennt) (aus Gesamtdatei)":
-        "P-Sätze (durch Komma getrennt) (aus Gesamtdatei)",
+        "P-Sätze\n(durch Komma getrennt)\n(aus Gesamtdatei)",
       "Flammpunkt [°C]": "Flammpunkt [°C]",
       Aggregatzustand: "Aggregatzustand",
       "CLP/GHS-Symbolnummern": "CLP/GHS-Symbolnummern",
@@ -510,13 +510,13 @@ const GetVerbundData = ({ refresh }) => {
       "N.A.G./NOS technische Benennung (Gefahraus-löser)":
         "N.A.G./NOS technische Benennung (Gefahraus-löser)",
       "H-Sätze (mit EUH) (durch Komma getrennt) (aus Kap.2)":
-        "H-Sätze (mit EUH) (durch Komma getrennt) (aus Kap.2)",
+        "H-Sätze (mit EUH)\n(durch Komma getrennt)\n(aus Kap.2)",
       "H-Sätze (mit EUH) (durch Komma getrennt) (aus Gesamtdatei)":
-        "H-Sätze (mit EUH) (durch Komma getrennt) (aus Gesamtdatei)",
+        "H-Sätze (mit EUH)\n(durch Komma getrennt)\n(aus Gesamtdatei)",
       "P-Sätze (durch Komma getrennt) (aus Kap.2)":
-        "P-Sätze (durch Komma getrennt) (aus Kap.2)",
+        "P-Sätze\n(durch Komma getrennt)\n(aus Kap.2)",
       "P-Sätze (durch Komma getrennt) (aus Gesamtdatei)":
-        "P-Sätze (durch Komma getrennt) (aus Gesamtdatei)",
+        "P-Sätze\n(durch Komma getrennt)\n(aus Gesamtdatei)",
       "Flammpunkt [°C]": "Flammpunkt [°C]",
       Aggregatzustand: "Aggregatzustand",
       "CLP/GHS-Symbolnummern": "CLP/GHS-Symbolnummern",

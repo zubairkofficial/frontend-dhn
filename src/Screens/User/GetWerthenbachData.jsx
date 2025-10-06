@@ -108,6 +108,7 @@ const GetWerthenbachData = ({ refresh }) => {
       "N.A.G./NOS technische Benennung (Gefahraus-löser)",
       "LQ (Spalte eingefügt)",
       "Dichte",
+      "Klassifizierungscode",
       "Aggregatzustand",
       "Hinweise/Bemerkungen/Sicherheitsbetrachtung (stoffspezifisch)",
       "Freigabe Störrfallbeauftragter",
@@ -205,6 +206,7 @@ const GetWerthenbachData = ({ refresh }) => {
         "N.A.G./NOS\ntechnische Benennung\n(Gefahraus-löser)",
       "LQ (Spalte eingefügt)": "LQ (Spalte eingefügt)",
       Dichte: "Dichte",
+      Klassifizierungscode: "Klassifizierungscode",
       Aggregatzustand: "Aggregatzustand",
       "Hinweise/Bemerkungen/Sicherheitsbetrachtung (stoffspezifisch)":
         "Hinweise/Bemerkungen/Sicherheitsbetrachtung (stoffspezifisch)",
