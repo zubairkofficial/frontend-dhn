@@ -1,78 +1,115 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import Helpers from "../../../Config/Helpers";
 import PropTypes from "prop-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faDownload } from "@fortawesome/free-solid-svg-icons";
 import Modal from "react-modal";
 import ExcelJS from "exceljs";
 import saveAs from "file-saver";
-import Helpers from "../../Config/Helpers";
 
-Modal.setAppElement("#root");
-
-const GetWerthenbachData = ({ refresh }) => {
-  // State declarations
-  const [processedData, setProcessedData] = useState([]);
+const AllWerthenbachData = () => {
+  const { userId } = useParams();
+  const navigate = useNavigate();
+  const [werthenbachData, setWerthenbachData] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [selectedData, setSelectedData] = useState(null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   // Date filter states
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [lastDownload, setLastDownload] = useState(null);
-  const navigate = useNavigate();
+  const currentUser = JSON.parse(localStorage.getItem("user"));
+
+  const [users, setUsers] = useState([]);
+  // Set default filter to an empty string so that ALL users are shown by default
+  const [selectedUser, setSelectedUser] = useState("");
 
   useEffect(() => {
-    fetchData();
+    const fetchWerthenbachData = async () => {
+      let response;
+
+      try {
+        if (currentUser && currentUser.user_type === 1) {
+          response = await axios.get(
+            `${Helpers.apiUrl}get-all-werthenbach-data-customer/${userId}`,
+            Helpers.authHeaders
+          );
+        }
+
+        if (
+          currentUser.is_user_customer === 1 &&
+          currentUser.is_user_organizational === 1 &&
+          currentUser.user_type === 0
+        ) {
+          response = await axios.get(
+            `${Helpers.apiUrl}get-all-werthenbach-data-organization/${userId}`,
+            Helpers.authHeaders
+          );
+        }
+        if (
+          currentUser.is_user_organizational === 1 &&
+          currentUser.is_user_customer !== 1 &&
+          currentUser.user_type === 0
+        ) {
+          response = await axios.get(
+            `${Helpers.apiUrl}get-all-werthenbach-data-user/${userId}`,
+            Helpers.authHeaders
+          );
+        }
+
+        if (response && response.status === 200) {
+          setUsers(response.data.users);
+          setWerthenbachData(response.data.data);
+        }
+      } catch (error) {
+        console.error("Error fetching processed data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    const fetchLastDownload = async () => {
+      try {
+        const response = await axios.get(
+          `${Helpers.apiUrl}get-last-download`,
+          Helpers.authHeaders
+        );
+        if (response.status === 200 && response.data.last_download) {
+          setLastDownload({
+            date: response.data.last_download,
+            file: response.data.file_name,
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching last download:", error);
+      }
+    };
+
+    fetchWerthenbachData();
     fetchLastDownload();
-  }, [refresh]);
-
-  const fetchLastDownload = async () => {
-    try {
-      const response = await axios.get(
-        `${Helpers.apiUrl}get-last-download`,
-        Helpers.authHeaders
-      );
-      if (response.status === 200 && response.data.last_download) {
-        setLastDownload({
-          date: response.data.last_download,
-          file: response.data.file_name,
-        });
-      }
-    } catch (error) {
-      console.error("Error fetching last download:", error);
-    }
-  };
-
-  const fetchData = async () => {
-    try {
-      const response = await axios.get(
-        `${Helpers.apiUrl}get-user-werthenbach-data`,
-        Helpers.authHeaders
-      );
-      if (response.status === 200) {
-        setProcessedData(response.data.data);
-      }
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  };
+  }, [userId]);
 
   const getFilteredData = () => {
-    if (!startDate || !endDate) {
-      return processedData; // No filter applied, return all data
-    }
-
-    const start = new Date(startDate);
-    start.setHours(0, 0, 0, 0); // Set time to 00:00:00
-
-    const end = new Date(endDate);
-    end.setHours(23, 59, 59, 999); // Extend to the end of the day
-
-    return processedData.filter((item) => {
-      const itemDate = new Date(item.created_at); // Convert `created_at` to Date object
-      return itemDate >= start && itemDate <= end;
+    return werthenbachData.filter((item) => {
+      const itemDate = new Date(item.created_at);
+      const start = startDate ? new Date(startDate).setHours(0, 0, 0, 0) : null;
+      const end = endDate ? new Date(endDate).setHours(23, 59, 59, 999) : null;
+      return (
+        // If a user is selected, filter by user_id; otherwise, include all items
+        (selectedUser ? item.user_id == selectedUser : true) &&
+        (!start || itemDate >= start) &&
+        (!end || itemDate <= end)
+      );
     });
+  };
+
+  // Use the filtered data (by both user and dates) for rendering
+  const filteredData = getFilteredData();
+
+  const handleUserChange = (event) => {
+    setSelectedUser(event.target.value);
   };
 
   const handleView = (data) => {
@@ -84,52 +121,103 @@ const GetWerthenbachData = ({ refresh }) => {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet("Werthenbach Data");
 
-    // Define headers in the desired order
     const headers = [
       "Produktname",
       "Hersteller",
       "Dateiname SDB",
-      "Ausgabedatum bzw. letzte Änderung",
-      "LG Klasse",
-      "WGK(numerischer Wert)",
-      "Signalwort",
-
-      "H Sätze durch Komma getrennt",
-      "Flammpunkt (numerischer Wert)[°C]",
-      "UN Nr",
-      "Gefahrensymbole",
-      "Gefahrgutklasse (Länge beachten)",
-      "Verpackungsgruppe",
-      "Tunnelcode",
+      "SDB-Ausgabedatum bzw. letzte Änderung",
+      "CAS-Nummer(n)",
+      "Hauptbestandteile",
+      "Lagerklassen (LGK) nach TRGS 510",
+      "Gefahrensymbole (CLP/GHS)",
+      "WGK",
+      "Transport oder Umfüllen- Verpackungsgruppe",
       "N.A.G./NOS technische Benennung (Gefahraus-löser)",
-      "LQ (Spalte eingefügt)",
-      "Dichte",
+      "H-Sätze (mit EUH) (durch Komma getrennt) (aus Kap.2)",
+      "H-Sätze (mit EUH) (durch Komma getrennt) (aus Gesamtdatei)",
+      "P-Sätze (durch Komma getrennt) (aus Kap.2)",
+      "P-Sätze (durch Komma getrennt) (aus Gesamtdatei)",
+      "Flammpunkt [°C]",
       "Aggregatzustand",
-      "Klassifizierungscode",
+      "CLP/GHS-Symbolnummern",
+      "CMR",
+      "Diisocyanat",
       "Hinweise/Bemerkungen/Sicherheitsbetrachtung (stoffspezifisch)",
-      "Freigabe Störrfallbeauftragter",
-      "Maßnahmen Lagerung Abschnitt 7.2",
-      "Zusammenlagerverbot Abschnitt 10.5",
-      "Main Ingredients",
-      "UFI",
-      "Section - FirstPage",
-      "Section - 1",
-      "Section - 2",
-      "Section - 2|2.2",
-      "Section - 3",
-      "Section - 5|5.1",
-      "Section - 7|7.2--15|15.1",
-      "Section - 7|7.2",
-      "Section - 9|9.1",
-      "Section - 10|10.5",
-      "Section - 14",
-      "Section - 15",
-
-      "Section-Missing-Count",
+      "UN Nr",
+      "ADR-Klasse (Gefahrgutklasse)",
+      "Gefahr-Nr (Kemler-Zahl)",
+      "Transport-Mengenbegrenzung LQ",
+      "Transport-Tunnelcode",
+      "Kopf",
+      "1",
+      "1.1",
+      "1.2",
+      "1.3",
+      "1.4",
+      "2",
+      "2.1",
+      "2.2",
+      "2.3",
+      "3",
+      "3.1",
+      "3.2",
+      "4",
+      "4.1",
+      "4.2",
+      "4.3",
+      "5",
+      "5.1",
+      "5.2",
+      "5.3",
+      "6",
+      "6.1",
+      "6.2",
+      "6.3",
+      "6.4",
+      "7",
+      "7.1",
+      "7.2",
+      "7.3",
+      "8",
+      "8.1",
+      "8.2",
+      "9",
+      "9.1",
+      "9.2",
+      "10",
+      "10.1",
+      "10.2",
+      "10.3",
+      "10.4",
+      "10.5",
+      "10.6",
+      "11",
+      "11.1",
+      "12",
+      "12.1",
+      "12.2",
+      "12.3",
+      "12.4",
+      "12.5",
+      "12.6",
+      "13",
+      "13.1",
+      "14",
+      "14.1",
+      "14.2",
+      "14.3",
+      "14.4",
+      "14.5",
+      "14.6",
+      "14.7",
+      "15",
+      "15.1",
+      "15.2",
+      "16",
       "Message",
+      "Section-Missing-Count",
     ];
 
-    // Add headers with styles
     worksheet.addRow(headers);
 
     worksheet.getRow(1).eachCell((cell) => {
@@ -143,7 +231,7 @@ const GetWerthenbachData = ({ refresh }) => {
         type: "pattern",
         pattern: "solid",
         fgColor: { argb: "FFD700" },
-      }; // Gold color
+      };
       cell.border = {
         top: { style: "thin" },
         left: { style: "thin" },
@@ -152,8 +240,9 @@ const GetWerthenbachData = ({ refresh }) => {
       };
     });
 
+    const staticRow = Array(39).fill("");
+    worksheet.addRow(staticRow);
 
-    // Header Mapping - Your stored data uses different field names
     const headerMapping = {
       Produktname: "Produktname",
       Hersteller: "Hersteller",
@@ -201,23 +290,19 @@ const GetWerthenbachData = ({ refresh }) => {
       Message: "Message",
     };
 
-    // Map data correctly using headerMapping
     const rowData = headers.map(
       (header) => fileData[headerMapping[header]] || ""
     );
     worksheet.addRow(rowData);
 
-    // Adjust column widths
     worksheet.columns.forEach((column) => {
-      column.width = 30; // Set default width
+      column.width = 30;
     });
 
-    // Write Excel file
     const buffer = await workbook.xlsx.writeBuffer();
     const blob = new Blob([buffer], {
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     });
-
     saveAs(blob, `${fileName}.xlsx`);
     await axios.post(
       `${Helpers.apiUrl}log-download`,
@@ -229,22 +314,6 @@ const GetWerthenbachData = ({ refresh }) => {
   };
 
   const handleDownloadAll = async () => {
-    // Check if the date range is for the current day
-    const today = new Date().toISOString().slice(0, 10); // Today's date in YYYY-MM-DD format
-    const selectedStartDate = startDate
-      ? new Date(startDate).toISOString().slice(0, 10)
-      : "";
-    const selectedEndDate = endDate
-      ? new Date(endDate).toISOString().slice(0, 10)
-      : "";
-
-    // If the selected date range is for today, download all data for today
-    if (selectedStartDate === today && selectedEndDate === today) {
-      Helpers.toast("error", "Downloading data for today's date!");
-      setStartDate(today);
-      setEndDate(today);
-    }
-
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet("Filtered Data");
 
@@ -255,6 +324,7 @@ const GetWerthenbachData = ({ refresh }) => {
       "Ausgabedatum bzw. letzte Änderung",
       "LG Klasse",
       "WGK(numerischer Wert)",
+      "Signalwort",
       "H Sätze durch Komma getrennt",
       "Flammpunkt (numerischer Wert)[°C]",
       "UN Nr",
@@ -264,6 +334,9 @@ const GetWerthenbachData = ({ refresh }) => {
       "Tunnelcode",
       "N.A.G./NOS technische Benennung (Gefahraus-löser)",
       "LQ (Spalte eingefügt)",
+      "Dichte",
+      "Aggregatzustand",
+      "Klassifizierungscode",
       "Hinweise/Bemerkungen/Sicherheitsbetrachtung (stoffspezifisch)",
       "Freigabe Störrfallbeauftragter",
       "Maßnahmen Lagerung Abschnitt 7.2",
@@ -282,10 +355,10 @@ const GetWerthenbachData = ({ refresh }) => {
       "Section - 10|10.5",
       "Section - 14",
       "Section - 15",
-
       "Section-Missing-Count",
       "Message",
     ];
+
     worksheet.addRow(headers);
     worksheet.getRow(1).eachCell((cell) => {
       cell.font = { bold: true, size: 12 };
@@ -307,17 +380,8 @@ const GetWerthenbachData = ({ refresh }) => {
       };
     });
 
-    // Filter data based on the start and end date
-    const filteredData = getFilteredData();
-
-    // If no matching records are found, show an alert
-    if (filteredData.length === 0) {
-      Helpers.toast(
-        "error",
-        "No matching records found for the selected filters!"
-      );
-      return;
-    }
+    const staticRow = Array(39).fill("");
+    worksheet.addRow(staticRow);
 
     const headerMapping = {
       Produktname: "Produktname",
@@ -326,6 +390,7 @@ const GetWerthenbachData = ({ refresh }) => {
       "Ausgabedatum bzw. letzte Änderung": "Ausgabedatum bzw. letzte Änderung",
       "LG Klasse": "LG Klasse",
       "WGK(numerischer Wert)": "WGK\n(numerischer Wert)",
+      Signalwort: "Signalwort",
       "H Sätze durch Komma getrennt": "H Sätze\ndurch Komma getrennt",
       "Flammpunkt (numerischer Wert)[°C]":
         "Flammpunkt\n(numerischer Wert)\n[°C]",
@@ -337,6 +402,9 @@ const GetWerthenbachData = ({ refresh }) => {
       "N.A.G./NOS technische Benennung (Gefahraus-löser)":
         "N.A.G./NOS\ntechnische Benennung\n(Gefahraus-löser)",
       "LQ (Spalte eingefügt)": "LQ (Spalte eingefügt)",
+      Dichte: "Dichte",
+      Aggregatzustand: "Aggregatzustand",
+      Klassifizierungscode: "Klassifizierungscode",
       "Hinweise/Bemerkungen/Sicherheitsbetrachtung (stoffspezifisch)":
         "Hinweise/Bemerkungen/Sicherheitsbetrachtung (stoffspezifisch)",
       "Freigabe Störrfallbeauftragter": "Freigabe Störrfallbeauftragter",
@@ -355,15 +423,24 @@ const GetWerthenbachData = ({ refresh }) => {
       "Section - 7|7.2": "Section - 7|7.2",
       "Section - 9|9.1": "Section - 9|9.1",
       "Section - 10|10.5": "Section - 10|10.5",
+
       "Section - 14": "Section - 14",
       "Section - 15": "Section - 15",
-
       "Section-Missing-Count": "Section-Missing-Count",
       Message: "Message",
     };
+    // Use the same filtering here as well
+    const filteredDownloadData = getFilteredData();
 
-    // Add filtered data rows to the worksheet
-    filteredData.forEach((file) => {
+    if (filteredDownloadData.length === 0) {
+      Helpers.toast(
+        "error",
+        "No matching records found for the selected filters!"
+      );
+      return;
+    }
+
+    filteredDownloadData.forEach((file) => {
       const rowData = headers.map(
         (header) => file.data[headerMapping[header]] || ""
       );
@@ -375,7 +452,7 @@ const GetWerthenbachData = ({ refresh }) => {
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     });
 
-    const fileName = `Processed_Data_${new Date()
+    const fileName = `Werthenbach_Data_${new Date()
       .toISOString()
       .slice(0, 10)}.xlsx`;
     saveAs(blob, fileName);
@@ -409,13 +486,13 @@ const GetWerthenbachData = ({ refresh }) => {
       : text;
   };
 
-  // Derive filtered data for display
-  const filteredData = getFilteredData();
+  if (loading) {
+    return <p>Loading...</p>;
+  }
 
   return (
     <div className="w-full bg-white py-5 px-10 mx-auto">
       <div className="bg-white rounded-lg p-6 mx-auto">
-        {/* Page Header */}
         <div className="flex items-center justify-between border-b pb-4 mb-6">
           <h2 className="text-3xl font-bold text-gray-800">
             All Werthenbach Data
@@ -428,7 +505,6 @@ const GetWerthenbachData = ({ refresh }) => {
           </button>
         </div>
 
-        {/* Last Download Information */}
         {lastDownload && (
           <div className="bg-blue-50 border border-blue-200 text-blue-700 rounded-lg p-4 mb-6 shadow-sm">
             <p className="text-lg font-semibold flex items-center">
@@ -456,73 +532,102 @@ const GetWerthenbachData = ({ refresh }) => {
         )}
       </div>
 
-      <div className="mb-4 flex flex-wrap items-center gap-2">
-        <button
-          onClick={handleDownloadAll}
-          className="text-white py-2 px-4 font-bold bg-success-300 hover:bg-success-300 transition-all rounded-lg"
-        >
-          Download All <FontAwesomeIcon icon={faDownload} />
-        </button>
-        <input
-          className="form-control m-2 border border-gray-300 rounded-lg p-2"
-          type="date"
-          value={startDate}
-          onChange={(e) => setStartDate(e.target.value)}
-        />
-        <input
-          className="form-control m-2 border border-gray-300 rounded-lg p-2"
-          type="date"
-          value={endDate}
-          onChange={(e) => setEndDate(e.target.value)}
-        />
-        {/* Optional: Clear Filter Button */}
-        {(startDate || endDate) && (
-          <button
-            onClick={() => {
-              setStartDate("");
-              setEndDate("");
-            }}
-            className="bg-red-500 text-white py-2 px-4 rounded-lg"
-          >
-            Clear Filter
-          </button>
-        )}
-      </div>
+      {werthenbachData.length > 0 ? (
+        <>
+          <div className="mb-4 flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={handleDownloadAll}
+                className="text-white py-2 px-4 font-bold bg-success-300 hover:bg-success-400 transition-all rounded-lg"
+              >
+                Download All <FontAwesomeIcon icon={faDownload} />
+              </button>
 
-      {filteredData.length > 0 ? (
-        <ul className="space-y-4">
-          {filteredData.map((item) => (
-            <li
-              key={item.id}
-              className="bg-gray-100 p-4 rounded-lg flex justify-between items-center shadow-sm"
-            >
-              <div>
-                <p className="font-semibold">
-                  File Name: {truncateText(item.file_name)}
-                </p>
-                <p>Product Name: {truncateText(item.data["Produktname"])}</p>
-              </div>
-              <div className="space-x-2">
+              <input
+                className="form-control border border-gray-300 rounded-lg p-2"
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+              />
+
+              <input
+                className="form-control border border-gray-300 rounded-lg p-2"
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+              />
+              {/* Optional: Clear Filter Button */}
+              {(startDate || endDate) && (
                 <button
-                  onClick={() => handleView(item.data)}
-                  className="bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600"
+                  onClick={() => {
+                    setStartDate("");
+                    setEndDate("");
+                  }}
+                  className="bg-red-500 text-white py-2 px-4 rounded-lg"
                 >
-                  View <FontAwesomeIcon icon={faEye} />
+                  Clear Filter
                 </button>
-                <button
-                  onClick={() => handleDownloadFile(item.file_name, item.data)}
-                  className="text-white py-2 px-4 font-bold bg-success-300 hover:bg-success-300 transition-all rounded-lg"
+              )}
+            </div>
+
+            <div>
+              <select
+                className="w-64 p-2 border rounded-lg shadow-sm"
+                value={selectedUser}
+                onChange={handleUserChange}
+              >
+                {/* Default option now shows "All Data" */}
+                <option value="">All Data</option>
+                {users.map((user) => (
+                  <option key={user.id} value={user.id}>
+                    {user.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+          {filteredData.length > 0 ? (
+            <ul className="space-y-4">
+              {filteredData.map((item) => (
+                <li
+                  key={item.id}
+                  className="bg-gray-100 p-4 rounded-lg flex justify-between items-center shadow-sm"
                 >
-                  Download <FontAwesomeIcon icon={faDownload} />
-                </button>
-              </div>
-            </li>
-          ))}
-        </ul>
+                  <div>
+                    <p className="font-semibold">
+                      File Name: {truncateText(item.file_name)}
+                    </p>
+                    <p>
+                      Product Name: {truncateText(item.data["Produktname"])}
+                    </p>
+                  </div>
+                  <div className="space-x-2">
+                    <button
+                      onClick={() => handleView(item.data)}
+                      className="bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600"
+                    >
+                      View <FontAwesomeIcon icon={faEye} />
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleDownloadFile(item.file_name, item.data)
+                      }
+                      className="text-white py-2 px-4 font-bold bg-success-300 hover:bg-success-300 transition-all rounded-lg"
+                    >
+                      Download <FontAwesomeIcon icon={faDownload} />
+                    </button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-center text-gray-500">
+              No werthenbach data found.
+            </p>
+          )}
+        </>
       ) : (
-        <p className="text-center text-gray-500">
-          No processed data found for the selected date range.
-        </p>
+        <p className="text-center text-gray-500">No werthenbach data found.</p>
       )}
 
       {selectedData && (
@@ -564,8 +669,8 @@ const GetWerthenbachData = ({ refresh }) => {
   );
 };
 
-GetWerthenbachData.propTypes = {
-  refresh: PropTypes.bool.isRequired, // Declare the prop
+AllWerthenbachData.propTypes = {
+  refresh: PropTypes.bool,
 };
 
-export default GetWerthenbachData;
+export default AllWerthenbachData;

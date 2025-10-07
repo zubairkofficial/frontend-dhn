@@ -64,6 +64,7 @@ import ResetNormalUserPassword from "./Screens/Admin/User/AddUser/ResetNormalUse
 import GetProcessedData from "./Screens/User/GetProcessedData";
 import AllProcessedData from "./Screens/User/Layout/AllProcessedData";
 import Werthenbach from "./Screens/User/Werthenbach";
+import AllWerthenbach from "./Screens/User/Layout/AllWerthenbachData";
 import Scheren from "./Screens/User/Scheren";
 import AllScherenData from "./Screens/User/Layout/AllScherenData";
 import AllSennheiserData from "./Screens/User/Layout/AllSennheiserData";
@@ -419,6 +420,14 @@ const App = () => {
               element={
                 <Auth>
                   <AllVerbundData />
+                </Auth>
+              }
+            />
+            <Route
+              path="/user/all-werthenbach-data/:userId"
+              element={
+                <Auth>
+                  <AllWerthenbach />
                 </Auth>
               }
             />

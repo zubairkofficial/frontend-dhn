@@ -154,9 +154,6 @@ const Werthenbach = () => {
 
     // Define the custom headers in your desired order
     const headers = [
-      // "Lagerkunde",
-      // "Artikel Nr.(Länge beachten)",
-      // "Materialkurztext",
       "Produktname",
       "Hersteller",
       "Dateiname SDB",
@@ -166,7 +163,6 @@ const Werthenbach = () => {
       "Signalwort",
       "H Sätze durch Komma getrennt",
       "Flammpunkt (numerischer Wert)[°C]",
-      // "Nr./Kategorie gem. Anhang I, 12. BImSchV 2017",
       "UN Nr",
       "Gefahrensymbole",
       "Gefahrgutklasse (Länge beachten)",
@@ -175,8 +171,8 @@ const Werthenbach = () => {
       "N.A.G./NOS technische Benennung (Gefahraus-löser)",
       "LQ (Spalte eingefügt)",
       "Dichte",
-      "Klassifizierungscode",
       "Aggregatzustand",
+      "Klassifizierungscode",
       "Hinweise/Bemerkungen/Sicherheitsbetrachtung (stoffspezifisch)",
       "Freigabe Störrfallbeauftragter",
       "Maßnahmen Lagerung Abschnitt 7.2",
@@ -219,34 +215,7 @@ const Werthenbach = () => {
       };
     });
 
-    // Add the static row data below the header row
-    // const staticRow = [
-    //     "",
-    //     "",
-    //     "",
-    //     "",
-    //     "",
-    //     "",
-    //     "14",
-    //     "1-HZWMSC",
-    //     "1-HZDWGK",
-    //     "3-HARIZIN",
-    //     "1-H2FLSP 3n",
-    //     "",
-    //     "1-HZUNNR 6n",
-    //     "2-HECODE",
-    //     "4-HMKLAS",
-    //     "4-HMVPAK",
-    //     "4-HMTNCD",
-    //     "1-HZGSDE / 4-HMGSDE",
-    //     "4-HMLQTP",
-    // ];
-    // worksheet.addRow(staticRow);
-
     const headerMapping = {
-      // Lagerkunde: "Lagerkunde",
-      // "Artikel Nr.(Länge beachten)": "Artikel Nr.\n(Länge beachten)",
-      // Materialkurztext: "Materialkurztext",
       Produktname: "Produktname",
       Hersteller: "Hersteller",
       "Dateiname SDB": "Dateiname SDB",
@@ -257,8 +226,6 @@ const Werthenbach = () => {
       "H Sätze durch Komma getrennt": "H Sätze\ndurch Komma getrennt",
       "Flammpunkt (numerischer Wert)[°C]":
         "Flammpunkt\n(numerischer Wert)\n[°C]",
-      // "Nr./Kategorie gem. Anhang I, 12. BImSchV 2017":
-      //     "Nr./Kategorie gem. Anhang I, 12. BImSchV 2017",
       "UN Nr": "UN Nr",
       Gefahrensymbole: "Gefahrensymbole",
       "Gefahrgutklasse (Länge beachten)": "Gefahrgutklasse (Länge beachten)",
@@ -268,8 +235,8 @@ const Werthenbach = () => {
         "N.A.G./NOS\ntechnische Benennung\n(Gefahraus-löser)",
       "LQ (Spalte eingefügt)": "LQ (Spalte eingefügt)",
       Dichte: "Dichte",
-      Klassifizierungscode: "Klassifizierungscode",
       Aggregatzustand: "Aggregatzustand",
+      Klassifizierungscode: "Klassifizierungscode",
       "Hinweise/Bemerkungen/Sicherheitsbetrachtung (stoffspezifisch)":
         "Hinweise/Bemerkungen/Sicherheitsbetrachtung (stoffspezifisch)",
       "Freigabe Störrfallbeauftragter": "Freigabe Störrfallbeauftragter",
