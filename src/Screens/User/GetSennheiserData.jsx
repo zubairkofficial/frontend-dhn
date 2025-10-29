@@ -303,22 +303,54 @@ const GetSennheiserData = ({ refresh }) => {
       "Section-Missing-Count": "Section-Missing-Count",
     };
 
-    // Add filtered data rows to the worksheet
+    // Build rows first to compute differences across duplicate Produktname groups
+    const rows = [];
     filteredData.forEach((file) => {
       const rowData = headers.map(
         (header) => file.data[headerMapping[header]] || ""
       );
-      const newRow = worksheet.addRow(rowData);
-      const produktname = file.data["Produktname"];
-      if (produktname && produktnameCounts[produktname] > 1) {
-        newRow.eachCell((cell) => {
+      const row = worksheet.addRow(rowData);
+      rows.push({ row, rowData, produktname: file.data["Produktname"] });
+    });
+
+    const BLUE = "FFA5D5E3"; // #a5d5e3
+    const GREEN = "FFB5CD82"; // #B5CD82
+
+    // Group rows by Produktname
+    const groups = rows.reduce((acc, item) => {
+      const key = item.produktname || "";
+      if (!acc[key]) acc[key] = [];
+      acc[key].push(item);
+      return acc;
+    }, {});
+
+    Object.values(groups).forEach((group) => {
+      if (group.length < 2) return;
+      // Color entire rows blue
+      group.forEach(({ row }) => {
+        row.eachCell((cell) => {
           cell.fill = {
             type: "pattern",
             pattern: "solid",
-            fgColor: { argb: "ADD8E6" }, // Light Blue
+            fgColor: { argb: BLUE },
           };
         });
-      }
+      });
+      // Mark differing cells green
+      headers.forEach((_, colIdx) => {
+        const values = new Set(
+          group.map(({ rowData }) => String(rowData[colIdx] ?? ""))
+        );
+        if (values.size > 1) {
+          group.forEach(({ row }) => {
+            row.getCell(colIdx + 1).fill = {
+              type: "pattern",
+              pattern: "solid",
+              fgColor: { argb: GREEN },
+            };
+          });
+        }
+      });
     });
 
     const buffer = await workbook.xlsx.writeBuffer();

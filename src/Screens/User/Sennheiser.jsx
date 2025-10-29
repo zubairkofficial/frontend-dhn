@@ -224,45 +224,79 @@ const Sennheiser = () => {
       "Section-Missing-Count": "Section-Missing-Count",
     };
 
+    // Build rows first so we can compare values within duplicate Produktname groups
+    const rows = [];
     const produktnameCounts = allSennheiserData.reduce((acc, fileData) => {
       const produktname = fileData.data?.["Produktname"];
-      if (produktname) {
-        acc[produktname] = (acc[produktname] || 0) + 1;
-      }
+      if (produktname) acc[produktname] = (acc[produktname] || 0) + 1;
       return acc;
     }, {});
 
-    // Add data rows and apply yellow fill if `Section-Missing-Count` > 0
     allSennheiserData.forEach((fileData) => {
-      let rowData = headers.map(
+      const rowData = headers.map(
         (header) => fileData.data[headerMapping[header]] || ""
       );
+      const row = worksheet.addRow(rowData);
+      rows.push({ row, rowData, produktname: fileData.data?.["Produktname"] });
+    });
+
+    // Color logic
+    const BLUE = "FFA5D5E3"; // #a5d5e3
+    const GREEN = "FFB5CD82"; // #B5CD82
+    const YELLOW = "FFFFFF00"; // #ffff00
+
+    // Base yellow fill for rows with missing sections
+    rows.forEach(({ row, rowData }) => {
       const sectionMissingCount = parseInt(
         rowData[headers.indexOf("Section-Missing-Count")] || 0
       );
-
-      const newRow = worksheet.addRow(rowData);
-      const produktname = fileData.data?.["Produktname"];
-      const isDuplicate = produktname && produktnameCounts[produktname] > 1;
-      // Apply blue fill if rows are duplicate
-      if (isDuplicate) {
-        newRow.eachCell((cell) => {
+      if (sectionMissingCount > 0) {
+        row.eachCell((cell) => {
           cell.fill = {
             type: "pattern",
             pattern: "solid",
-            fgColor: { argb: "ADD8E6" },
-          };
-        });
-      } else if (sectionMissingCount > 0) {
-        // Apply yellow fill if `Section-Missing-Count` > 0
-        newRow.eachCell((cell) => {
-          cell.fill = {
-            type: "pattern",
-            pattern: "solid",
-            fgColor: { argb: "FFFF00" },
+            fgColor: { argb: YELLOW },
           };
         });
       }
+    });
+
+    // Group by Produktname and color duplicates blue, differing cells green
+    const groups = rows.reduce((acc, item) => {
+      const key = item.produktname || "";
+      if (!acc[key]) acc[key] = [];
+      acc[key].push(item);
+      return acc;
+    }, {});
+
+    Object.values(groups).forEach((group) => {
+      if (group.length < 2) return;
+      // Paint entire rows blue first
+      group.forEach(({ row }) => {
+        row.eachCell((cell) => {
+          cell.fill = {
+            type: "pattern",
+            pattern: "solid",
+            fgColor: { argb: BLUE },
+          };
+        });
+      });
+      // For each column, if values differ within the group, paint those cells green
+      headers.forEach((_, colIdx) => {
+        const values = new Set(
+          group.map(({ rowData }) => String(rowData[colIdx] ?? ""))
+        );
+        if (values.size > 1) {
+          group.forEach(({ row }) => {
+            const cell = row.getCell(colIdx + 1);
+            cell.fill = {
+              type: "pattern",
+              pattern: "solid",
+              fgColor: { argb: GREEN },
+            };
+          });
+        }
+      });
     });
 
     // Set column widths
