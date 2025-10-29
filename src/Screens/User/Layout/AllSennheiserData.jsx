@@ -316,51 +316,71 @@ const AllSennheiserData = () => {
       return;
     }
 
-    // Build rows first so we can compute differences within duplicate Produktname groups
-    const rows = [];
+    // Group data by Produktname to find duplicates and compare values
+    const produktnameCounts = filteredDownloadData.reduce((acc, item) => {
+      const produktname = item.data?.["Produktname"];
+      if (produktname) {
+        const normalizedName = produktname.toLowerCase().trim();
+        acc[normalizedName] = (acc[normalizedName] || 0) + 1;
+      }
+      return acc;
+    }, {});
+
+    const groupedByProduktname = filteredDownloadData.reduce((acc, file) => {
+      const produktname = file.data?.["Produktname"];
+      if (produktname) {
+        const normalizedName = produktname.toLowerCase().trim();
+        if (!acc[normalizedName]) {
+          acc[normalizedName] = [];
+        }
+        acc[normalizedName].push(file);
+      }
+      return acc;
+    }, {});
+
     filteredDownloadData.forEach((file) => {
       const rowData = headers.map(
         (header) => file.data[headerMapping[header]] || ""
       );
-      const row = worksheet.addRow(rowData);
-      rows.push({ row, rowData, produktname: file.data["Produktname"] });
-    });
+      const newRow = worksheet.addRow(rowData);
+      const produktname = file.data?.["Produktname"];
+      const normalizedName = produktname
+        ? produktname.toLowerCase().trim()
+        : "";
 
-    const BLUE = "FFA5D5E3"; // #a5d5e3
-    const GREEN = "FFB5CD82"; // #B5CD82
-
-    const groups = rows.reduce((acc, item) => {
-      const key = item.produktname || "";
-      if (!acc[key]) acc[key] = [];
-      acc[key].push(item);
-      return acc;
-    }, {});
-
-    Object.values(groups).forEach((group) => {
-      if (group.length < 2) return;
-      group.forEach(({ row }) => {
-        row.eachCell((cell) => {
+      if (produktname && produktnameCounts[normalizedName] > 1) {
+        // Mark entire row blue for duplicates
+        newRow.eachCell((cell) => {
           cell.fill = {
             type: "pattern",
             pattern: "solid",
-            fgColor: { argb: BLUE },
+            fgColor: { argb: "FFA5D5E3" }, // Light Blue #a5d5e3
           };
         });
-      });
-      headers.forEach((_, colIdx) => {
-        const values = new Set(
-          group.map(({ rowData }) => String(rowData[colIdx] ?? ""))
-        );
-        if (values.size > 1) {
-          group.forEach(({ row }) => {
-            row.getCell(colIdx + 1).fill = {
-              type: "pattern",
-              pattern: "solid",
-              fgColor: { argb: GREEN },
-            };
+
+        // Find other rows with same Produktname to compare values
+        const duplicateRows = groupedByProduktname[normalizedName];
+        if (duplicateRows.length > 1) {
+          // Compare each field and mark different values green
+          headers.forEach((header, columnIndex) => {
+            const currentValue = file.data[headerMapping[header]] || "";
+            const hasDifferentValues = duplicateRows.some(
+              (otherFile) =>
+                otherFile.id !== file.id &&
+                (otherFile.data[headerMapping[header]] || "") !== currentValue
+            );
+
+            if (hasDifferentValues) {
+              const cell = newRow.getCell(columnIndex + 1);
+              cell.fill = {
+                type: "pattern",
+                pattern: "solid",
+                fgColor: { argb: "FFB5CD82" }, // Light Green #B5CD82
+              };
+            }
           });
         }
-      });
+      }
     });
 
     const buffer = await workbook.xlsx.writeBuffer();

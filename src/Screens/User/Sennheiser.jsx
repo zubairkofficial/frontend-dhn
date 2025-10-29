@@ -224,79 +224,86 @@ const Sennheiser = () => {
       "Section-Missing-Count": "Section-Missing-Count",
     };
 
-    // Build rows first so we can compare values within duplicate Produktname groups
-    const rows = [];
     const produktnameCounts = allSennheiserData.reduce((acc, fileData) => {
       const produktname = fileData.data?.["Produktname"];
-      if (produktname) acc[produktname] = (acc[produktname] || 0) + 1;
+      if (produktname) {
+        const normalizedName = produktname.toLowerCase().trim();
+        acc[normalizedName] = (acc[normalizedName] || 0) + 1;
+      }
       return acc;
     }, {});
 
+    // Group data by Produktname to find duplicates and compare values
+    const groupedByProduktname = allSennheiserData.reduce((acc, fileData) => {
+      const produktname = fileData.data?.["Produktname"];
+      if (produktname) {
+        const normalizedName = produktname.toLowerCase().trim();
+        if (!acc[normalizedName]) {
+          acc[normalizedName] = [];
+        }
+        acc[normalizedName].push(fileData);
+      }
+      return acc;
+    }, {});
+
+    // Add data rows and apply coloring based on duplicates and missing sections
     allSennheiserData.forEach((fileData) => {
-      const rowData = headers.map(
+      let rowData = headers.map(
         (header) => fileData.data[headerMapping[header]] || ""
       );
-      const row = worksheet.addRow(rowData);
-      rows.push({ row, rowData, produktname: fileData.data?.["Produktname"] });
-    });
-
-    // Color logic
-    const BLUE = "FFA5D5E3"; // #a5d5e3
-    const GREEN = "FFB5CD82"; // #B5CD82
-    const YELLOW = "FFFFFF00"; // #ffff00
-
-    // Base yellow fill for rows with missing sections
-    rows.forEach(({ row, rowData }) => {
       const sectionMissingCount = parseInt(
         rowData[headers.indexOf("Section-Missing-Count")] || 0
       );
-      if (sectionMissingCount > 0) {
-        row.eachCell((cell) => {
+
+      const newRow = worksheet.addRow(rowData);
+      const produktname = fileData.data?.["Produktname"];
+      const normalizedName = produktname
+        ? produktname.toLowerCase().trim()
+        : "";
+      const isDuplicate = produktname && produktnameCounts[normalizedName] > 1;
+
+      // Apply blue fill if rows are duplicate
+      if (isDuplicate) {
+        newRow.eachCell((cell) => {
           cell.fill = {
             type: "pattern",
             pattern: "solid",
-            fgColor: { argb: YELLOW },
+            fgColor: { argb: "FFA5D5E3" }, // Light Blue #a5d5e3
+          };
+        });
+
+        // Find other rows with same Produktname to compare values
+        const duplicateRows = groupedByProduktname[normalizedName];
+        if (duplicateRows.length > 1) {
+          // Compare each field and mark different values green
+          headers.forEach((header, columnIndex) => {
+            const currentValue = fileData.data[headerMapping[header]] || "";
+            const hasDifferentValues = duplicateRows.some(
+              (otherFile) =>
+                otherFile !== fileData &&
+                (otherFile.data[headerMapping[header]] || "") !== currentValue
+            );
+
+            if (hasDifferentValues) {
+              const cell = newRow.getCell(columnIndex + 1);
+              cell.fill = {
+                type: "pattern",
+                pattern: "solid",
+                fgColor: { argb: "FFB5CD82" }, // Light Green #B5CD82
+              };
+            }
+          });
+        }
+      } else if (sectionMissingCount > 0) {
+        // Apply yellow fill if `Section-Missing-Count` > 0
+        newRow.eachCell((cell) => {
+          cell.fill = {
+            type: "pattern",
+            pattern: "solid",
+            fgColor: { argb: "FFFF00" },
           };
         });
       }
-    });
-
-    // Group by Produktname and color duplicates blue, differing cells green
-    const groups = rows.reduce((acc, item) => {
-      const key = item.produktname || "";
-      if (!acc[key]) acc[key] = [];
-      acc[key].push(item);
-      return acc;
-    }, {});
-
-    Object.values(groups).forEach((group) => {
-      if (group.length < 2) return;
-      // Paint entire rows blue first
-      group.forEach(({ row }) => {
-        row.eachCell((cell) => {
-          cell.fill = {
-            type: "pattern",
-            pattern: "solid",
-            fgColor: { argb: BLUE },
-          };
-        });
-      });
-      // For each column, if values differ within the group, paint those cells green
-      headers.forEach((_, colIdx) => {
-        const values = new Set(
-          group.map(({ rowData }) => String(rowData[colIdx] ?? ""))
-        );
-        if (values.size > 1) {
-          group.forEach(({ row }) => {
-            const cell = row.getCell(colIdx + 1);
-            cell.fill = {
-              type: "pattern",
-              pattern: "solid",
-              fgColor: { argb: GREEN },
-            };
-          });
-        }
-      });
     });
 
     // Set column widths
