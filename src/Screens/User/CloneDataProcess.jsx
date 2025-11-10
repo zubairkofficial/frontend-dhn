@@ -19,6 +19,7 @@ const CloneDataProcess = () => {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [fileStatuses, setFileStatuses] = useState({});
   const [canUpload, setCanUpload] = useState(true);
+  const [availableCount, setAvailableCount] = useState(null);
   const [allProcessedData, setAllProcessedData] = useState([]);
   const [processedCount, setProcessedCount] = useState(0);
   const fileInputRef = useRef(null);
@@ -32,7 +33,12 @@ const CloneDataProcess = () => {
 
       if (response.status === 200) {
         const { available_count } = response.data;
-        if (available_count <= 0) {
+        const normalizedCount =
+          typeof available_count === "number" ? available_count : null;
+
+        setAvailableCount(normalizedCount);
+
+        if (normalizedCount !== null && normalizedCount <= 0) {
           setCanUpload(false);
           Helpers.toast(
             "error",
@@ -43,19 +49,31 @@ const CloneDataProcess = () => {
         }
       }
     } catch (error) {
-      if (error.response && error.response.status === 403) {
-        setCanUpload(false);
-        Helpers.toast(
-          "error",
-          Helpers.getTranslationValue("error_usage_limit")
-        );
-      } else {
-        Helpers.toast(
-          "error",
-          Helpers.getTranslationValue("error_check_usage")
-        );
-        setCanUpload(false);
+      if (error.response) {
+        const { status: statusCode, data } = error.response;
+        const remainingCount =
+          typeof data?.available_count === "number"
+            ? data.available_count
+            : null;
+
+        setAvailableCount(remainingCount);
+
+        if (statusCode === 403) {
+          setCanUpload(false);
+          const sheetsLeftMessage =
+            remainingCount !== null
+              ? `Only ${remainingCount} data sheet${
+                  remainingCount === 1 ? "" : "s"
+                } left. Please try again.`
+              : Helpers.getTranslationValue("error_usage_limit");
+
+          Helpers.toast("error", sheetsLeftMessage);
+          return;
+        }
       }
+
+      Helpers.toast("error", Helpers.getTranslationValue("error_check_usage"));
+      setCanUpload(false);
     }
   };
   useEffect(() => {
@@ -83,6 +101,16 @@ const CloneDataProcess = () => {
   const handleFileUpload = async () => {
     if (!selectedFiles || selectedFiles.length === 0) {
       Helpers.toast("error", Helpers.getTranslationValue("file_select_first"));
+      return;
+    }
+
+    if (availableCount !== null && selectedFiles.length > availableCount) {
+      Helpers.toast(
+        "error",
+        `Only ${availableCount} data sheet${
+          availableCount === 1 ? "" : "s"
+        } left. Please try again.`
+      );
       return;
     }
 
@@ -320,7 +348,9 @@ const CloneDataProcess = () => {
 
   return (
     <div className="w-full bg-white py-5 mx-auto">
-      <h2 className="text-center text-2xl font-semibold mb-8">{Helpers.getTranslationValue('Data Process')}</h2>
+      <h2 className="text-center text-2xl font-semibold mb-8">
+        {Helpers.getTranslationValue("Data Process")}
+      </h2>
 
       <div className="flex flex-col items-center px-10">
         <input
@@ -393,6 +423,6 @@ const CloneDataProcess = () => {
       </div>
     </div>
   );
-}
+};
 
 export default CloneDataProcess;

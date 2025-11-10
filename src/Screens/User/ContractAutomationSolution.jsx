@@ -18,40 +18,67 @@ const ContractAutomationSolution = () => {
   const [selectedDoctype, setSelectedDoctype] = useState("wind"); // Default to 'wind'
   const fileInputRef = useRef(null);
   const [canUpload, setCanUpload] = useState(true);
+  const [availableCount, setAvailableCount] = useState(null);
+
+  const checkUsageCount = async () => {
+    try {
+      const response = await axios.get(
+        `${Helpers.apiUrl}check-usage-count/ContractSolutions`,
+        Helpers.authHeaders
+      );
+
+      if (response.status === 200) {
+        const { available_count } = response.data;
+        const normalizedCount =
+          typeof available_count === "number" ? available_count : null;
+
+        setAvailableCount(normalizedCount);
+
+        if (normalizedCount !== null && normalizedCount <= 0) {
+          setCanUpload(false);
+          Helpers.toast(
+            "error",
+            Helpers.getTranslationValue("error_usage_limit")
+          );
+        } else {
+          setCanUpload(true);
+        }
+      }
+    } catch (error) {
+      if (error.response) {
+        const { status: statusCode, data } = error.response;
+        const remainingCount =
+          typeof data?.available_count === "number"
+            ? data.available_count
+            : null;
+
+        setAvailableCount(remainingCount);
+
+        if (statusCode === 403) {
+          setCanUpload(false); // Disable the file selection
+          const sheetsLeftMessage =
+            remainingCount !== null
+              ? `Only ${remainingCount} data sheet${
+                  remainingCount === 1 ? "" : "s"
+                } left. Please try again.`
+              : Helpers.getTranslationValue("error_usage_limit");
+
+          Helpers.toast("error", sheetsLeftMessage);
+          return;
+        }
+      }
+
+      // Handle other errors
+      Helpers.toast("error", Helpers.getTranslationValue("error_check_usage"));
+      setCanUpload(false); // Optionally disable if there's an unknown error
+    }
+  };
 
   useEffect(() => {
     setHeaderData({
       title: Helpers.getTranslationValue("Automatisierte Vertragserstellung"),
       desc: "",
     });
-    const checkUsageCount = async () => {
-      try {
-        const response = await axios.get(
-          `${Helpers.apiUrl}check-usage-count/ContractSolutions`, Helpers.authHeaders
-        );
-
-        if (response.status === 200) {
-          const { available_count } = response.data;
-          if (available_count <= 0) {
-            setCanUpload(false);
-            Helpers.toast("error", Helpers.getTranslationValue("error_usage_limit"));
-          } else {
-            setCanUpload(true);
-          }
-        }
-      } catch (error) {
-        // Check if the error is a 403 status
-        if (error.response && error.response.status === 403) {
-          setCanUpload(false); // Disable the file selection
-          Helpers.toast("error", Helpers.getTranslationValue("error_usage_limit"));
-        } else {
-          // Handle other errors
-          Helpers.toast("error", Helpers.getTranslationValue("error_check_usage"));
-          setCanUpload(false); // Optionally disable if there's an unknown error
-        }
-      }
-    };
-
     checkUsageCount();
   }, [setHeaderData]);
 
@@ -68,6 +95,16 @@ const ContractAutomationSolution = () => {
   const handleFileUpload = async () => {
     if (!selectedFiles || selectedFiles.length === 0) {
       Helpers.toast("error", Helpers.getTranslationValue("file_select_first"));
+      return;
+    }
+
+    if (availableCount !== null && selectedFiles.length > availableCount) {
+      Helpers.toast(
+        "error",
+        `Only ${availableCount} data sheet${
+          availableCount === 1 ? "" : "s"
+        } left. Please try again.`
+      );
       return;
     }
 
@@ -121,6 +158,7 @@ const ContractAutomationSolution = () => {
             "success",
             Helpers.getTranslationValue("upload_success")
           );
+          await checkUsageCount();
         } else {
           throw new Error(
             response.message || Helpers.getTranslationValue("error_file_upload")
@@ -213,9 +251,11 @@ const ContractAutomationSolution = () => {
       <div className="flex justify-end gap-1 mt-8 px-10">
         <button
           onClick={handleFileUpload}
-          disabled={Object.values(fileStatuses).some(
-            (file) => file.status === "In Progress"
-          ) || !canUpload}
+          disabled={
+            Object.values(fileStatuses).some(
+              (file) => file.status === "In Progress"
+            ) || !canUpload
+          }
           className="flex justify-end text-white py-3 px-6 font-bold bg-success-300 hover:bg-success-300 transition-all rounded-lg"
           style={{ marginRight: "40px" }}
         >
@@ -225,6 +265,6 @@ const ContractAutomationSolution = () => {
       </div>
     </div>
   );
-}
+};
 
 export default ContractAutomationSolution;
