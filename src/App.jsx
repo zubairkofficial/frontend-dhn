@@ -32,6 +32,7 @@ import AddTool from "./Screens/Admin/Tools/AddTool";
 import EditTool from "./Screens/Admin/Tools/EditTool";
 import DataProcess from "./Screens/User/DataProcess";
 import CloneDataProcess from "./Screens/User/CloneDataProcess";
+import DemoDataProcess from "./Screens/User/DemoDataProcess";
 import ChangeLogo from "./Screens/User/ChangeLogo";
 import Settings from "./Screens/User/Settings";
 import OrganizationalUserTable from "./Components/OrganizationalUserTable";
@@ -198,9 +199,9 @@ const App = () => {
 
   const hasServiceAccess = (serviceId) => {
     const user = Helpers.authUser;
-      if (user && user.services) {
-        return user.services.includes(serviceId);
-      }
+    if (user && user.services) {
+      return user.services.includes(serviceId);
+    }
     return false;
   };
   const fetchTranslations = async () => {
@@ -336,6 +337,16 @@ const App = () => {
                 element={
                   <Auth>
                     <CloneDataProcess />
+                  </Auth>
+                }
+              />
+            )}
+            {hasServiceAccess(12) && (
+              <Route
+                path="/demo_data_process"
+                element={
+                  <Auth>
+                    <DemoDataProcess />
                   </Auth>
                 }
               />
