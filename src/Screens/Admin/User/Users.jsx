@@ -36,6 +36,7 @@ const Users = () => {
   const [dataProcessCount, setDataProcessCount] = useState(null);
   const [freeDataProcessCount, setFreeDataProcessCount] = useState(null);
   const [cloneDataProcessCount, setCloneDataProcessCount] = useState(null);
+  const [demoDataProcessCount, setDemoDataProcessCount] = useState(null);
   const [werthenbachCount, setWerthenbachCount] = useState(null);
   const [scherenCount, setScherenCount] = useState(null);
   const [sennheiserCount, setSennheiserCount] = useState(null);
@@ -67,6 +68,7 @@ const Users = () => {
         setScherenCount(response.data.scheren_count);
         setSennheiserCount(response.data.sennheiser_count);
         setVerbundCount(response.data.verbund_count);
+        setDemoDataProcessCount(response.data.demo_data_process_count);
       } else {
         throw new Error("Failed to fetch user usage data");
       }
@@ -88,6 +90,7 @@ const Users = () => {
     setScherenCount(null);
     setSennheiserCount(null);
     setVerbundCount(null);
+    setDemoDataProcessCount(null);
     setModalError(null);
   };
 
@@ -273,7 +276,8 @@ const Users = () => {
                   werthenbachCount === undefined &&
                   scherenCount === undefined &&
                   sennheiserCount === undefined &&
-                  verbundCount === undefined ? (
+                  verbundCount === undefined &&
+                  demoDataProcessCount === undefined ? (
                     <p className="text-gray-500">
                       Keine Werkzeugnutzung gefunden
                     </p>
@@ -410,6 +414,19 @@ const Users = () => {
                                 {verbundCount}
                               </td>
                              </tr>
+                          )}
+                          {demoDataProcessCount !== undefined && (
+                            <tr className="hover:bg-gray-50">
+                              <td className="px-6 py-4 border-b text-sm text-gray-600 font-bold">
+                                10
+                              </td>
+                              <td className="px-6 py-4 text-sm text-gray-600 font-bold">
+                                Demo Data Process
+                              </td>
+                              <td className="px-6 py-4 text-sm text-gray-600 font-bold">
+                                {demoDataProcessCount}
+                              </td>
+                            </tr>
                           )}
                         </tbody>
                       </table>

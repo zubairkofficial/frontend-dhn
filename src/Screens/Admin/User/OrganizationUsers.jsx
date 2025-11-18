@@ -228,6 +228,19 @@ const OrganizationUsers = () => {
                         </td>
                       </tr>
                     )}
+                    {selectedUser.serviceIds.includes(12) && (
+                      <tr className="hover:bg-gray-50">
+                        <td className="px-6 py-4 text-sm text-gray-600 font-bold">
+                          6
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-600 font-bold">
+                          Demo Data Process
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-600 font-bold">
+                          {selectedUser.demoDataProcessCount}
+                        </td>
+                      </tr>
+                    )}
                   </tbody>
                 </table>
               </div>

@@ -10,6 +10,7 @@ const UserUsageModal = ({
   contractSolutionCount,
   dataProcessCount,
   cloneDataProcessCount,
+  demoDataProcessCount,
 }) => {
   return (
     <Modal
@@ -36,6 +37,7 @@ const UserUsageModal = ({
             <p><strong>Contract Solution Count:</strong> {contractSolutionCount}</p>
             <p><strong>Data Processes Count:</strong> {dataProcessCount}</p>
             <p><strong>Clone Data Processes Count:</strong> {cloneDataProcessCount}</p>
+            <p><strong>Demo Data Processes Count:</strong> {demoDataProcessCount}</p>
           </div>
         )}
       </Modal.Body>
