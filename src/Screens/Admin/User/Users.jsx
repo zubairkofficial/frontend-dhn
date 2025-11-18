@@ -16,11 +16,14 @@ const Users = () => {
     });
   }, [setHeaderData]);
 
-  const [users, setUsers] = useState([]);
+  const [customerAdmins, setCustomerAdmins] = useState([]);
+  const [allUsers, setAllUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [globalSearchTerm, setGlobalSearchTerm] = useState("");
+  const [isGlobalSearch, setIsGlobalSearch] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
   const itemsPerPage = 10;
   const location = useLocation();
@@ -105,28 +108,41 @@ const Users = () => {
     fetchUsers();
   }, []);
 
+  // Filter users based on search terms
   useEffect(() => {
-    setFilteredUsers(
-      users.filter(
-        (user) =>
-          user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          (user.services &&
-            user.services
-              .map((service) => service.name)
-              .join(", ")
-              .toLowerCase()
-              .includes(searchTerm.toLowerCase())) ||
-          (user.organization &&
-            user.organization.name &&
-            user.organization.name
-              .toLowerCase()
-              .includes(searchTerm.toLowerCase()))
-      )
-    );
-  }, [searchTerm, users]);
+    let usersToFilter = isGlobalSearch ? allUsers : customerAdmins;
+    let searchValue = isGlobalSearch ? globalSearchTerm : searchTerm;
 
-  const fetchUsers = async () => {
+    if (!searchValue || searchValue.trim() === "") {
+      // Show default data when search is empty
+      setFilteredUsers(usersToFilter);
+      return;
+    }
+
+    const filtered = usersToFilter.filter(
+      (user) =>
+        user.name?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        user.email?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        (user.services &&
+          Array.isArray(user.services) &&
+          user.services
+            .map((service) =>
+              typeof service === "string" ? service : service.name || service
+            )
+            .join(", ")
+            .toLowerCase()
+            .includes(searchValue.toLowerCase())) ||
+        (user.organization_name &&
+          user.organization_name
+            .toLowerCase()
+            .includes(searchValue.toLowerCase()))
+    );
+
+    setFilteredUsers(filtered);
+  }, [searchTerm, globalSearchTerm, isGlobalSearch, customerAdmins, allUsers]);
+
+  // Fetch customer admins
+  const fetchCustomerAdmins = async () => {
     try {
       const response = await axios.get(
         `${Helpers.apiUrl}getAllCustomerUsers`,
@@ -138,12 +154,77 @@ const Users = () => {
       const usersData = Array.isArray(response.data.customer_users)
         ? response.data.customer_users
         : [];
-      setUsers(usersData);
-      setFilteredUsers(usersData);
-      setLoading(false);
+      setCustomerAdmins(usersData);
+      return usersData;
     } catch (error) {
       setError(error.message);
+      throw error;
+    }
+  };
+
+  // Fetch all users for global search
+  const fetchAllUsers = async () => {
+    try {
+      const response = await axios.get(
+        `${Helpers.apiUrl}search-all-users`,
+        Helpers.authHeaders
+      );
+      if (response.status === 200) {
+        const usersData = Array.isArray(response.data.users)
+          ? response.data.users
+          : [];
+        // Transform the data to match the expected format
+        const transformedUsers = usersData.map((user) => ({
+          ...user,
+          services: user.services || [],
+        }));
+        setAllUsers(transformedUsers);
+        return transformedUsers;
+      } else {
+        throw new Error("Failed to fetch all users");
+      }
+    } catch (error) {
+      console.error("Error fetching all users:", error);
+      setAllUsers([]);
+      return [];
+    }
+  };
+
+  // Fetch both datasets on component load
+  const fetchUsers = async () => {
+    setLoading(true);
+    try {
+      const [customerAdminsData] = await Promise.all([
+        fetchCustomerAdmins(),
+        fetchAllUsers(),
+      ]);
+      // Set default filtered users to customer admins
+      setFilteredUsers(customerAdminsData);
+    } catch (error) {
+      setError(error.message);
+    } finally {
       setLoading(false);
+    }
+  };
+
+  const handleGlobalSearch = (searchValue) => {
+    setGlobalSearchTerm(searchValue);
+    setIsGlobalSearch(true);
+
+    // If search is empty, switch back to customer admins view
+    if (!searchValue || searchValue.trim() === "") {
+      setIsGlobalSearch(false);
+      setFilteredUsers(customerAdmins);
+    }
+  };
+
+  const handleLocalSearch = (searchValue) => {
+    setSearchTerm(searchValue);
+    setIsGlobalSearch(false);
+
+    // If search is empty, show all customer admins
+    if (!searchValue || searchValue.trim() === "") {
+      setFilteredUsers(customerAdmins);
     }
   };
 
@@ -164,7 +245,10 @@ const Users = () => {
       if (response.status !== 200) {
         throw new Error(Helpers.getTranslationValue("user_delete_error"));
       }
-      setUsers(users.filter((user) => user.id !== userToDelete));
+      setCustomerAdmins(
+        customerAdmins.filter((user) => user.id !== userToDelete)
+      );
+      setAllUsers(allUsers.filter((user) => user.id !== userToDelete));
       setFilteredUsers(
         filteredUsers.filter((user) => user.id !== userToDelete)
       );
@@ -413,7 +497,7 @@ const Users = () => {
                               <td className="px-6 py-4 text-sm text-gray-600 font-bold">
                                 {verbundCount}
                               </td>
-                             </tr>
+                            </tr>
                           )}
                           {demoDataProcessCount !== undefined && (
                             <tr className="hover:bg-gray-50">
@@ -570,15 +654,18 @@ const Users = () => {
 
       <div className="bg-white p-4 rounded-lg shadow-md">
         <div className="flex justify-between space-x-2 mb-4">
-          <div className="mb-4">
+          <div className="mb-4 flex gap-2">
             <div className="relative">
               <input
                 type="text"
                 className="border border-gray-300 rounded-lg p-2 pr-10 focus:border-blue-500 focus:ring-0"
                 id="search"
-                placeholder={Helpers.getTranslationValue("user_search")}
+                placeholder={
+                  Helpers.getTranslationValue("user_search") +
+                  " (Customer Admins)"
+                }
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => handleLocalSearch(e.target.value)}
               />
               <div className="absolute top-1/2 right-4 transform -translate-y-1/2">
                 <svg
@@ -601,6 +688,42 @@ const Users = () => {
                     strokeWidth="1.5"
                     strokeLinecap="round"
                     strokeLinejoin="round"
+                  />
+                </svg>
+              </div>
+            </div>
+            <div className="relative">
+              <input
+                type="text"
+                className="border border-blue-500 rounded-lg p-2 pr-10 focus:border-blue-600 focus:ring-0"
+                id="globalSearch"
+                placeholder="Global Search (All Users)"
+                value={globalSearchTerm}
+                onChange={(e) => handleGlobalSearch(e.target.value)}
+              />
+              <div className="absolute top-1/2 right-4 transform -translate-y-1/2">
+                <svg
+                  width={20}
+                  height={20}
+                  viewBox="0 0 20 20"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <circle
+                    cx="9.7859"
+                    cy="9.78614"
+                    r="8.23951"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="text-blue-500"
+                  />
+                  <path
+                    d="M15.5166 15.9448L18.747 19.1668"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="text-blue-500"
                   />
                 </svg>
               </div>
@@ -670,7 +793,15 @@ const Users = () => {
                     {user.email}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {user.services.map((service) => service).join(", ")}
+                    {Array.isArray(user.services)
+                      ? user.services
+                          .map((service) =>
+                            typeof service === "string"
+                              ? service
+                              : service.name || service
+                          )
+                          .join(", ")
+                      : user.services || "N/A"}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {user.organization_name}
