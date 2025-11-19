@@ -10,7 +10,7 @@ import {
   faEnvelope,
 } from "@fortawesome/free-solid-svg-icons";
 import { useHeader } from "../../Components/HeaderContext";
-import * as XLSX from "xlsx";
+import ExcelJS from "exceljs";
 
 const DemoDataProcess = () => {
   const { setHeaderData } = useHeader();
@@ -167,7 +167,9 @@ const DemoDataProcess = () => {
   const handleSendEmail = async () => {
     setIsEmailSending(true);
     const MAX_CHAR_LIMIT = 32767;
-    const data = [];
+
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Processed Data");
 
     // Define the custom headers in your desired order (same as CloneDataProcess)
     const headers = [
@@ -206,7 +208,24 @@ const DemoDataProcess = () => {
       "Section - 14",
       "Section-Missing-Count",
     ];
-    data.push(headers);
+
+    // Add headers to the worksheet with styles
+    worksheet.addRow(headers);
+    worksheet.getRow(1).eachCell((cell) => {
+      cell.font = { bold: true, size: 14, name: "Calibri" };
+      cell.alignment = { vertical: "middle", horizontal: "center" };
+      cell.fill = {
+        type: "pattern",
+        pattern: "solid",
+        fgColor: { argb: "FFFF00" },
+      };
+      cell.border = {
+        top: { style: "thick" },
+        bottom: { style: "thick" },
+        left: { style: "thick" },
+        right: { style: "thick" },
+      };
+    });
 
     const headerMapping = {
       Produktname: "Produktname",
@@ -263,15 +282,12 @@ const DemoDataProcess = () => {
         return cellData;
       });
 
-      data.push(processedRowData);
+      worksheet.addRow(processedRowData);
     });
 
-    const ws = XLSX.utils.aoa_to_sheet(data);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Processed Data");
-
-    const wbout = XLSX.write(wb, { type: "array", bookType: "xlsx" });
-    const blob = new Blob([wbout], {
+    // Write the workbook to a buffer
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], {
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     });
 
