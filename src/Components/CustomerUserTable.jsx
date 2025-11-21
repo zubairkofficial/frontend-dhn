@@ -22,6 +22,10 @@ const CustomerUserTable = () => {
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
+  const [childUsersMap, setChildUsersMap] = useState({});
+  const [childUsersLoading, setChildUsersLoading] = useState(false);
+  const [childUsersError, setChildUsersError] = useState(null);
+  const [matchingChildUsers, setMatchingChildUsers] = useState({});
   const itemsPerPage = 10;
   const location = useLocation();
   const navigate = useNavigate();
@@ -99,27 +103,57 @@ const CustomerUserTable = () => {
   }, []);
 
   useEffect(() => {
-    setFilteredUsers(
-      users
-        .filter((user) => user.is_user_organizational === 1) // Filter for users with is_user_organizational = 1
-        .filter(
-          (user) =>
-            user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            (user.services &&
-              user.services
-                .map((service) => service.name)
-                .join(", ")
-                .toLowerCase()
-                .includes(searchTerm.toLowerCase())) ||
-            (user.organization &&
-              user.organization.name &&
-              user.organization.name
-                .toLowerCase()
-                .includes(searchTerm.toLowerCase()))
-        )
+    const normalizedSearch = searchTerm.trim().toLowerCase();
+    const organizationalUsers = users.filter(
+      (user) => user.is_user_organizational === 1
     );
-  }, [searchTerm, users]);
+
+    if (!normalizedSearch) {
+      setFilteredUsers(organizationalUsers);
+      setMatchingChildUsers({});
+      return;
+    }
+
+    const nextMatchingChildren = {};
+    const filtered = organizationalUsers.filter((user) => {
+      const servicesText = Array.isArray(user.services)
+        ? user.services
+            .map((service) =>
+              typeof service === "string" ? service : service?.name ?? ""
+            )
+            .join(", ")
+            .toLowerCase()
+        : "";
+
+      const matchesSelf =
+        user.name?.toLowerCase().includes(normalizedSearch) ||
+        user.email?.toLowerCase().includes(normalizedSearch) ||
+        servicesText.includes(normalizedSearch) ||
+        user.organization_name?.toLowerCase().includes(normalizedSearch);
+
+      const children = childUsersMap[user.id] || [];
+      const childMatches = children.filter((child) => {
+        const childServices = Array.isArray(child.services)
+          ? child.services.join(", ").toLowerCase()
+          : "";
+        return (
+          child.name?.toLowerCase().includes(normalizedSearch) ||
+          child.email?.toLowerCase().includes(normalizedSearch) ||
+          childServices.includes(normalizedSearch) ||
+          child.organization_name?.toLowerCase().includes(normalizedSearch)
+        );
+      });
+
+      if (childMatches.length) {
+        nextMatchingChildren[user.id] = childMatches;
+      }
+
+      return matchesSelf || childMatches.length > 0;
+    });
+
+    setMatchingChildUsers(nextMatchingChildren);
+    setFilteredUsers(filtered);
+  }, [searchTerm, users, childUsersMap]);
 
   const fetchUsers = async () => {
     try {
@@ -138,10 +172,65 @@ const CustomerUserTable = () => {
       setFilteredUsers(
         usersData.filter((user) => user.is_user_organizational === 1)
       ); // Only set users with is_user_organizational = 1
+      fetchChildUsersForOrganizations(usersData);
       setLoading(false);
     } catch (error) {
       setError(error.message);
       setLoading(false);
+    }
+  };
+
+  const fetchChildUsersForOrganizations = async (organizationUsers) => {
+    const orgAdmins = organizationUsers.filter(
+      (user) => user.is_user_organizational === 1
+    );
+
+    if (!orgAdmins.length) {
+      setChildUsersMap({});
+      return;
+    }
+
+    setChildUsersLoading(true);
+    setChildUsersError(null);
+
+    try {
+      const responses = await Promise.all(
+        orgAdmins.map(async (orgUser) => {
+          try {
+            const response = await axios.get(
+              `${Helpers.apiUrl}customer-normal-users/${orgUser.id}`,
+              Helpers.authHeaders
+            );
+            if (
+              response.status === 200 &&
+              Array.isArray(response.data.normal_users)
+            ) {
+              return {
+                parentId: orgUser.id,
+                users: response.data.normal_users,
+              };
+            }
+            return { parentId: orgUser.id, users: [] };
+          } catch (childError) {
+            console.error(
+              `Failed to fetch users for organizational admin ${orgUser.id}`,
+              childError
+            );
+            return { parentId: orgUser.id, users: [] };
+          }
+        })
+      );
+
+      const map = responses.reduce((acc, { parentId, users }) => {
+        acc[parentId] = users;
+        return acc;
+      }, {});
+
+      setChildUsersMap(map);
+    } catch (childFetchError) {
+      setChildUsersError(childFetchError.message);
+    } finally {
+      setChildUsersLoading(false);
     }
   };
 
@@ -446,6 +535,16 @@ const CustomerUserTable = () => {
                 </svg>
               </div>
             </div>
+            {childUsersLoading && (
+              <p className="text-xs text-gray-500 mt-1">
+                {Helpers.getTranslationValue("Loading")}...
+              </p>
+            )}
+            {!childUsersLoading && childUsersError && (
+              <p className="text-xs text-red-500 mt-1">
+                {Helpers.getTranslationValue("error")}: {childUsersError}
+              </p>
+            )}
           </div>
 
           <Link
@@ -506,6 +605,16 @@ const CustomerUserTable = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {user.name}
+                      {searchTerm.trim() &&
+                        matchingChildUsers[user.id] &&
+                        matchingChildUsers[user.id].length > 0 && (
+                          <div className="mt-1 text-xs text-gray-500">
+                            Matching users:{" "}
+                            {matchingChildUsers[user.id]
+                              .map((child) => `${child.name} (${child.email})`)
+                              .join(", ")}
+                          </div>
+                        )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {user.email}
