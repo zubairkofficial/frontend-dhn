@@ -21,11 +21,14 @@ const CustomerUserTable = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [globalSearchTerm, setGlobalSearchTerm] = useState("");
+  const [isGlobalSearch, setIsGlobalSearch] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
   const [childUsersMap, setChildUsersMap] = useState({});
   const [childUsersLoading, setChildUsersLoading] = useState(false);
   const [childUsersError, setChildUsersError] = useState(null);
   const [matchingChildUsers, setMatchingChildUsers] = useState({});
+  const [allChildUsers, setAllChildUsers] = useState([]);
   const itemsPerPage = 10;
   const location = useLocation();
   const navigate = useNavigate();
@@ -102,7 +105,76 @@ const CustomerUserTable = () => {
     fetchUsers();
   }, []);
 
+  const stringifyServices = (services) => {
+    if (Array.isArray(services)) {
+      return services
+        .map((service) =>
+          typeof service === "string" ? service : service?.name ?? ""
+        )
+        .filter(Boolean)
+        .join(", ");
+    }
+
+    if (typeof services === "string") {
+      return services;
+    }
+
+    if (services && typeof services === "object") {
+      return services.name || "";
+    }
+
+    return "";
+  };
+
+  const handleLocalSearchChange = (value) => {
+    setSearchTerm(value);
+    setGlobalSearchTerm("");
+    setIsGlobalSearch(false);
+    setCurrentPage(0);
+  };
+
+  const handleGlobalSearchChange = (value) => {
+    setGlobalSearchTerm(value);
+    if (value.trim()) {
+      setIsGlobalSearch(true);
+      setSearchTerm("");
+      setMatchingChildUsers({});
+    } else {
+      setIsGlobalSearch(false);
+    }
+    setCurrentPage(0);
+  };
+
   useEffect(() => {
+    if (isGlobalSearch) {
+      const normalizedGlobal = globalSearchTerm.trim().toLowerCase();
+
+      if (!normalizedGlobal) {
+        setFilteredUsers(
+          users.filter((user) => user.is_user_organizational === 1)
+        );
+        return;
+      }
+
+      const filteredChildren = allChildUsers.filter((child) => {
+        const servicesText = stringifyServices(child.services)
+          .toLowerCase()
+          .trim();
+        return (
+          child.name?.toLowerCase().includes(normalizedGlobal) ||
+          child.email?.toLowerCase().includes(normalizedGlobal) ||
+          servicesText.includes(normalizedGlobal) ||
+          child.organization_name?.toLowerCase().includes(normalizedGlobal) ||
+          child.parentName?.toLowerCase().includes(normalizedGlobal) ||
+          child.parentEmail?.toLowerCase().includes(normalizedGlobal)
+        );
+      });
+
+      setFilteredUsers(filteredChildren);
+      setCurrentPage(0);
+      return;
+    }
+
     const normalizedSearch = searchTerm.trim().toLowerCase();
     const organizationalUsers = users.filter(
       (user) => user.is_user_organizational === 1
@@ -116,14 +188,9 @@ const CustomerUserTable = () => {
 
     const nextMatchingChildren = {};
     const filtered = organizationalUsers.filter((user) => {
-      const servicesText = Array.isArray(user.services)
-        ? user.services
-            .map((service) =>
-              typeof service === "string" ? service : service?.name ?? ""
-            )
-            .join(", ")
-            .toLowerCase()
-        : "";
+      const servicesText = stringifyServices(user.services)
+        .toLowerCase()
+        .trim();
 
       const matchesSelf =
         user.name?.toLowerCase().includes(normalizedSearch) ||
@@ -133,9 +200,9 @@ const CustomerUserTable = () => {
 
       const children = childUsersMap[user.id] || [];
       const childMatches = children.filter((child) => {
-        const childServices = Array.isArray(child.services)
-          ? child.services.join(", ").toLowerCase()
-          : "";
+        const childServices = stringifyServices(child.services)
+          .toLowerCase()
+          .trim();
         return (
           child.name?.toLowerCase().includes(normalizedSearch) ||
           child.email?.toLowerCase().includes(normalizedSearch) ||
@@ -153,7 +220,15 @@ const CustomerUserTable = () => {
 
     setMatchingChildUsers(nextMatchingChildren);
     setFilteredUsers(filtered);
-  }, [searchTerm, users, childUsersMap]);
+    setCurrentPage(0);
+  }, [
+    searchTerm,
+    users,
+    childUsersMap,
+    isGlobalSearch,
+    globalSearchTerm,
+    allChildUsers,
+  ]);
 
   const fetchUsers = async () => {
     try {
@@ -184,9 +259,14 @@ const CustomerUserTable = () => {
     const orgAdmins = organizationUsers.filter(
       (user) => user.is_user_organizational === 1
     );
+    const orgAdminLookup = orgAdmins.reduce((acc, admin) => {
+      acc[admin.id] = admin;
+      return acc;
+    }, {});
 
     if (!orgAdmins.length) {
       setChildUsersMap({});
+      setAllChildUsers([]);
       return;
     }
 
@@ -226,9 +306,23 @@ const CustomerUserTable = () => {
         return acc;
       }, {});
 
+      const flattenedChildren = responses.flatMap(({ parentId, users }) => {
+        const parentInfo = orgAdminLookup[parentId] || {};
+        return users.map((child) => ({
+          ...child,
+          parentId,
+          parentName: parentInfo.name || "",
+          parentEmail: parentInfo.email || "",
+          parentOrganization:
+            parentInfo.organization_name || child.organization_name || "",
+        }));
+      });
+
       setChildUsersMap(map);
+      setAllChildUsers(flattenedChildren);
     } catch (childFetchError) {
       setChildUsersError(childFetchError.message);
+      setAllChildUsers([]);
     } finally {
       setChildUsersLoading(false);
     }
@@ -499,16 +593,16 @@ const CustomerUserTable = () => {
       )}
 
       <div className="bg-white p-4 rounded-lg shadow-md">
-        <div className="flex justify-between space-x-2 mb-4">
-          <div className="mb-4">
-            <div className="relative">
+        <div className="flex justify-between space-x-2 mb-4 flex-col lg:flex-row">
+          <div className="mb-4 flex flex-col md:flex-row gap-3 w-full">
+            <div className="relative flex-1">
               <input
                 type="text"
-                className="border border-gray-300 rounded-lg p-2 pr-10 focus:border-blue-500 focus:ring-0"
+                className="w-full border border-gray-300 rounded-lg p-2 pr-10 focus:border-blue-500 focus:ring-0"
                 id="search"
                 placeholder={Helpers.getTranslationValue("user_search")}
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => handleLocalSearchChange(e.target.value)}
               />
               <div className="absolute top-1/2 right-4 transform -translate-y-1/2">
                 <svg
@@ -531,6 +625,42 @@ const CustomerUserTable = () => {
                     strokeWidth="1.5"
                     strokeLinecap="round"
                     strokeLinejoin="round"
+                  />
+                </svg>
+              </div>
+            </div>
+            <div className="relative flex-1">
+              <input
+                type="text"
+                className="w-full border border-blue-500 rounded-lg p-2 pr-10 focus:border-blue-600 focus:ring-0"
+                id="globalSearch"
+                placeholder="Global Search (Assigned Users)"
+                value={globalSearchTerm}
+                onChange={(e) => handleGlobalSearchChange(e.target.value)}
+              />
+              <div className="absolute top-1/2 right-4 transform -translate-y-1/2">
+                <svg
+                  width={20}
+                  height={20}
+                  viewBox="0 0 20 20"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <circle
+                    cx="9.7859"
+                    cy="9.78614"
+                    r="8.23951"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="text-blue-500"
+                  />
+                  <path
+                    d="M15.5166 15.9448L18.747 19.1668"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="text-blue-500"
                   />
                 </svg>
               </div>
@@ -559,123 +689,210 @@ const CustomerUserTable = () => {
           <div className="overflow-auto">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    #
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {Helpers.getTranslationValue("Name")}
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {Helpers.getTranslationValue("Email")}
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {Helpers.getTranslationValue("Services")}
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {Helpers.getTranslationValue("Voice Protocol Organization")}
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {Helpers.getTranslationValue(
-                      "Anzahl verfügbarer Dokumente"
-                    )}
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {Helpers.getTranslationValue("Organisationsbenutzer")}
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {Helpers.getTranslationValue("Verbrauchte Dokumente")}
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {Helpers.getTranslationValue("Actions")}
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {Helpers.getTranslationValue("users")}
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {Helpers.getTranslationValue("All Processed Data")}
-                  </th>
-                </tr>
+                {isGlobalSearch ? (
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      #
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      {Helpers.getTranslationValue("Name")}
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      {Helpers.getTranslationValue("Email")}
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      {Helpers.getTranslationValue("Services")}
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      {Helpers.getTranslationValue(
+                        "Voice Protocol Organization"
+                      )}
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Assigned Organizational Admin
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      {Helpers.getTranslationValue("Actions")}
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      {Helpers.getTranslationValue("All Processed Data")}
+                    </th>
+                  </tr>
+                ) : (
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      #
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      {Helpers.getTranslationValue("Name")}
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      {Helpers.getTranslationValue("Email")}
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      {Helpers.getTranslationValue("Services")}
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      {Helpers.getTranslationValue(
+                        "Voice Protocol Organization"
+                      )}
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      {Helpers.getTranslationValue(
+                        "Anzahl verfügbarer Dokumente"
+                      )}
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      {Helpers.getTranslationValue("Organisationsbenutzer")}
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      {Helpers.getTranslationValue("Verbrauchte Dokumente")}
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      {Helpers.getTranslationValue("Actions")}
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      {Helpers.getTranslationValue("users")}
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      {Helpers.getTranslationValue("All Processed Data")}
+                    </th>
+                  </tr>
+                )}
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {currentUsers.map((user, index) => (
-                  <tr key={user.id}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {indexOfFirstUser + index + 1}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {user.name}
-                      {searchTerm.trim() &&
-                        matchingChildUsers[user.id] &&
-                        matchingChildUsers[user.id].length > 0 && (
-                          <div className="mt-1 text-xs text-gray-500">
-                            Matching users:{" "}
-                            {matchingChildUsers[user.id]
-                              .map((child) => `${child.name} (${child.email})`)
-                              .join(", ")}
-                          </div>
-                        )}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {user.email}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {user.services.map((service) => service).join(", ")}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {user.organization_name}
-                    </td>
-                    <td className="px-6 py-4 text-center whitespace-nowrap text-sm text-gray-500">
-                      {user.counter_limit}
-                    </td>
-                    <td className="px-6 py-4 text-center whitespace-nowrap text-sm text-gray-500">
-                      {user.all_organization_count ?? "Nill"}
-                    </td>
+                {isGlobalSearch
+                  ? currentUsers.map((user, index) => (
+                      <tr key={`${user.id}-${user.parentId || index}`}>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                          {indexOfFirstUser + index + 1}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {user.name}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {user.email}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {stringifyServices(user.services) || "N/A"}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {user.organization_name ||
+                            user.parentOrganization ||
+                            "-"}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          <div>{user.parentName || "-"}</div>
+                          {user.parentEmail && (
+                            <div className="text-xs text-gray-400">
+                              {user.parentEmail}
+                            </div>
+                          )}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium flex items-center">
+                          <button
+                            className="bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600"
+                            onClick={() => handleEdit(user.id)}
+                          >
+                            <FaPencilAlt className="text-black" />
+                          </button>
+                          <button
+                            className="bg-red-500 text-white p-2 rounded-lg hover:bg-red-600 ml-2"
+                            onClick={() => handleDelete(user.id)}
+                          >
+                            <FaTrashAlt className="text-black" />
+                          </button>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                          <button
+                            className="bg-purple-500 text-white p-2 rounded-lg hover:bg-purple-600 ml-2"
+                            onClick={() => handleViewAllProcessedData(user.id)}
+                          >
+                            <FaEye className="text-black" />
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  : currentUsers.map((user, index) => (
+                      <tr key={user.id}>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                          {indexOfFirstUser + index + 1}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {user.name}
+                          {searchTerm.trim() &&
+                            matchingChildUsers[user.id] &&
+                            matchingChildUsers[user.id].length > 0 && (
+                              <div className="mt-1 text-xs text-gray-500">
+                                Matching users:{" "}
+                                {matchingChildUsers[user.id]
+                                  .map(
+                                    (child) => `${child.name} (${child.email})`
+                                  )
+                                  .join(", ")}
+                              </div>
+                            )}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {user.email}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {stringifyServices(user.services) || "N/A"}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {user.organization_name}
+                        </td>
+                        <td className="px-6 py-4 text-center whitespace-nowrap text-sm text-gray-500">
+                          {user.counter_limit}
+                        </td>
+                        <td className="px-6 py-4 text-center whitespace-nowrap text-sm text-gray-500">
+                          {user.all_organization_count ?? "Nill"}
+                        </td>
 
-                    <td className="px-6 py-4 text-center whitespace-nowrap text-sm text-gray-500">
-                      {user.allCount}
-                    </td>
+                        <td className="px-6 py-4 text-center whitespace-nowrap text-sm text-gray-500">
+                          {user.allCount}
+                        </td>
 
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium flex items-center">
-                      <button
-                        className="bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600"
-                        onClick={() => handleEdit(user.id)}
-                      >
-                        <FaPencilAlt className="text-black" />
-                      </button>
-                      <button
-                        className="bg-red-500 text-white p-2 rounded-lg hover:bg-red-600 ml-2"
-                        onClick={() => handleDelete(user.id)}
-                      >
-                        <FaTrashAlt className="text-black" />
-                      </button>
-                      {/* <button
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium flex items-center">
+                          <button
+                            className="bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600"
+                            onClick={() => handleEdit(user.id)}
+                          >
+                            <FaPencilAlt className="text-black" />
+                          </button>
+                          <button
+                            className="bg-red-500 text-white p-2 rounded-lg hover:bg-red-600 ml-2"
+                            onClick={() => handleDelete(user.id)}
+                          >
+                            <FaTrashAlt className="text-black" />
+                          </button>
+                          {/* <button
                         className="bg-green-500 text-white p-2 rounded-lg hover:bg-green-600 ml-2"
                         onClick={() => handleShowModal(user.id)}
                       >
                         <FaEye className="text-black" />
                       </button> */}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium items-center">
-                      {user.is_user_organizational === 1 && (
-                        <button
-                          className="bg-purple-500 text-white p-2 rounded-lg hover:bg-purple-600 ml-2"
-                          onClick={() => handleViewChildren(user.id)}
-                        >
-                          <FaUsers className="text-black" />
-                        </button>
-                      )}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium  items-center">
-                      <button
-                        className="bg-purple-500 text-white p-2 rounded-lg hover:bg-purple-600 ml-2"
-                        onClick={() => handleViewAllProcessedData(user.id)}
-                      >
-                        <FaEye className="text-black" />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium items-center">
+                          {user.is_user_organizational === 1 && (
+                            <button
+                              className="bg-purple-500 text-white p-2 rounded-lg hover:bg-purple-600 ml-2"
+                              onClick={() => handleViewChildren(user.id)}
+                            >
+                              <FaUsers className="text-black" />
+                            </button>
+                          )}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium  items-center">
+                          <button
+                            className="bg-purple-500 text-white p-2 rounded-lg hover:bg-purple-600 ml-2"
+                            onClick={() => handleViewAllProcessedData(user.id)}
+                          >
+                            <FaEye className="text-black" />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
               </tbody>
             </table>
           </div>
