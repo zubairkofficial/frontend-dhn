@@ -21,6 +21,7 @@ const DataProcess = () => {
   const [fileStatuses, setFileStatuses] = useState({});
   const [canUpload, setCanUpload] = useState(true);
   const [availableCount, setAvailableCount] = useState(null);
+  const [userCounterLimit, setUserCounterLimit] = useState(null);
   const [allProcessedData, setAllProcessedData] = useState([]);
   const [processedCount, setProcessedCount] = useState(0);
   const fileInputRef = useRef(null);
@@ -33,11 +34,14 @@ const DataProcess = () => {
       );
 
       if (response.status === 200) {
-        const { available_count } = response.data;
+        const { available_count, userCounterLimit } = response.data;
         const normalizedCount =
           typeof available_count === "number" ? available_count : null;
+        const normalizedLimit =
+          typeof userCounterLimit === "number" ? userCounterLimit : null;
 
         setAvailableCount(normalizedCount);
+        setUserCounterLimit(normalizedLimit);
 
         if (normalizedCount !== null && normalizedCount <= 0) {
           setCanUpload(false);
@@ -56,8 +60,13 @@ const DataProcess = () => {
           typeof data?.available_count === "number"
             ? data.available_count
             : null;
+        const limit =
+          typeof data?.userCounterLimit === "number"
+            ? data.userCounterLimit
+            : null;
 
         setAvailableCount(remainingCount);
+        setUserCounterLimit(limit);
 
         if (statusCode === 403) {
           setCanUpload(false);
@@ -385,6 +394,52 @@ const DataProcess = () => {
       <h2 className="text-center text-2xl font-semibold mb-8">
         {Helpers.getTranslationValue("Data Process")}
       </h2>
+
+      {/* Display Usage Limit */}
+      {(userCounterLimit !== null || availableCount !== null) && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6 mx-10">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-lg font-semibold text-blue-800">
+                Usage Limit Information
+              </p>
+              <p className="text-sm text-blue-600 mt-1">
+                {userCounterLimit !== null && (
+                  <>
+                    Total Limit: <span className="font-bold">{userCounterLimit}</span> data sheets
+                  </>
+                )}
+                {availableCount !== null && userCounterLimit !== null && (
+                  <>
+                    {" | "}
+                    Available: <span className="font-bold">{availableCount}</span> data sheets remaining
+                  </>
+                )}
+                {userCounterLimit !== null && availableCount !== null && (
+                  <>
+                    {" | "}
+                    Used: <span className="font-bold">{userCounterLimit - availableCount}</span> data sheets
+                  </>
+                )}
+              </p>
+            </div>
+            {availableCount !== null && availableCount <= 10 && availableCount > 0 && (
+              <div className="bg-yellow-100 border border-yellow-300 rounded px-3 py-1">
+                <p className="text-yellow-800 text-sm font-medium">
+                  Low Limit Warning
+                </p>
+              </div>
+            )}
+            {availableCount !== null && availableCount === 0 && (
+              <div className="bg-red-100 border border-red-300 rounded px-3 py-1">
+                <p className="text-red-800 text-sm font-medium">
+                  Limit Exceeded
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       <div className="flex flex-col items-center px-10">
         <input

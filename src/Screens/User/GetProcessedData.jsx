@@ -76,11 +76,19 @@ const GetProcessedData = ({ refresh }) => {
   };
 
   const handleView = (data) => {
+    if (!data) {
+      Helpers.toast("error", "No data available for this upload");
+      return;
+    }
     setSelectedData(data);
     setModalIsOpen(true);
   };
 
   const handleDownloadFile = async (fileName, fileData) => {
+    if (!fileData) {
+      Helpers.toast("error", "No data available for download");
+      return;
+    }
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet("Processed Data");
 
@@ -352,7 +360,10 @@ const GetProcessedData = ({ refresh }) => {
 
     // If no matching records are found, show an alert
     if (filteredData.length === 0) {
-      Helpers.toast("error", "No matching records found for the selected filters!");
+      Helpers.toast(
+        "error",
+        "No matching records found for the selected filters!"
+      );
       return;
     }
 
@@ -533,27 +544,61 @@ const GetProcessedData = ({ refresh }) => {
           {filteredData.map((item) => (
             <li
               key={item.id}
-              className="bg-gray-100 p-4 rounded-lg flex justify-between items-center shadow-sm"
+              className={`p-4 rounded-lg flex justify-between items-center shadow-sm ${
+                item.status === "error"
+                  ? "bg-red-50 border border-red-200"
+                  : "bg-gray-100"
+              }`}
             >
-              <div>
-                <p className="font-semibold">
-                  File Name: {truncateText(item.file_name)}
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-2">
+                  <p className="font-semibold">
+                    File Name: {truncateText(item.file_name)}
+                  </p>
+                  {item.status === "error" && (
+                    <span className="bg-red-500 text-white text-xs px-2 py-1 rounded">
+                      Error
+                    </span>
+                  )}
+                  {item.status === "success" && (
+                    <span className="bg-green-500 text-white text-xs px-2 py-1 rounded">
+                      Success
+                    </span>
+                  )}
+                </div>
+                {item.status === "error" ? (
+                  <p className="text-red-600">
+                    Error: {item.error_message || "Unknown error occurred"}
+                  </p>
+                ) : (
+                  <p>
+                    Product Name:{" "}
+                    {truncateText(item.data?.["Produktname"] || "N/A")}
+                  </p>
+                )}
+                <p className="text-sm text-gray-500 mt-1">
+                  Uploaded: {new Date(item.created_at).toLocaleString()}
                 </p>
-                <p>Product Name: {truncateText(item.data["Produktname"])}</p>
               </div>
               <div className="space-x-2">
-                <button
-                  onClick={() => handleView(item.data)}
-                  className="bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600"
-                >
-                  View <FontAwesomeIcon icon={faEye} />
-                </button>
-                <button
-                  onClick={() => handleDownloadFile(item.file_name, item.data)}
-                  className="text-white py-2 px-4 font-bold bg-success-300 hover:bg-success-300 transition-all rounded-lg"
-                >
-                  Download <FontAwesomeIcon icon={faDownload} />
-                </button>
+                {item.status === "success" && item.data && (
+                  <>
+                    <button
+                      onClick={() => handleView(item.data)}
+                      className="bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600"
+                    >
+                      View <FontAwesomeIcon icon={faEye} />
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleDownloadFile(item.file_name, item.data)
+                      }
+                      className="text-white py-2 px-4 font-bold bg-success-300 hover:bg-success-300 transition-all rounded-lg"
+                    >
+                      Download <FontAwesomeIcon icon={faDownload} />
+                    </button>
+                  </>
+                )}
               </div>
             </li>
           ))}
@@ -601,7 +646,7 @@ const GetProcessedData = ({ refresh }) => {
       )}
     </div>
   );
-}
+};
 
 GetProcessedData.propTypes = {
   refresh: PropTypes.bool.isRequired, // Declare the prop
