@@ -152,7 +152,6 @@ const GetWerthenbachData = ({ refresh }) => {
       };
     });
 
-
     // Header Mapping - Your stored data uses different field names
     const headerMapping = {
       Produktname: "Produktname",
@@ -390,16 +389,52 @@ const GetWerthenbachData = ({ refresh }) => {
   };
 
   const renderTableRows = (data) => {
-    return Object.entries(data).map(([key, value]) => (
-      <tr key={key} className="border-b">
-        <td className="p-3 font-medium text-gray-800">{key}</td>
-        <td className="p-3 text-gray-600">
-          {typeof value === "string" || typeof value === "number"
-            ? value
-            : JSON.stringify(value)}
-        </td>
-      </tr>
-    ));
+    // Define the desired display order for specific fields (based on client request)
+    const prioritizedFields = [
+      "WGK(numerischer Wert)", // WasserGefKlasse
+      "LG Klasse", // Lagerklasse
+      "Signalwort", // Signalwort
+      "Gefahrensymbole", // GefSymbole
+      "Aggregatzustand", // Aggregatzustand
+      "Dichte", // Dichte
+      "Flammpunkt (numerischer Wert)[°C]", // Flammpunkt
+      "UN Nr", // UN
+      "UN Benennung", // UN Benennung (if exists)
+      "Gefahrgutklasse (Länge beachten)", // Gefahrklasse
+      "Verpackungsgruppe", // Verpackungsgruppe
+      "Tunnelcode", // Tunnelcode
+      "Klassifizierungscode", // Klassifizierungscode
+      "LQ (Spalte eingefügt)", // Begrenzte Menge
+      "H Sätze durch Komma getrennt", // H-Sätze
+    ];
+
+    // Get all data keys
+    const allKeys = Object.keys(data);
+
+    // Separate prioritized fields and remaining fields
+    const prioritizedKeys = prioritizedFields.filter((key) =>
+      allKeys.includes(key)
+    );
+    const remainingKeys = allKeys.filter(
+      (key) => !prioritizedFields.includes(key)
+    );
+
+    // Combine: prioritized first, then remaining fields
+    const orderedKeys = [...prioritizedKeys, ...remainingKeys];
+
+    return orderedKeys.map((key) => {
+      const value = data[key];
+      return (
+        <tr key={key} className="border-b">
+          <td className="p-3 font-medium text-gray-800">{key}</td>
+          <td className="p-3 text-gray-600">
+            {typeof value === "string" || typeof value === "number"
+              ? value
+              : JSON.stringify(value)}
+          </td>
+        </tr>
+      );
+    });
   };
 
   const truncateText = (text, maxLength = 70) => {
