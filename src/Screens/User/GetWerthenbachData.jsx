@@ -390,14 +390,19 @@ const GetWerthenbachData = ({ refresh }) => {
 
   const renderTableRows = (data) => {
     // Define the desired display order for specific fields (based on client request)
+    // Include variations with and without \n characters
     const prioritizedFields = [
-      "WGK(numerischer Wert)", // WasserGefKlasse
+      "WasserGefKlasse", // First priority - written out version
+      "WGK\n(numerischer Wert)", // With \n
+      "WGK(numerischer Wert)", // Without \n
       "LG Klasse", // Lagerklasse
       "Signalwort", // Signalwort
       "Gefahrensymbole", // GefSymbole
       "Aggregatzustand", // Aggregatzustand
       "Dichte", // Dichte
-      "Flammpunkt (numerischer Wert)[°C]", // Flammpunkt
+      "Flammpunkt", // Flammpunkt (simple version first)
+      "Flammpunkt\n(numerischer Wert)\n[°C]", // With \n
+      "Flammpunkt (numerischer Wert)[°C]", // Without \n
       "UN Nr", // UN
       "UN Benennung", // UN Benennung (if exists)
       "Gefahrgutklasse (Länge beachten)", // Gefahrklasse
@@ -406,31 +411,74 @@ const GetWerthenbachData = ({ refresh }) => {
       "Klassifizierungscode", // Klassifizierungscode
       "LQ (Spalte eingefügt)", // Begrenzte Menge
       "H Sätze durch Komma getrennt", // H-Sätze
+      "H Sätze\ndurch Komma getrennt", // H-Sätze with \n
     ];
 
-    // Get all data keys
+    // Get all data keys (need to check both with and without \n variations)
     const allKeys = Object.keys(data);
 
-    // Separate prioritized fields and remaining fields
-    const prioritizedKeys = prioritizedFields.filter((key) =>
-      allKeys.includes(key)
-    );
-    const remainingKeys = allKeys.filter(
-      (key) => !prioritizedFields.includes(key)
-    );
+    // Function to find matching key (check for exact match or variations with \n)
+    const findMatchingKey = (fieldName) => {
+      // First check exact match
+      if (allKeys.includes(fieldName)) {
+        return fieldName;
+      }
+      // Normalize both by removing \n and extra spaces for comparison
+      const normalize = (str) =>
+        str.replace(/\n/g, "").replace(/\s+/g, "").toLowerCase();
+      const normalizedFieldName = normalize(fieldName);
+
+      for (const key of allKeys) {
+        const normalizedKey = normalize(key);
+        // Check exact normalized match or if one contains the other
+        if (
+          normalizedKey === normalizedFieldName ||
+          normalizedKey.includes(normalizedFieldName) ||
+          normalizedFieldName.includes(normalizedKey)
+        ) {
+          return key;
+        }
+      }
+      return null;
+    };
+
+    // Find actual field names that exist in the data, in the desired order
+    const prioritizedKeys = [];
+    const foundKeys = new Set();
+
+    for (const field of prioritizedFields) {
+      const matchingKey = findMatchingKey(field);
+      if (matchingKey && !foundKeys.has(matchingKey)) {
+        prioritizedKeys.push(matchingKey);
+        foundKeys.add(matchingKey);
+      }
+    }
+
+    // Get remaining fields that weren't prioritized
+    const remainingKeys = allKeys.filter((key) => !foundKeys.has(key));
 
     // Combine: prioritized first, then remaining fields
     const orderedKeys = [...prioritizedKeys, ...remainingKeys];
 
     return orderedKeys.map((key) => {
       const value = data[key];
+      // Handle values with \n - use CSS to preserve line breaks
+      let displayValue;
+      if (typeof value === "string") {
+        displayValue = value;
+      } else if (typeof value === "number") {
+        displayValue = value;
+      } else {
+        displayValue = JSON.stringify(value);
+      }
+
       return (
         <tr key={key} className="border-b">
-          <td className="p-3 font-medium text-gray-800">{key}</td>
-          <td className="p-3 text-gray-600">
-            {typeof value === "string" || typeof value === "number"
-              ? value
-              : JSON.stringify(value)}
+          <td className="p-3 font-medium text-gray-800">
+            {key.replace(/\n/g, " ")}
+          </td>
+          <td className="p-3 text-gray-600" style={{ whiteSpace: "pre-wrap" }}>
+            {displayValue}
           </td>
         </tr>
       );
