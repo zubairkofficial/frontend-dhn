@@ -468,7 +468,7 @@ const AllScherenData = () => {
         )}
       </div>
 
-      {scherenData.length > 0 && (
+      {scherenData.length > 0 ? (
         <>
           <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center space-x-2">
@@ -562,10 +562,8 @@ const AllScherenData = () => {
             </p>
           )}
         </>
-      )}
-
-      {scherenData.length === 0 && !loading && (
-        <p className="text-center text-gray-500">No scheren data found.</p>
+      ) : (
+        !loading && <p className="text-center text-gray-500">No scheren data found.</p>
       )}
 
       {selectedData && (

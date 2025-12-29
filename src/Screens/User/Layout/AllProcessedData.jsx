@@ -411,7 +411,10 @@ const AllProcessedData = () => {
     const filteredDownloadData = getFilteredData();
 
     if (filteredDownloadData.length === 0) {
-      Helpers.toast("error", "No matching records found for the selected filters!");
+      Helpers.toast(
+        "error",
+        "No matching records found for the selected filters!"
+      );
       return;
     }
 
@@ -507,7 +510,7 @@ const AllProcessedData = () => {
         )}
       </div>
 
-      {processedData.length > 0 && (
+      {processedData.length > 0 ? (
         <>
           <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center space-x-2">
@@ -561,7 +564,7 @@ const AllProcessedData = () => {
               </select>
             </div>
           </div>
-          {filteredData.length > 0 && (
+          {filteredData.length > 0 ? (
             <ul className="space-y-4">
               {filteredData.map((item) => (
                 <li
@@ -595,18 +598,16 @@ const AllProcessedData = () => {
                 </li>
               ))}
             </ul>
-          )}
-
-          {filteredData.length === 0 && !loading && (
+          ) : (
             <p className="text-center text-gray-500">
               No processed data found for the selected date range.
             </p>
           )}
         </>
-      )}
-
-      {processedData.length === 0 && !loading && (
-        <p className="text-center text-gray-500">No processed data found.</p>
+      ) : (
+        !loading && (
+          <p className="text-center text-gray-500">No processed data found.</p>
+        )
       )}
 
       {selectedData && (
@@ -646,7 +647,7 @@ const AllProcessedData = () => {
       )}
     </div>
   );
-}
+};
 
 AllProcessedData.propTypes = {
   refresh: PropTypes.bool,

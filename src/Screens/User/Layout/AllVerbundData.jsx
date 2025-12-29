@@ -521,6 +521,9 @@ const AllVerbundData = () => {
   if (loading) {
     return <p>Loading...</p>;
   }
+  if (verbundData.length === 0 && !loading) {
+    return;
+  }
 
   return (
     <div className="w-full bg-white py-5 px-10 mx-auto">
@@ -562,7 +565,7 @@ const AllVerbundData = () => {
         )}
       </div>
 
-      {verbundData.length > 0 && (
+      {verbundData.length > 0 ? (
         <>
           <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center space-x-2">
@@ -661,10 +664,10 @@ const AllVerbundData = () => {
             </p>
           )}
         </>
-      )}
-
-      {verbundData.length === 0 && !loading && (
-        <p className="text-center text-gray-500">No verbund data found.</p>
+      ) : (
+        !loading && (
+          <p className="text-center text-gray-500">No verbund data found.</p>
+        )
       )}
 
       {selectedData && (

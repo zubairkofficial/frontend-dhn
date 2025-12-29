@@ -462,6 +462,10 @@ const GetProcessedData = ({ refresh }) => {
   // Derive filtered data for display
   const filteredData = getFilteredData();
 
+  if (filteredData.length === 0) {
+    return;
+  }
+
   return (
     <div className="w-full bg-white py-5 px-10 mx-auto">
       <div className="bg-white rounded-lg p-6 mx-auto">
