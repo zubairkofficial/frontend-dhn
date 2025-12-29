@@ -468,7 +468,7 @@ const AllSennheiserData = () => {
         )}
       </div>
 
-      {sennheiserData.length > 0 ? (
+      {sennheiserData.length > 0 && (
         <>
           <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center space-x-2">
@@ -558,11 +558,13 @@ const AllSennheiserData = () => {
             </ul>
           ) : (
             <p className="text-center text-gray-500">
-              No sennheiser data found.
+              No sennheiser data found for the selected date range.
             </p>
           )}
         </>
-      ) : (
+      )}
+
+      {sennheiserData.length === 0 && !loading && (
         <p className="text-center text-gray-500">No sennheiser data found.</p>
       )}
 

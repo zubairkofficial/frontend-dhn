@@ -562,7 +562,7 @@ const AllVerbundData = () => {
         )}
       </div>
 
-      {verbundData.length > 0 ? (
+      {verbundData.length > 0 && (
         <>
           <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center space-x-2">
@@ -656,10 +656,14 @@ const AllVerbundData = () => {
               ))}
             </ul>
           ) : (
-            <p className="text-center text-gray-500">No verbund data found.</p>
+            <p className="text-center text-gray-500">
+              No verbund data found for the selected date range.
+            </p>
           )}
         </>
-      ) : (
+      )}
+
+      {verbundData.length === 0 && !loading && (
         <p className="text-center text-gray-500">No verbund data found.</p>
       )}
 

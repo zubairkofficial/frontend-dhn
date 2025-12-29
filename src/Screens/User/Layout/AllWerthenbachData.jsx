@@ -532,7 +532,7 @@ const AllWerthenbachData = () => {
         )}
       </div>
 
-      {werthenbachData.length > 0 ? (
+      {werthenbachData.length > 0 && (
         <>
           <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center space-x-2">
@@ -622,11 +622,13 @@ const AllWerthenbachData = () => {
             </ul>
           ) : (
             <p className="text-center text-gray-500">
-              No werthenbach data found.
+              No werthenbach data found for the selected date range.
             </p>
           )}
         </>
-      ) : (
+      )}
+
+      {werthenbachData.length === 0 && !loading && (
         <p className="text-center text-gray-500">No werthenbach data found.</p>
       )}
 
