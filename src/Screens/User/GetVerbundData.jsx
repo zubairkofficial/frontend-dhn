@@ -86,33 +86,110 @@ const GetVerbundData = ({ refresh }) => {
 
     // Define headers in the desired order
     const headers = [
-      "Handelsname/Produktname \n(aus 1.1)",
-      "Hersteller/Lieferant\n(aus1.3)",
-      "Dateiname SDB\n (=Name des pdf's, so wie übergeben)",
-      "SDB-Ausgabedatum bzw. letzte Änderung\n(aus Kopfdaten)",
-      "CAS-Nummer(n)\n(aus 3.)",
-      "Hauptbestandteile",
-      "Lagerklassen (LGK) nach TRGS 510 (aus 15.2)",
-      "Gefahrensymbole (CLP/GHS)\n(aus 2.2)",
-      "WGK\n(aus 15.2)",
-      "Transport oder Umfüllen: Verpackungsgruppe\n(aus 14.4)",
-      "N.A.G./NOS technische Benennung (Gefahrauslöser)",
-      "H-Sätze (mit EUH)\n(durch Komma getrennt)\n(aus Kap.2)",
-      "H-Sätze (mit EUH)\n(durch Komma getrennt)\n(aus Gesamtdatei)",
-      "P-Sätze\n(durch Komma getrennt)\n(aus Kap.2)",
-      "P-Sätze\n(durch Komma getrennt)\n(aus Gesamtdatei)",
-      "Flammpunkt [°C]\n(aus 9.1)",
+      "1.1 Produktidentifikator",
+      "10.1 Reaktivität",
+      "10.2 Chemische Stabilität",
+      "10.3 Möglichkeit gefährlicher Reaktionen",
+      "10.4 Zu vermeidende Bedingungen",
+      "10.5 Unverträgliche Materialen",
+      "10.6 Gefährliche Zersetzungsprodukte",
+      "11.1 Angaben zu toxikologischen Wirkungen",
+      "12.1 Toxizität",
+      "12.2 Persistenz und Abbaubarkeit",
+      "12.3 Bioakkumulationspotenzial",
+      "12.4 Mobilität im Boden",
+      "12.5 Ergebnisse der PBT- und vPvB-Beurteilung",
+      "12.6 Andere schädliche Wirkungen",
+      "12.7 Endokrinschädliche Eigenschaften",
+      "13.1 Verfahren der Abfallbehandlung",
+      "14.1 UN-Nummer",
+      "14.2 Transportbezeichnung",
+      "14.3. Transportgefahrenklassen",
+      "14.4 Verpackungsgruppe",
+      "14.5. Umweltgefahren",
+      "14.6 Besondere Vorsichtsmaßnahmen des Verwenders",
+      "15.2. Stoffsicherheitsbeurteilung",
+      "2.1 Einstufung des Stoffs/Gemischs",
+      "2.2 Kennzeichnungselemente",
+      "2.3 Sonstige Gefahren, die nicht zu einer Einstufung führen",
+      "3.2 Gemische",
+      "4.1 Beschreibung der Erste-Hilfe-Maßnahmen",
+      "4.2 Wichtigste akute und verzögert auftretende Symptome und Wirkungen",
+      "4.3 Hinweise auf ärztliche Soforthilfe oder Spezialbehandlung",
+      "5.1 Löschmittel",
+      "5.2 Besondere vom Stoff oder Gemisch ausgehende Gefahren",
+      "5.3 Hinweise für die Brandbekämpfung",
+      "6.3 Methoden und Material für Rückhaltung und Reinigung",
+      "6.4 Verweis auf andere Abschnitte",
+      "7.1 Schutzmaßnahmen zur sicheren Handhabung",
+      "7.2. Bedingungen zur sicheren Lagerung unter Berücksichtigung von Unverträglichkeiten",
+      "7.3 Spezifische Endanwendungen",
+      "8.1 Zu überwachende Parameter",
+      "8.2 Begrenzung und Überwachung der Exposition",
+      "9.1 Angaben zu den grundlegenden physikalischen und chemischen Eigenschaften",
+      "9.2 Sonstige Angaben",
+      "ADR-Klasse (Gefahrgutklasse)",
       "Aggregatzustand (9.1)",
+      "BA: Erste Hilfe_4",
+      "BA: Gefahren für Mensch und Umwelt_2",
+      "BA: Gefahrstoffbezeichnung_1",
+      "BA: Gefahrstoffbezeichnung_3",
+      "BA: Sachgerechte Entsorgung _13",
+      "BA: Sachgerechte Entsorgung _14",
+      "BA: Schutzmaßnahmen_8",
+      "BA: Verhalten im Gefahrenfall_5",
+      "BA: Verhalten im Gefahrenfall_6",
+      "CAS-Nummer(n)\n(aus 3.)",
       "CLP/GHS-Symbolnummern\n(CLP-Code mit Text; aus Piktorammen Kap.2 erkennen)",
       "CMR\n(GHS08 Piktogramm & einer der folgenden Sätze: H340, H341, H350, H351, H360, H361 (inkl Unterkategorie in Form von Buchstaben zB f)",
+      "Dateiname SDB\n (=Name des pdf's, so wie übergeben)",
       "Diisocyanat (aus Gesamtdatei)",
-      "Hinweise/Bemerkungen/Sicherheitsbetrachtung (stoffspezifisch)",
-      "UN Nr \n",
-      "ADR-Klasse (Gefahrgutklasse)",
+      "Flammpunkt [°C]\n(aus 9.1)",
       "Gefahr-Nr (Kemler-Zahl)",
+      "Gefahrensymbole (CLP/GHS)\n(aus 2.2)",
+      "H-Sätze (mit EUH)\n(durch Komma getrennt)\n(aus Gesamtdatei)",
+      "H-Sätze (mit EUH)\n(durch Komma getrennt)\n(aus Kap.2)",
+      "Handelsname/Produktname/Produktidentifikator\n(aus 1.1)",
+      "Hauptbestandteile",
+      "Hersteller/Lieferant\n(aus1.3)",
+      "Hinweise/Bemerkungen/Sicherheitsbetrachtung (stoffspezifisch)",
+      "Kap.1 Rest (falls vorhanden)",
+      "Kap.10 Rest (falls vorhanden)",
+      "Kap.11 Rest (falls vorhanden)",
+      "Kap.12 Rest (falls vorhanden)",
+      "Kap.13 Rest (falls vorhanden)",
+      "Kap.14 Rest (falls vorhanden)",
+      "Kap.15 Rest (falls vorhanden)",
+      "Kap.16 Rest (falls vorhanden)",
+      "Kap.2 Rest (falls vorhanden)",
+      "Kap.3 Rest (falls vorhanden)",
+      "Kap.4 Rest (falls vorhanden)",
+      "Kap.5 Rest (falls vorhanden)",
+      "Kap.6 Rest (falls vorhanden)",
+      "Kap.7 Rest (falls vorhanden)",
+      "Kap.8 Rest (falls vorhanden)",
+      "Kap.9 Rest (falls vorhanden)",
+      "Lagerklassen (LGK) nach TRGS 510 (aus 15)",
+      "Message",
+      "N.A.G./NOS technische Benennung (Gefahrauslöser)",
+      "P-Sätze\n(durch Komma getrennt)\n(aus Gesamtdatei)",
+      "P-Sätze\n(durch Komma getrennt)\n(aus Kap.2)",
+      "SDB-Ausgabedatum bzw. letzte Änderung\n(aus Kopfdaten)",
+      "Section-Missing-Count",
+      "Transport oder Umfüllen: Verpackungsgruppe\n(aus 14.4)",
       "Transport: Mengenbegrenzung LQ",
       "Transport: Tunnelcode",
+      "UN Nr \n",
+      "Verwendungszweck / Produktkategorie\n(Extrakt aus 1.2)",
+      "WGK\n(aus 15.2)",
       "tatsächliche Überschrift Kap.1",
+      "tatsächliche Überschrift Kap.10",
+      "tatsächliche Überschrift Kap.11",
+      "tatsächliche Überschrift Kap.12",
+      "tatsächliche Überschrift Kap.13",
+      "tatsächliche Überschrift Kap.14",
+      "tatsächliche Überschrift Kap.15",
+      "tatsächliche Überschrift Kap.16 (sonstige Angaben)",
       "tatsächliche Überschrift Kap.2",
       "tatsächliche Überschrift Kap.3",
       "tatsächliche Überschrift Kap.4",
@@ -121,73 +198,6 @@ const GetVerbundData = ({ refresh }) => {
       "tatsächliche Überschrift Kap.7",
       "tatsächliche Überschrift Kap.8",
       "tatsächliche Überschrift Kap.9",
-      "tatsächliche Überschrift Kap.10",
-      "tatsächliche Überschrift Kap.11",
-      "tatsächliche Überschrift Kap.12",
-      "tatsächliche Überschrift Kap.13",
-      "tatsächliche Überschrift Kap.14",
-      "tatsächliche Überschrift Kap.15",
-      "tatsächliche Überschrift Kap.16",
-      "1.1 Produktidentifikator",
-      "1.2 Relevante identifizierte Verwendungen des Stoffs/Gemischs",
-      "1.3 Angaben zum Lieferanten/Hersteller",
-      "1.4 Notrufnummer",
-      "2.1 Einstufung des Stoffs/Gemischs",
-      "2.2 Kennzeichnungselemente",
-      "2.3 Sonstige Gefahren, die nicht zu einer Einstufung führen",
-      "3.1 Chemische Charakterisierung",
-      "3.2 Gefährliche Inhaltsstoffe",
-      "4.1 Maßnahmen nach Einatmen",
-      "4.2 Maßnahmen nach Hautkontakt",
-      "4.3 Maßnahmen nach Augenkontakt",
-      "5.1 Geeignete Löschmittel",
-      "5.2 Besondere Gefahren durch den Stoff",
-      "5.3 Hinweise für die Brandbekämpfung",
-      "6.1 Persönliche Vorsichtsmaßnahmen",
-      "6.2 Umweltbezogene Vorsichtsmaßnahmen",
-      "6.3 Reinigungsmethoden und -materialien",
-      "6.4 Verweis",
-      "7.1 Schutzmaßnahmen beim Umgang",
-      "7.2 Hinweise zur sicheren Lagerung",
-      "7.3 Anforderungen an Lagerräume",
-      "8.1 Technische Schutzmaßnahmen",
-      "8.2 Grenzwerte für Arbeitsplatzexposition",
-      "9.1 Zustand, Farbe, Geruch",
-      "9.2 pH-Wert",
-      "10.1 Chemische Stabilität",
-      "10.2 Zu vermeidende Bedingungen",
-      "10.3 Unverträgliche Materialien",
-      "10.4 Gefährliche Zersetzungsprodukte",
-      "10.5 Unverträgliche Materialen",
-      "10.6 Gefährliche Zersetzungsprodukte",
-      "11.1 Akute Toxizität",
-      "12.1 Ökotoxizität",
-      "12.2 Persistenz und Abbaubarkeit",
-      "12.3 Bioakkumulationspotenzial",
-      "12.4 Hinweise auf andere schädliche Wirkungen",
-      "12.5 Ergebnisse der PBT- und vPvB-Beurteilung",
-      "12.6 Endokrinschädliche Eigenschaften",
-      "13.1 Abfallbehandlung von Stoffen/Gemischen",
-      "14.1 UN-Nummer",
-      "14.2 Transportbezeichnung",
-      "14.3 Gefahrklasse",
-      "14.4 Verpackungsgruppe",
-      "14.5 Besondere Vorschriften für Transport",
-      "14.6 Besondere Vorsichtsmaßnahmen des Verwenders",
-      "14.7 Massengutbeförderun auf dem Seeweg",
-      "15.1 Sicherheits-, Gesundheits- und Umweltschutzvorschriften",
-      "15.2 Kennzeichnung gemäß nationalem Recht",
-      "BA: Erste Hilfe",
-      "BA: Gefahren für Mensch und Umwelt",
-      "BA: Gefahrstoffbezeichnung_1",
-      "BA: Gefahrstoffbezeichnung_3",
-      "BA: Sachgerechte Entsorgung _13",
-      "BA: Sachgerechte Entsorgung _14",
-      "BA: Schutzmaßnahmen",
-      "BA: Verhalten im Gefahrenfall _5",
-      "BA: Verhalten im Gefahrenfall _6",
-      "Message",
-      "Section-Missing-Count",
     ];
 
     // Add headers with styles
@@ -214,147 +224,10 @@ const GetVerbundData = ({ refresh }) => {
     });
 
     // Header Mapping - Your stored data uses different field names
-    const headerMapping = {
-      "Handelsname/Produktname \n(aus 1.1)":
-        "Handelsname/Produktname \n(aus 1.1)",
-      "Hersteller/Lieferant\n(aus1.3)": "Hersteller/Lieferant\n(aus1.3)",
-      "Dateiname SDB\n (=Name des pdf's, so wie übergeben)":
-        "Dateiname SDB\n (=Name des pdf's, so wie übergeben)",
-      "SDB-Ausgabedatum bzw. letzte Änderung\n(aus Kopfdaten)":
-        "SDB-Ausgabedatum bzw. letzte Änderung\n(aus Kopfdaten)",
-      "CAS-Nummer(n)\n(aus 3.)": "CAS-Nummer(n)\n(aus 3.)",
-      Hauptbestandteile: "Hauptbestandteile",
-      "Lagerklassen (LGK) nach TRGS 510 (aus 15.2)":
-        "Lagerklassen (LGK) nach TRGS 510 (aus 15.2)",
-      "Gefahrensymbole (CLP/GHS)\n(aus 2.2)":
-        "Gefahrensymbole (CLP/GHS)\n(aus 2.2)",
-      "WGK\n(aus 15.2)": "WGK\n(aus 15.2)",
-      "Transport oder Umfüllen: Verpackungsgruppe\n(aus 14.4)":
-        "Transport oder Umfüllen: Verpackungsgruppe\n(aus 14.4)",
-      "N.A.G./NOS technische Benennung (Gefahrauslöser)":
-        "N.A.G./NOS technische Benennung (Gefahrauslöser)",
-      "H-Sätze (mit EUH)\n(durch Komma getrennt)\n(aus Kap.2)":
-        "H-Sätze (mit EUH)\n(durch Komma getrennt)\n(aus Kap.2)",
-      "H-Sätze (mit EUH)\n(durch Komma getrennt)\n(aus Gesamtdatei)":
-        "H-Sätze (mit EUH)\n(durch Komma getrennt)\n(aus Gesamtdatei)",
-      "P-Sätze\n(durch Komma getrennt)\n(aus Kap.2)":
-        "P-Sätze\n(durch Komma getrennt)\n(aus Kap.2)",
-      "P-Sätze\n(durch Komma getrennt)\n(aus Gesamtdatei)":
-        "P-Sätze\n(durch Komma getrennt)\n(aus Gesamtdatei)",
-      "Flammpunkt [°C]\n(aus 9.1)": "Flammpunkt [°C]\n(aus 9.1)",
-      "Aggregatzustand (9.1)": "Aggregatzustand (9.1)",
-      "CLP/GHS-Symbolnummern\n(CLP-Code mit Text; aus Piktorammen Kap.2 erkennen)":
-        "CLP/GHS-Symbolnummern\n(CLP-Code mit Text; aus Piktorammen Kap.2 erkennen)",
-      "CMR\n(GHS08 Piktogramm & einer der folgenden Sätze: H340, H341, H350, H351, H360, H361 (inkl Unterkategorie in Form von Buchstaben zB f)":
-        "CMR\n(GHS08 Piktogramm & einer der folgenden Sätze: H340, H341, H350, H351, H360, H361 (inkl Unterkategorie in Form von Buchstaben zB f)",
-      "Diisocyanat (aus Gesamtdatei)": "Diisocyanat (aus Gesamtdatei)",
-      "Hinweise/Bemerkungen/Sicherheitsbetrachtung (stoffspezifisch)":
-        "Hinweise/Bemerkungen/Sicherheitsbetrachtung (stoffspezifisch)",
-      "UN Nr \n": "UN Nr \n",
-      "ADR-Klasse (Gefahrgutklasse)": "ADR-Klasse (Gefahrgutklasse)",
-      "Gefahr-Nr (Kemler-Zahl)": "Gefahr-Nr (Kemler-Zahl)",
-      "Transport: Mengenbegrenzung LQ": "Transport: Mengenbegrenzung LQ",
-      "Transport: Tunnelcode": "Transport: Tunnelcode",
-      "tatsächliche Überschrift Kap.1": "tatsächliche Überschrift Kap.1",
-      "tatsächliche Überschrift Kap.2": "tatsächliche Überschrift Kap.2",
-      "tatsächliche Überschrift Kap.3": "tatsächliche Überschrift Kap.3",
-      "tatsächliche Überschrift Kap.4": "tatsächliche Überschrift Kap.4",
-      "tatsächliche Überschrift Kap.5": "tatsächliche Überschrift Kap.5",
-      "tatsächliche Überschrift Kap.6": "tatsächliche Überschrift Kap.6",
-      "tatsächliche Überschrift Kap.7": "tatsächliche Überschrift Kap.7",
-      "tatsächliche Überschrift Kap.8": "tatsächliche Überschrift Kap.8",
-      "tatsächliche Überschrift Kap.9": "tatsächliche Überschrift Kap.9",
-      "tatsächliche Überschrift Kap.10": "tatsächliche Überschrift Kap.10",
-      "tatsächliche Überschrift Kap.11": "tatsächliche Überschrift Kap.11",
-      "tatsächliche Überschrift Kap.12": "tatsächliche Überschrift Kap.12",
-      "tatsächliche Überschrift Kap.13": "tatsächliche Überschrift Kap.13",
-      "tatsächliche Überschrift Kap.14": "tatsächliche Überschrift Kap.14",
-      "tatsächliche Überschrift Kap.15": "tatsächliche Überschrift Kap.15",
-      "tatsächliche Überschrift Kap.16": "tatsächliche Überschrift Kap.16",
-      "1.1 Produktidentifikator": "1.1 Produktidentifikator",
-      "1.2 Relevante identifizierte Verwendungen des Stoffs/Gemischs":
-        "1.2 Relevante identifizierte Verwendungen des Stoffs/Gemischs",
-      "1.3 Angaben zum Lieferanten/Hersteller":
-        "1.3 Angaben zum Lieferanten/Hersteller",
-      "1.4 Notrufnummer": "1.4 Notrufnummer",
-      "2.1 Einstufung des Stoffs/Gemischs":
-        "2.1 Einstufung des Stoffs/Gemischs",
-      "2.2 Kennzeichnungselemente": "2.2 Kennzeichnungselemente",
-      "2.3 Sonstige Gefahren, die nicht zu einer Einstufung führen":
-        "2.3 Sonstige Gefahren, die nicht zu einer Einstufung führen",
-      "3.1 Chemische Charakterisierung": "3.1 Chemische Charakterisierung",
-      "3.2 Gefährliche Inhaltsstoffe": "3.2 Gefährliche Inhaltsstoffe",
-      "4.1 Maßnahmen nach Einatmen": "4.1 Maßnahmen nach Einatmen",
-      "4.2 Maßnahmen nach Hautkontakt": "4.2 Maßnahmen nach Hautkontakt",
-      "4.3 Maßnahmen nach Augenkontakt": "4.3 Maßnahmen nach Augenkontakt",
-      "5.1 Geeignete Löschmittel": "5.1 Geeignete Löschmittel",
-      "5.2 Besondere Gefahren durch den Stoff":
-        "5.2 Besondere Gefahren durch den Stoff",
-      "5.3 Hinweise für die Brandbekämpfung":
-        "5.3 Hinweise für die Brandbekämpfung",
-      "6.1 Persönliche Vorsichtsmaßnahmen":
-        "6.1 Persönliche Vorsichtsmaßnahmen",
-      "6.2 Umweltbezogene Vorsichtsmaßnahmen":
-        "6.2 Umweltbezogene Vorsichtsmaßnahmen",
-      "6.3 Reinigungsmethoden und -materialien":
-        "6.3 Reinigungsmethoden und -materialien",
-      "6.4 Verweis": "6.4 Verweis",
-      "7.1 Schutzmaßnahmen beim Umgang": "7.1 Schutzmaßnahmen beim Umgang",
-      "7.2 Hinweise zur sicheren Lagerung":
-        "7.2 Hinweise zur sicheren Lagerung",
-      "7.3 Anforderungen an Lagerräume": "7.3 Anforderungen an Lagerräume",
-      "8.1 Technische Schutzmaßnahmen": "8.1 Technische Schutzmaßnahmen",
-      "8.2 Grenzwerte für Arbeitsplatzexposition":
-        "8.2 Grenzwerte für Arbeitsplatzexposition",
-      "9.1 Zustand, Farbe, Geruch": "9.1 Zustand, Farbe, Geruch",
-      "9.2 pH-Wert": "9.2 pH-Wert",
-      "10.1 Chemische Stabilität": "10.1 Chemische Stabilität",
-      "10.2 Zu vermeidende Bedingungen": "10.2 Zu vermeidende Bedingungen",
-      "10.3 Unverträgliche Materialien": "10.3 Unverträgliche Materialien",
-      "10.4 Gefährliche Zersetzungsprodukte":
-        "10.4 Gefährliche Zersetzungsprodukte",
-      "10.5 Unverträgliche Materialen": "10.5 Unverträgliche Materialen",
-      "10.6 Gefährliche Zersetzungsprodukte":
-        "10.6 Gefährliche Zersetzungsprodukte",
-      "11.1 Akute Toxizität": "11.1 Akute Toxizität",
-      "12.1 Ökotoxizität": "12.1 Ökotoxizität",
-      "12.2 Persistenz und Abbaubarkeit": "12.2 Persistenz und Abbaubarkeit",
-      "12.3 Bioakkumulationspotenzial": "12.3 Bioakkumulationspotenzial",
-      "12.4 Hinweise auf andere schädliche Wirkungen":
-        "12.4 Hinweise auf andere schädliche Wirkungen",
-      "12.5 Ergebnisse der PBT- und vPvB-Beurteilung":
-        "12.5 Ergebnisse der PBT- und vPvB-Beurteilung",
-      "12.6 Endokrinschädliche Eigenschaften":
-        "12.6 Endokrinschädliche Eigenschaften",
-      "13.1 Abfallbehandlung von Stoffen/Gemischen":
-        "13.1 Abfallbehandlung von Stoffen/Gemischen",
-      "14.1 UN-Nummer": "14.1 UN-Nummer",
-      "14.2 Transportbezeichnung": "14.2 Transportbezeichnung",
-      "14.3 Gefahrklasse": "14.3 Gefahrklasse",
-      "14.4 Verpackungsgruppe": "14.4 Verpackungsgruppe",
-      "14.5 Besondere Vorschriften für Transport":
-        "14.5 Besondere Vorschriften für Transport",
-      "14.6 Besondere Vorsichtsmaßnahmen des Verwenders":
-        "14.6 Besondere Vorsichtsmaßnahmen des Verwenders",
-      "14.7 Massengutbeförderun auf dem Seeweg":
-        "14.7 Massengutbeförderun auf dem Seeweg",
-      "15.1 Sicherheits-, Gesundheits- und Umweltschutzvorschriften":
-        "15.1 Sicherheits-, Gesundheits- und Umweltschutzvorschriften",
-      "15.2 Kennzeichnung gemäß nationalem Recht":
-        "15.2 Kennzeichnung gemäß nationalem Recht",
-      "BA: Erste Hilfe": "BA: Erste Hilfe",
-      "BA: Gefahren für Mensch und Umwelt":
-        "BA: Gefahren für Mensch und Umwelt",
-      "BA: Gefahrstoffbezeichnung_1": "BA: Gefahrstoffbezeichnung_1",
-      "BA: Gefahrstoffbezeichnung_3": "BA: Gefahrstoffbezeichnung_3",
-      "BA: Sachgerechte Entsorgung _13": "BA: Sachgerechte Entsorgung _13",
-      "BA: Sachgerechte Entsorgung _14": "BA: Sachgerechte Entsorgung _14",
-      "BA: Schutzmaßnahmen": "BA: Schutzmaßnahmen",
-      "BA: Verhalten im Gefahrenfall _5": "BA: Verhalten im Gefahrenfall _5",
-      "BA: Verhalten im Gefahrenfall _6": "BA: Verhalten im Gefahrenfall _6",
-      Message: "Message",
-      "Section-Missing-Count": "Section-Missing-Count",
-    };
+    const headerMapping = headers.reduce((acc, header) => {
+      acc[header] = header;
+      return acc;
+    }, {});
 
     // Map data correctly using headerMapping
     const rowData = headers.map(
@@ -403,33 +276,110 @@ const GetVerbundData = ({ refresh }) => {
     const worksheet = workbook.addWorksheet("Filtered Data");
 
     const headers = [
-      "Handelsname/Produktname \n(aus 1.1)",
-      "Hersteller/Lieferant\n(aus1.3)",
-      "Dateiname SDB\n (=Name des pdf's, so wie übergeben)",
-      "SDB-Ausgabedatum bzw. letzte Änderung\n(aus Kopfdaten)",
-      "CAS-Nummer(n)\n(aus 3.)",
-      "Hauptbestandteile",
-      "Lagerklassen (LGK) nach TRGS 510 (aus 15.2)",
-      "Gefahrensymbole (CLP/GHS)\n(aus 2.2)",
-      "WGK\n(aus 15.2)",
-      "Transport oder Umfüllen: Verpackungsgruppe\n(aus 14.4)",
-      "N.A.G./NOS technische Benennung (Gefahrauslöser)",
-      "H-Sätze (mit EUH)\n(durch Komma getrennt)\n(aus Kap.2)",
-      "H-Sätze (mit EUH)\n(durch Komma getrennt)\n(aus Gesamtdatei)",
-      "P-Sätze\n(durch Komma getrennt)\n(aus Kap.2)",
-      "P-Sätze\n(durch Komma getrennt)\n(aus Gesamtdatei)",
-      "Flammpunkt [°C]\n(aus 9.1)",
+      "1.1 Produktidentifikator",
+      "10.1 Reaktivität",
+      "10.2 Chemische Stabilität",
+      "10.3 Möglichkeit gefährlicher Reaktionen",
+      "10.4 Zu vermeidende Bedingungen",
+      "10.5 Unverträgliche Materialen",
+      "10.6 Gefährliche Zersetzungsprodukte",
+      "11.1 Angaben zu toxikologischen Wirkungen",
+      "12.1 Toxizität",
+      "12.2 Persistenz und Abbaubarkeit",
+      "12.3 Bioakkumulationspotenzial",
+      "12.4 Mobilität im Boden",
+      "12.5 Ergebnisse der PBT- und vPvB-Beurteilung",
+      "12.6 Andere schädliche Wirkungen",
+      "12.7 Endokrinschädliche Eigenschaften",
+      "13.1 Verfahren der Abfallbehandlung",
+      "14.1 UN-Nummer",
+      "14.2 Transportbezeichnung",
+      "14.3. Transportgefahrenklassen",
+      "14.4 Verpackungsgruppe",
+      "14.5. Umweltgefahren",
+      "14.6 Besondere Vorsichtsmaßnahmen des Verwenders",
+      "15.2. Stoffsicherheitsbeurteilung",
+      "2.1 Einstufung des Stoffs/Gemischs",
+      "2.2 Kennzeichnungselemente",
+      "2.3 Sonstige Gefahren, die nicht zu einer Einstufung führen",
+      "3.2 Gemische",
+      "4.1 Beschreibung der Erste-Hilfe-Maßnahmen",
+      "4.2 Wichtigste akute und verzögert auftretende Symptome und Wirkungen",
+      "4.3 Hinweise auf ärztliche Soforthilfe oder Spezialbehandlung",
+      "5.1 Löschmittel",
+      "5.2 Besondere vom Stoff oder Gemisch ausgehende Gefahren",
+      "5.3 Hinweise für die Brandbekämpfung",
+      "6.3 Methoden und Material für Rückhaltung und Reinigung",
+      "6.4 Verweis auf andere Abschnitte",
+      "7.1 Schutzmaßnahmen zur sicheren Handhabung",
+      "7.2. Bedingungen zur sicheren Lagerung unter Berücksichtigung von Unverträglichkeiten",
+      "7.3 Spezifische Endanwendungen",
+      "8.1 Zu überwachende Parameter",
+      "8.2 Begrenzung und Überwachung der Exposition",
+      "9.1 Angaben zu den grundlegenden physikalischen und chemischen Eigenschaften",
+      "9.2 Sonstige Angaben",
+      "ADR-Klasse (Gefahrgutklasse)",
       "Aggregatzustand (9.1)",
+      "BA: Erste Hilfe_4",
+      "BA: Gefahren für Mensch und Umwelt_2",
+      "BA: Gefahrstoffbezeichnung_1",
+      "BA: Gefahrstoffbezeichnung_3",
+      "BA: Sachgerechte Entsorgung _13",
+      "BA: Sachgerechte Entsorgung _14",
+      "BA: Schutzmaßnahmen_8",
+      "BA: Verhalten im Gefahrenfall_5",
+      "BA: Verhalten im Gefahrenfall_6",
+      "CAS-Nummer(n)\n(aus 3.)",
       "CLP/GHS-Symbolnummern\n(CLP-Code mit Text; aus Piktorammen Kap.2 erkennen)",
       "CMR\n(GHS08 Piktogramm & einer der folgenden Sätze: H340, H341, H350, H351, H360, H361 (inkl Unterkategorie in Form von Buchstaben zB f)",
+      "Dateiname SDB\n (=Name des pdf's, so wie übergeben)",
       "Diisocyanat (aus Gesamtdatei)",
-      "Hinweise/Bemerkungen/Sicherheitsbetrachtung (stoffspezifisch)",
-      "UN Nr \n",
-      "ADR-Klasse (Gefahrgutklasse)",
+      "Flammpunkt [°C]\n(aus 9.1)",
       "Gefahr-Nr (Kemler-Zahl)",
+      "Gefahrensymbole (CLP/GHS)\n(aus 2.2)",
+      "H-Sätze (mit EUH)\n(durch Komma getrennt)\n(aus Gesamtdatei)",
+      "H-Sätze (mit EUH)\n(durch Komma getrennt)\n(aus Kap.2)",
+      "Handelsname/Produktname/Produktidentifikator\n(aus 1.1)",
+      "Hauptbestandteile",
+      "Hersteller/Lieferant\n(aus1.3)",
+      "Hinweise/Bemerkungen/Sicherheitsbetrachtung (stoffspezifisch)",
+      "Kap.1 Rest (falls vorhanden)",
+      "Kap.10 Rest (falls vorhanden)",
+      "Kap.11 Rest (falls vorhanden)",
+      "Kap.12 Rest (falls vorhanden)",
+      "Kap.13 Rest (falls vorhanden)",
+      "Kap.14 Rest (falls vorhanden)",
+      "Kap.15 Rest (falls vorhanden)",
+      "Kap.16 Rest (falls vorhanden)",
+      "Kap.2 Rest (falls vorhanden)",
+      "Kap.3 Rest (falls vorhanden)",
+      "Kap.4 Rest (falls vorhanden)",
+      "Kap.5 Rest (falls vorhanden)",
+      "Kap.6 Rest (falls vorhanden)",
+      "Kap.7 Rest (falls vorhanden)",
+      "Kap.8 Rest (falls vorhanden)",
+      "Kap.9 Rest (falls vorhanden)",
+      "Lagerklassen (LGK) nach TRGS 510 (aus 15)",
+      "Message",
+      "N.A.G./NOS technische Benennung (Gefahrauslöser)",
+      "P-Sätze\n(durch Komma getrennt)\n(aus Gesamtdatei)",
+      "P-Sätze\n(durch Komma getrennt)\n(aus Kap.2)",
+      "SDB-Ausgabedatum bzw. letzte Änderung\n(aus Kopfdaten)",
+      "Section-Missing-Count",
+      "Transport oder Umfüllen: Verpackungsgruppe\n(aus 14.4)",
       "Transport: Mengenbegrenzung LQ",
       "Transport: Tunnelcode",
+      "UN Nr \n",
+      "Verwendungszweck / Produktkategorie\n(Extrakt aus 1.2)",
+      "WGK\n(aus 15.2)",
       "tatsächliche Überschrift Kap.1",
+      "tatsächliche Überschrift Kap.10",
+      "tatsächliche Überschrift Kap.11",
+      "tatsächliche Überschrift Kap.12",
+      "tatsächliche Überschrift Kap.13",
+      "tatsächliche Überschrift Kap.14",
+      "tatsächliche Überschrift Kap.15",
+      "tatsächliche Überschrift Kap.16 (sonstige Angaben)",
       "tatsächliche Überschrift Kap.2",
       "tatsächliche Überschrift Kap.3",
       "tatsächliche Überschrift Kap.4",
@@ -438,73 +388,6 @@ const GetVerbundData = ({ refresh }) => {
       "tatsächliche Überschrift Kap.7",
       "tatsächliche Überschrift Kap.8",
       "tatsächliche Überschrift Kap.9",
-      "tatsächliche Überschrift Kap.10",
-      "tatsächliche Überschrift Kap.11",
-      "tatsächliche Überschrift Kap.12",
-      "tatsächliche Überschrift Kap.13",
-      "tatsächliche Überschrift Kap.14",
-      "tatsächliche Überschrift Kap.15",
-      "tatsächliche Überschrift Kap.16",
-      "1.1 Produktidentifikator",
-      "1.2 Relevante identifizierte Verwendungen des Stoffs/Gemischs",
-      "1.3 Angaben zum Lieferanten/Hersteller",
-      "1.4 Notrufnummer",
-      "2.1 Einstufung des Stoffs/Gemischs",
-      "2.2 Kennzeichnungselemente",
-      "2.3 Sonstige Gefahren, die nicht zu einer Einstufung führen",
-      "3.1 Chemische Charakterisierung",
-      "3.2 Gefährliche Inhaltsstoffe",
-      "4.1 Maßnahmen nach Einatmen",
-      "4.2 Maßnahmen nach Hautkontakt",
-      "4.3 Maßnahmen nach Augenkontakt",
-      "5.1 Geeignete Löschmittel",
-      "5.2 Besondere Gefahren durch den Stoff",
-      "5.3 Hinweise für die Brandbekämpfung",
-      "6.1 Persönliche Vorsichtsmaßnahmen",
-      "6.2 Umweltbezogene Vorsichtsmaßnahmen",
-      "6.3 Reinigungsmethoden und -materialien",
-      "6.4 Verweis",
-      "7.1 Schutzmaßnahmen beim Umgang",
-      "7.2 Hinweise zur sicheren Lagerung",
-      "7.3 Anforderungen an Lagerräume",
-      "8.1 Technische Schutzmaßnahmen",
-      "8.2 Grenzwerte für Arbeitsplatzexposition",
-      "9.1 Zustand, Farbe, Geruch",
-      "9.2 pH-Wert",
-      "10.1 Chemische Stabilität",
-      "10.2 Zu vermeidende Bedingungen",
-      "10.3 Unverträgliche Materialien",
-      "10.4 Gefährliche Zersetzungsprodukte",
-      "10.5 Unverträgliche Materialen",
-      "10.6 Gefährliche Zersetzungsprodukte",
-      "11.1 Akute Toxizität",
-      "12.1 Ökotoxizität",
-      "12.2 Persistenz und Abbaubarkeit",
-      "12.3 Bioakkumulationspotenzial",
-      "12.4 Hinweise auf andere schädliche Wirkungen",
-      "12.5 Ergebnisse der PBT- und vPvB-Beurteilung",
-      "12.6 Endokrinschädliche Eigenschaften",
-      "13.1 Abfallbehandlung von Stoffen/Gemischen",
-      "14.1 UN-Nummer",
-      "14.2 Transportbezeichnung",
-      "14.3 Gefahrklasse",
-      "14.4 Verpackungsgruppe",
-      "14.5 Besondere Vorschriften für Transport",
-      "14.6 Besondere Vorsichtsmaßnahmen des Verwenders",
-      "14.7 Massengutbeförderun auf dem Seeweg",
-      "15.1 Sicherheits-, Gesundheits- und Umweltschutzvorschriften",
-      "15.2 Kennzeichnung gemäß nationalem Recht",
-      "BA: Erste Hilfe",
-      "BA: Gefahren für Mensch und Umwelt",
-      "BA: Gefahrstoffbezeichnung_1",
-      "BA: Gefahrstoffbezeichnung_3",
-      "BA: Sachgerechte Entsorgung _13",
-      "BA: Sachgerechte Entsorgung _14",
-      "BA: Schutzmaßnahmen",
-      "BA: Verhalten im Gefahrenfall _5",
-      "BA: Verhalten im Gefahrenfall _6",
-      "Message",
-      "Section-Missing-Count",
     ];
     worksheet.addRow(headers);
     worksheet.getRow(1).eachCell((cell) => {
@@ -541,7 +424,7 @@ const GetVerbundData = ({ refresh }) => {
 
     const produktnameCounts = filteredData.reduce((acc, item) => {
       const produktname =
-        item.data["Handelsname/Produktname \n(aus 1.1)"] ||
+        item.data["Handelsname/Produktname/Produktidentifikator\n(aus 1.1)"] ||
         item.data["Produktname"];
       if (produktname) {
         acc[produktname] = (acc[produktname] || 0) + 1;
@@ -549,147 +432,10 @@ const GetVerbundData = ({ refresh }) => {
       return acc;
     }, {});
 
-    const headerMapping = {
-      "Handelsname/Produktname \n(aus 1.1)":
-        "Handelsname/Produktname \n(aus 1.1)",
-      "Hersteller/Lieferant\n(aus1.3)": "Hersteller/Lieferant\n(aus1.3)",
-      "Dateiname SDB\n (=Name des pdf's, so wie übergeben)":
-        "Dateiname SDB\n (=Name des pdf's, so wie übergeben)",
-      "SDB-Ausgabedatum bzw. letzte Änderung\n(aus Kopfdaten)":
-        "SDB-Ausgabedatum bzw. letzte Änderung\n(aus Kopfdaten)",
-      "CAS-Nummer(n)\n(aus 3.)": "CAS-Nummer(n)\n(aus 3.)",
-      Hauptbestandteile: "Hauptbestandteile",
-      "Lagerklassen (LGK) nach TRGS 510 (aus 15.2)":
-        "Lagerklassen (LGK) nach TRGS 510 (aus 15.2)",
-      "Gefahrensymbole (CLP/GHS)\n(aus 2.2)":
-        "Gefahrensymbole (CLP/GHS)\n(aus 2.2)",
-      "WGK\n(aus 15.2)": "WGK\n(aus 15.2)",
-      "Transport oder Umfüllen: Verpackungsgruppe\n(aus 14.4)":
-        "Transport oder Umfüllen: Verpackungsgruppe\n(aus 14.4)",
-      "N.A.G./NOS technische Benennung (Gefahrauslöser)":
-        "N.A.G./NOS technische Benennung (Gefahrauslöser)",
-      "H-Sätze (mit EUH)\n(durch Komma getrennt)\n(aus Kap.2)":
-        "H-Sätze (mit EUH)\n(durch Komma getrennt)\n(aus Kap.2)",
-      "H-Sätze (mit EUH)\n(durch Komma getrennt)\n(aus Gesamtdatei)":
-        "H-Sätze (mit EUH)\n(durch Komma getrennt)\n(aus Gesamtdatei)",
-      "P-Sätze\n(durch Komma getrennt)\n(aus Kap.2)":
-        "P-Sätze\n(durch Komma getrennt)\n(aus Kap.2)",
-      "P-Sätze\n(durch Komma getrennt)\n(aus Gesamtdatei)":
-        "P-Sätze\n(durch Komma getrennt)\n(aus Gesamtdatei)",
-      "Flammpunkt [°C]\n(aus 9.1)": "Flammpunkt [°C]\n(aus 9.1)",
-      "Aggregatzustand (9.1)": "Aggregatzustand (9.1)",
-      "CLP/GHS-Symbolnummern\n(CLP-Code mit Text; aus Piktorammen Kap.2 erkennen)":
-        "CLP/GHS-Symbolnummern\n(CLP-Code mit Text; aus Piktorammen Kap.2 erkennen)",
-      "CMR\n(GHS08 Piktogramm & einer der folgenden Sätze: H340, H341, H350, H351, H360, H361 (inkl Unterkategorie in Form von Buchstaben zB f)":
-        "CMR\n(GHS08 Piktogramm & einer der folgenden Sätze: H340, H341, H350, H351, H360, H361 (inkl Unterkategorie in Form von Buchstaben zB f)",
-      "Diisocyanat (aus Gesamtdatei)": "Diisocyanat (aus Gesamtdatei)",
-      "Hinweise/Bemerkungen/Sicherheitsbetrachtung (stoffspezifisch)":
-        "Hinweise/Bemerkungen/Sicherheitsbetrachtung (stoffspezifisch)",
-      "UN Nr \n": "UN Nr \n",
-      "ADR-Klasse (Gefahrgutklasse)": "ADR-Klasse (Gefahrgutklasse)",
-      "Gefahr-Nr (Kemler-Zahl)": "Gefahr-Nr (Kemler-Zahl)",
-      "Transport: Mengenbegrenzung LQ": "Transport: Mengenbegrenzung LQ",
-      "Transport: Tunnelcode": "Transport: Tunnelcode",
-      "tatsächliche Überschrift Kap.1": "tatsächliche Überschrift Kap.1",
-      "tatsächliche Überschrift Kap.2": "tatsächliche Überschrift Kap.2",
-      "tatsächliche Überschrift Kap.3": "tatsächliche Überschrift Kap.3",
-      "tatsächliche Überschrift Kap.4": "tatsächliche Überschrift Kap.4",
-      "tatsächliche Überschrift Kap.5": "tatsächliche Überschrift Kap.5",
-      "tatsächliche Überschrift Kap.6": "tatsächliche Überschrift Kap.6",
-      "tatsächliche Überschrift Kap.7": "tatsächliche Überschrift Kap.7",
-      "tatsächliche Überschrift Kap.8": "tatsächliche Überschrift Kap.8",
-      "tatsächliche Überschrift Kap.9": "tatsächliche Überschrift Kap.9",
-      "tatsächliche Überschrift Kap.10": "tatsächliche Überschrift Kap.10",
-      "tatsächliche Überschrift Kap.11": "tatsächliche Überschrift Kap.11",
-      "tatsächliche Überschrift Kap.12": "tatsächliche Überschrift Kap.12",
-      "tatsächliche Überschrift Kap.13": "tatsächliche Überschrift Kap.13",
-      "tatsächliche Überschrift Kap.14": "tatsächliche Überschrift Kap.14",
-      "tatsächliche Überschrift Kap.15": "tatsächliche Überschrift Kap.15",
-      "tatsächliche Überschrift Kap.16": "tatsächliche Überschrift Kap.16",
-      "1.1 Produktidentifikator": "1.1 Produktidentifikator",
-      "1.2 Relevante identifizierte Verwendungen des Stoffs/Gemischs":
-        "1.2 Relevante identifizierte Verwendungen des Stoffs/Gemischs",
-      "1.3 Angaben zum Lieferanten/Hersteller":
-        "1.3 Angaben zum Lieferanten/Hersteller",
-      "1.4 Notrufnummer": "1.4 Notrufnummer",
-      "2.1 Einstufung des Stoffs/Gemischs":
-        "2.1 Einstufung des Stoffs/Gemischs",
-      "2.2 Kennzeichnungselemente": "2.2 Kennzeichnungselemente",
-      "2.3 Sonstige Gefahren, die nicht zu einer Einstufung führen":
-        "2.3 Sonstige Gefahren, die nicht zu einer Einstufung führen",
-      "3.1 Chemische Charakterisierung": "3.1 Chemische Charakterisierung",
-      "3.2 Gefährliche Inhaltsstoffe": "3.2 Gefährliche Inhaltsstoffe",
-      "4.1 Maßnahmen nach Einatmen": "4.1 Maßnahmen nach Einatmen",
-      "4.2 Maßnahmen nach Hautkontakt": "4.2 Maßnahmen nach Hautkontakt",
-      "4.3 Maßnahmen nach Augenkontakt": "4.3 Maßnahmen nach Augenkontakt",
-      "5.1 Geeignete Löschmittel": "5.1 Geeignete Löschmittel",
-      "5.2 Besondere Gefahren durch den Stoff":
-        "5.2 Besondere Gefahren durch den Stoff",
-      "5.3 Hinweise für die Brandbekämpfung":
-        "5.3 Hinweise für die Brandbekämpfung",
-      "6.1 Persönliche Vorsichtsmaßnahmen":
-        "6.1 Persönliche Vorsichtsmaßnahmen",
-      "6.2 Umweltbezogene Vorsichtsmaßnahmen":
-        "6.2 Umweltbezogene Vorsichtsmaßnahmen",
-      "6.3 Reinigungsmethoden und -materialien":
-        "6.3 Reinigungsmethoden und -materialien",
-      "6.4 Verweis": "6.4 Verweis",
-      "7.1 Schutzmaßnahmen beim Umgang": "7.1 Schutzmaßnahmen beim Umgang",
-      "7.2 Hinweise zur sicheren Lagerung":
-        "7.2 Hinweise zur sicheren Lagerung",
-      "7.3 Anforderungen an Lagerräume": "7.3 Anforderungen an Lagerräume",
-      "8.1 Technische Schutzmaßnahmen": "8.1 Technische Schutzmaßnahmen",
-      "8.2 Grenzwerte für Arbeitsplatzexposition":
-        "8.2 Grenzwerte für Arbeitsplatzexposition",
-      "9.1 Zustand, Farbe, Geruch": "9.1 Zustand, Farbe, Geruch",
-      "9.2 pH-Wert": "9.2 pH-Wert",
-      "10.1 Chemische Stabilität": "10.1 Chemische Stabilität",
-      "10.2 Zu vermeidende Bedingungen": "10.2 Zu vermeidende Bedingungen",
-      "10.3 Unverträgliche Materialien": "10.3 Unverträgliche Materialien",
-      "10.4 Gefährliche Zersetzungsprodukte":
-        "10.4 Gefährliche Zersetzungsprodukte",
-      "10.5 Unverträgliche Materialen": "10.5 Unverträgliche Materialen",
-      "10.6 Gefährliche Zersetzungsprodukte":
-        "10.6 Gefährliche Zersetzungsprodukte",
-      "11.1 Akute Toxizität": "11.1 Akute Toxizität",
-      "12.1 Ökotoxizität": "12.1 Ökotoxizität",
-      "12.2 Persistenz und Abbaubarkeit": "12.2 Persistenz und Abbaubarkeit",
-      "12.3 Bioakkumulationspotenzial": "12.3 Bioakkumulationspotenzial",
-      "12.4 Hinweise auf andere schädliche Wirkungen":
-        "12.4 Hinweise auf andere schädliche Wirkungen",
-      "12.5 Ergebnisse der PBT- und vPvB-Beurteilung":
-        "12.5 Ergebnisse der PBT- und vPvB-Beurteilung",
-      "12.6 Endokrinschädliche Eigenschaften":
-        "12.6 Endokrinschädliche Eigenschaften",
-      "13.1 Abfallbehandlung von Stoffen/Gemischen":
-        "13.1 Abfallbehandlung von Stoffen/Gemischen",
-      "14.1 UN-Nummer": "14.1 UN-Nummer",
-      "14.2 Transportbezeichnung": "14.2 Transportbezeichnung",
-      "14.3 Gefahrklasse": "14.3 Gefahrklasse",
-      "14.4 Verpackungsgruppe": "14.4 Verpackungsgruppe",
-      "14.5 Besondere Vorschriften für Transport":
-        "14.5 Besondere Vorschriften für Transport",
-      "14.6 Besondere Vorsichtsmaßnahmen des Verwenders":
-        "14.6 Besondere Vorsichtsmaßnahmen des Verwenders",
-      "14.7 Massengutbeförderun auf dem Seeweg":
-        "14.7 Massengutbeförderun auf dem Seeweg",
-      "15.1 Sicherheits-, Gesundheits- und Umweltschutzvorschriften":
-        "15.1 Sicherheits-, Gesundheits- und Umweltschutzvorschriften",
-      "15.2 Kennzeichnung gemäß nationalem Recht":
-        "15.2 Kennzeichnung gemäß nationalem Recht",
-      "BA: Erste Hilfe": "BA: Erste Hilfe",
-      "BA: Gefahren für Mensch und Umwelt":
-        "BA: Gefahren für Mensch und Umwelt",
-      "BA: Gefahrstoffbezeichnung_1": "BA: Gefahrstoffbezeichnung_1",
-      "BA: Gefahrstoffbezeichnung_3": "BA: Gefahrstoffbezeichnung_3",
-      "BA: Sachgerechte Entsorgung _13": "BA: Sachgerechte Entsorgung _13",
-      "BA: Sachgerechte Entsorgung _14": "BA: Sachgerechte Entsorgung _14",
-      "BA: Schutzmaßnahmen": "BA: Schutzmaßnahmen",
-      "BA: Verhalten im Gefahrenfall _5": "BA: Verhalten im Gefahrenfall _5",
-      "BA: Verhalten im Gefahrenfall _6": "BA: Verhalten im Gefahrenfall _6",
-      Message: "Message",
-      "Section-Missing-Count": "Section-Missing-Count",
-    };
+    const headerMapping = headers.reduce((acc, header) => {
+      acc[header] = header;
+      return acc;
+    }, {});
 
     // Add filtered data rows to the worksheet
     filteredData.forEach((file) => {
@@ -698,7 +444,7 @@ const GetVerbundData = ({ refresh }) => {
       );
       const newRow = worksheet.addRow(rowData);
       const produktname =
-        file.data["Handelsname/Produktname \n(aus 1.1)"] ||
+        file.data["Handelsname/Produktname/Produktidentifikator\n(aus 1.1)"] ||
         file.data["Produktname"];
       if (produktname && produktnameCounts[produktname] > 1) {
         newRow.eachCell((cell) => {
@@ -756,7 +502,7 @@ const GetVerbundData = ({ refresh }) => {
   // Find duplicates based on 'Produktname'
   const produktnameCounts = filteredData.reduce((acc, item) => {
     const produktname =
-      item.data?.["Handelsname/Produktname \n(aus 1.1)"] ||
+      item.data?.["Handelsname/Produktname/Produktidentifikator\n(aus 1.1)"] ||
       item.data?.["Produktname"];
     if (produktname) {
       acc[produktname] = (acc[produktname] || 0) + 1;
@@ -851,9 +597,8 @@ const GetVerbundData = ({ refresh }) => {
             return (
               <li
                 key={item.id}
-                className={`p-4 rounded-lg flex justify-between items-center shadow-sm ${
-                  isDuplicate ? "bg-blue-200" : "bg-gray-100"
-                }`}
+                className={`p-4 rounded-lg flex justify-between items-center shadow-sm ${isDuplicate ? "bg-blue-200" : "bg-gray-100"
+                  }`}
               >
                 <div>
                   <p className="font-semibold">
@@ -863,7 +608,7 @@ const GetVerbundData = ({ refresh }) => {
                     Product Name:{" "}
                     {truncateText(
                       item.data["Handelsname/Produktname \n(aus 1.1)"] ||
-                        item.data["Produktname"]
+                      item.data["Produktname"]
                     )}
                   </p>
                 </div>
