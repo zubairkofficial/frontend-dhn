@@ -28,6 +28,7 @@ const AddUser = () => {
     is_user_customer: 0,
     showPassword: false,
     creator_id: "",
+    history_enabled: true,
   });
 
   const [services, setServices] = useState([]);
@@ -155,6 +156,7 @@ const AddUser = () => {
           parent_id: selectedCustomer.id,
           org_id: selectedCustomer.org_id,
           services: selectedCustomer.services.map((service) => service),
+          history_enabled: user.history_enabled,
           ...(user.is_user_organizational === 1
             ? {
               counterLimit: user?.selectedOrgUser?.counter_limit ?? 0,
@@ -175,6 +177,7 @@ const AddUser = () => {
           services: user.services,
           is_user_customer: user.is_user_customer,
           is_user_organizational: 1,
+          history_enabled: user.history_enabled,
         };
         apiUrl = `${Helpers.apiUrl}auth/register-customer-admin`;
       } else {
@@ -188,6 +191,7 @@ const AddUser = () => {
           counterLimit: user.counterLimit,
           expirationDate: user.expirationDate || "2099-12-31",
           services: selectedCustomer.services.map((service) => service),
+          history_enabled: user.history_enabled,
         };
         apiUrl = `${Helpers.apiUrl}auth/register`;
       }
@@ -492,6 +496,27 @@ const AddUser = () => {
                       </div>
                     )}
                   </>
+                )}
+
+                {Helpers.authUser.user_type === 1 && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Historie aktivieren
+                    </label>
+                    <div className="mt-2">
+                      <label className="inline-flex items-center">
+                        <input
+                          type="checkbox"
+                          className="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                          checked={user.history_enabled}
+                          onChange={(e) => handleChange("history_enabled")(e.target.checked)}
+                        />
+                        <span className="ml-2 text-sm text-gray-700">
+                          {user.history_enabled ? "Aktiviert" : "Deaktiviert"}
+                        </span>
+                      </label>
+                    </div>
+                  </div>
                 )}
 
                 <div className="flex justify-end mt-4">

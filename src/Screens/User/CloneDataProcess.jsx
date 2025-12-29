@@ -12,6 +12,7 @@ import {
 import { useHeader } from "../../Components/HeaderContext";
 import ExcelJS from "exceljs";
 import saveAs from "file-saver";
+import GetCloneProcessedData from "./GetCloneProcessedData";
 
 const CloneDataProcess = () => {
   const { setHeaderData } = useHeader();
@@ -20,9 +21,11 @@ const CloneDataProcess = () => {
   const [fileStatuses, setFileStatuses] = useState({});
   const [canUpload, setCanUpload] = useState(true);
   const [availableCount, setAvailableCount] = useState(null);
+  const [userCounterLimit, setUserCounterLimit] = useState(null);
   const [allProcessedData, setAllProcessedData] = useState([]);
   const [processedCount, setProcessedCount] = useState(0);
   const fileInputRef = useRef(null);
+  const [refreshProcessedData, setRefreshProcessedData] = useState(false);
 
   const checkUsageCount = async () => {
     try {
@@ -32,11 +35,14 @@ const CloneDataProcess = () => {
       );
 
       if (response.status === 200) {
-        const { available_count } = response.data;
+        const { available_count, userCounterLimit } = response.data;
         const normalizedCount =
           typeof available_count === "number" ? available_count : null;
+        const normalizedLimit =
+          typeof userCounterLimit === "number" ? userCounterLimit : null;
 
         setAvailableCount(normalizedCount);
+        setUserCounterLimit(normalizedLimit);
 
         if (normalizedCount !== null && normalizedCount <= 0) {
           setCanUpload(false);
@@ -152,14 +158,40 @@ const CloneDataProcess = () => {
 
           allData = allData.concat(parsedData);
         } else {
-          throw new Error(
-            response.message || Helpers.getTranslationValue("error_file_upload")
-          );
+          // Handle backend error response
+          const errorMessage =
+            response.data?.error ||
+            response.message ||
+            Helpers.getTranslationValue("error_file_upload");
+          newStatuses[file.name].status = "Error";
+          newStatuses[file.name].errorMessage = errorMessage;
+          setFileStatuses({ ...newStatuses });
+          throw new Error(errorMessage);
         }
       } catch (error) {
         console.error("Error uploading file:", file.name, error);
+
+        // Extract error message from backend response if available
+        let errorMessage =
+          error.message || Helpers.getTranslationValue("error_file_upload");
+
+        // Try to get error from response if it's an axios error
+        if (error.response && error.response.data) {
+          errorMessage =
+            error.response.data.error ||
+            error.response.data.message ||
+            errorMessage;
+        }
+
         newStatuses[file.name].status = "Error";
+        newStatuses[file.name].errorMessage = errorMessage;
         setFileStatuses({ ...newStatuses });
+
+        // Show error toast to user
+        Helpers.toast(
+          "error",
+          `Error processing ${file.name}: ${errorMessage}`
+        );
       }
 
       count += 1;
@@ -171,6 +203,7 @@ const CloneDataProcess = () => {
       "success",
       Helpers.getTranslationValue("files_processed_msg")
     );
+    setRefreshProcessedData((prev) => !prev); // Trigger GetCloneProcessedData to refresh
   };
 
   const handleDownload = async () => {
@@ -379,6 +412,43 @@ const CloneDataProcess = () => {
           </div>
         )}
 
+        {(userCounterLimit !== null || availableCount !== null) && (
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+            <div className="flex items-center justify-between">
+              <div className="text-blue-800">
+                {userCounterLimit !== null && (
+                  <span className="font-semibold">
+                    Total Limit:{" "}
+                    <span className="text-lg">{userCounterLimit}</span> data
+                    sheets
+                  </span>
+                )}
+                {userCounterLimit !== null && availableCount !== null && (
+                  <span className="mx-4 text-blue-600">|</span>
+                )}
+                {availableCount !== null && (
+                  <span>
+                    Available:{" "}
+                    <span className="font-semibold text-lg">
+                      {availableCount}
+                    </span>{" "}
+                    data sheets
+                  </span>
+                )}
+                {userCounterLimit !== null && availableCount !== null && (
+                  <span className="ml-4">
+                    Used:{" "}
+                    <span className="font-semibold text-lg text-red-600">
+                      {userCounterLimit - availableCount}
+                    </span>{" "}
+                    data sheets
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
         <ul className="space-y-4">
           {selectedFiles.map((file, index) => (
             <li key={index} className="bg-white p-4 rounded-lg shadow-sm">
@@ -389,6 +459,15 @@ const CloneDataProcess = () => {
                 <span className="flex items-center space-x-2">
                   {getStatusIcon(fileStatuses[file.name]?.status)}
                   <span>{fileStatuses[file.name]?.status}</span>
+                  {fileStatuses[file.name]?.status === "Error" &&
+                    fileStatuses[file.name]?.errorMessage && (
+                      <span
+                        className="text-red-600 text-sm ml-2 max-w-xs truncate"
+                        title={fileStatuses[file.name].errorMessage}
+                      >
+                        {fileStatuses[file.name].errorMessage}
+                      </span>
+                    )}
                 </span>
               </div>
             </li>
@@ -421,6 +500,8 @@ const CloneDataProcess = () => {
           </button>
         )}
       </div>
+
+      <GetCloneProcessedData refresh={refreshProcessedData} />
     </div>
   );
 };

@@ -21,6 +21,7 @@ const EditUser = () => {
     email: "",
     org_id: "",
     services: [],
+    history_enabled: true,
   });
   const navigate = useNavigate();
 
@@ -44,6 +45,7 @@ const EditUser = () => {
         email: response.data.user.email,
         services: response.data.user.services,
         org_id: response.data.user.org_id,
+        history_enabled: response.data.user.history_enabled ?? true,
       });
       setLoading(false);
     } catch (error) {
@@ -195,6 +197,26 @@ const EditUser = () => {
                         }
                         className="text-base border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-0 p-2"
                       />
+                    </div>
+                  )}
+                  {Helpers.authUser.user_type === 1 && (
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">
+                        Historie aktivieren
+                      </label>
+                      <div className="mt-2">
+                        <label className="inline-flex items-center">
+                          <input
+                            type="checkbox"
+                            className="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                            checked={formData.history_enabled}
+                            onChange={(e) => setFormData({...formData, history_enabled: e.target.checked})}
+                          />
+                          <span className="ml-2 text-sm text-gray-700">
+                            {formData.history_enabled ? "Aktiviert" : "Deaktiviert"}
+                          </span>
+                        </label>
+                      </div>
                     </div>
                   )}
                   <div className="flex justify-end space-x-3">

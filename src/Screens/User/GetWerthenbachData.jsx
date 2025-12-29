@@ -584,6 +584,24 @@ const GetWerthenbachData = ({ refresh }) => {
                   File Name: {truncateText(item.file_name)}
                 </p>
                 <p>Product Name: {truncateText(item.data["Produktname"])}</p>
+                <div className="mt-2">
+                  <span
+                    className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                      item.status === "success" || !item.status
+                        ? "bg-green-100 text-green-800"
+                        : "bg-red-100 text-red-800"
+                    }`}
+                  >
+                    {item.status === "success" || !item.status
+                      ? "Success"
+                      : "Error"}
+                  </span>
+                  {item.status === "error" && item.error_message && (
+                    <p className="text-red-600 text-sm mt-1">
+                      Error: {item.error_message}
+                    </p>
+                  )}
+                </div>
               </div>
               <div className="space-x-2">
                 <button
@@ -618,6 +636,24 @@ const GetWerthenbachData = ({ refresh }) => {
           <h3 className="text-xl font-semibold mb-6 text-center">
             Data Details
           </h3>
+          <div className="mb-4 text-center">
+            <span
+              className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${
+                selectedData.status === "success" || !selectedData.status
+                  ? "bg-green-100 text-green-800"
+                  : "bg-red-100 text-red-800"
+              }`}
+            >
+              {selectedData.status === "success" || !selectedData.status
+                ? "Success"
+                : "Error"}
+            </span>
+            {selectedData.error_message && (
+              <p className="text-red-600 text-sm mt-2">
+                Error: {selectedData.error_message}
+              </p>
+            )}
+          </div>
           <div className="overflow-auto max-h-[70vh]">
             <table className="w-full border-collapse border">
               <thead>

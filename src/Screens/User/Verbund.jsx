@@ -152,14 +152,40 @@ const Verbund = () => {
 
           allData = allData.concat(parsedData);
         } else {
-          throw new Error(
-            response.message || Helpers.getTranslationValue("error_file_upload")
-          );
+          // Handle backend error response
+          const errorMessage =
+            response.data?.error ||
+            response.message ||
+            Helpers.getTranslationValue("error_file_upload");
+          newStatuses[file.name].status = "Error";
+          newStatuses[file.name].errorMessage = errorMessage;
+          setFileStatuses({ ...newStatuses });
+          throw new Error(errorMessage);
         }
       } catch (error) {
         console.error("Error uploading file:", file.name, error);
+
+        // Extract error message from backend response if available
+        let errorMessage =
+          error.message || Helpers.getTranslationValue("error_file_upload");
+
+        // Try to get error from response if it's an axios error
+        if (error.response && error.response.data) {
+          errorMessage =
+            error.response.data.error ||
+            error.response.data.message ||
+            errorMessage;
+        }
+
         newStatuses[file.name].status = "Error";
+        newStatuses[file.name].errorMessage = errorMessage;
         setFileStatuses({ ...newStatuses });
+
+        // Show error toast to user
+        Helpers.toast(
+          "error",
+          `Error processing ${file.name}: ${errorMessage}`
+        );
       }
 
       count += 1;
@@ -460,6 +486,15 @@ const Verbund = () => {
                 <span className="flex items-center space-x-2">
                   {getStatusIcon(fileStatuses[file.name]?.status)}
                   <span>{fileStatuses[file.name]?.status}</span>
+                  {fileStatuses[file.name]?.status === "Error" &&
+                    fileStatuses[file.name]?.errorMessage && (
+                      <span
+                        className="text-red-600 text-sm ml-2 max-w-xs truncate"
+                        title={fileStatuses[file.name].errorMessage}
+                      >
+                        {fileStatuses[file.name].errorMessage}
+                      </span>
+                    )}
                 </span>
               </div>
             </li>

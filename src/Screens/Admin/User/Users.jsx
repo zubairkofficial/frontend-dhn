@@ -97,6 +97,44 @@ const Users = () => {
     setModalError(null);
   };
 
+  const handleToggleUserHistory = async (userId, historyEnabled) => {
+    try {
+      const response = await axios.post(
+        `${Helpers.apiUrl}toggle-user-history/${userId}`,
+        { history_enabled: historyEnabled },
+        Helpers.authHeaders
+      );
+
+      if (response.status === 200) {
+        // Update the user in the state
+        setAllUsers(prevUsers =>
+          prevUsers.map(user =>
+            user.id === userId
+              ? { ...user, history_enabled: historyEnabled }
+              : user
+          )
+        );
+        setFilteredUsers(prevUsers =>
+          prevUsers.map(user =>
+            user.id === userId
+              ? { ...user, history_enabled: historyEnabled }
+              : user
+          )
+        );
+        setCustomerAdmins(prevUsers =>
+          prevUsers.map(user =>
+            user.id === userId
+              ? { ...user, history_enabled: historyEnabled }
+              : user
+          )
+        );
+        Helpers.toast("success", `Historie ${historyEnabled ? "aktiviert" : "deaktiviert"}`);
+      }
+    } catch (error) {
+      Helpers.toast("error", "Fehler beim Aktualisieren der Historieeinstellungen");
+    }
+  };
+
   useEffect(() => {
     if (successMessage) {
       Helpers.toast("success", successMessage);
@@ -778,6 +816,11 @@ const Users = () => {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   {Helpers.getTranslationValue("All Processed Data")}
                 </th>
+                {Helpers.authUser.user_type === 1 && (
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Historie
+                  </th>
+                )}
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -851,6 +894,21 @@ const Users = () => {
                       <FaEye className="text-black" />
                     </button>
                   </td>
+                  {Helpers.authUser.user_type === 1 && (
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <label className="inline-flex items-center">
+                        <input
+                          type="checkbox"
+                          className="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                          checked={user.history_enabled ?? true}
+                          onChange={(e) => handleToggleUserHistory(user.id, e.target.checked)}
+                        />
+                        <span className="ml-2 text-sm">
+                          {(user.history_enabled ?? true) ? "Aktiviert" : "Deaktiviert"}
+                        </span>
+                      </label>
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>
