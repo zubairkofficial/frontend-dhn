@@ -368,7 +368,7 @@ const AllVerbundData = () => {
       "BA: Erste Hilfe_4": "BA: Erste Hilfe_4",
       "BA: Sachgerechte Entsorgung _13": "BA: Sachgerechte Entsorgung _13",
       "BA: Sachgerechte Entsorgung _14": "BA: Sachgerechte Entsorgung _14",
-      "Kopf (alles überhalb Kap.1)": "-", // This field is not provided by API, use "-" as per user requirement
+      "Kopf (alles überhalb Kap.1)": "Kopf\n(alles überhalb Kap.1.)",
       "tatsächliche Überschrift Kap.1": "tatsächliche Überschrift Kap.1",
       "1.1 Produktidentifikator": "1.1 Produktidentifikator",
       "1.2 Relevante identifizierte Verwendungen des Stoffs/Gemischs":
@@ -477,7 +477,7 @@ const AllVerbundData = () => {
       "tatsächliche Überschrift Kap.16 (sonstige Angaben)":
         "tatsächliche Überschrift Kap.16 (sonstige Angaben)",
       "Kap.16 Rest (falls vorhanden)": "Kap.16 Rest (falls vorhanden)",
-      "Rest des SDB (falls vorhanden)": "-", // Not provided by API
+      "Rest des SDB (falls vorhanden)": "Rest des SDB (falls vorhanden)",
       Message: "Message",
       "Section-Missing-Count": "Section-Missing-Count",
     };
@@ -760,7 +760,7 @@ const AllVerbundData = () => {
       "BA: Erste Hilfe_4": "BA: Erste Hilfe_4",
       "BA: Sachgerechte Entsorgung _13": "BA: Sachgerechte Entsorgung _13",
       "BA: Sachgerechte Entsorgung _14": "BA: Sachgerechte Entsorgung _14",
-      "Kopf (alles überhalb Kap.1)": "-", // This field is not provided by API, use "-" as per user requirement
+      "Kopf (alles überhalb Kap.1)": "Kopf\n(alles überhalb Kap.1)",
       "tatsächliche Überschrift Kap.1": "tatsächliche Überschrift Kap.1",
       "1.1 Produktidentifikator": "1.1 Produktidentifikator",
       "1.2 Relevante identifizierte Verwendungen des Stoffs/Gemischs":
@@ -869,7 +869,7 @@ const AllVerbundData = () => {
       "tatsächliche Überschrift Kap.16 (sonstige Angaben)":
         "tatsächliche Überschrift Kap.16 (sonstige Angaben)",
       "Kap.16 Rest (falls vorhanden)": "Kap.16 Rest (falls vorhanden)",
-      "Rest des SDB (falls vorhanden)": "-", // Not provided by API
+      "Rest des SDB (falls vorhanden)": "Rest des SDB (falls vorhanden)",
       Message: "Message",
       "Section-Missing-Count": "Section-Missing-Count",
     };

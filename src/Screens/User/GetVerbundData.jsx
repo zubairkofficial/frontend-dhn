@@ -330,7 +330,7 @@ const GetVerbundData = ({ refresh }) => {
       "BA: Erste Hilfe_4": "BA: Erste Hilfe_4",
       "BA: Sachgerechte Entsorgung _13": "BA: Sachgerechte Entsorgung _13",
       "BA: Sachgerechte Entsorgung _14": "BA: Sachgerechte Entsorgung _14",
-      "Kopf (alles überhalb Kap.1)": "-", // This field is not provided by API, use "-" as per user requirement
+      "Kopf (alles überhalb Kap.1)": "Kopf\n(alles überhalb Kap.1)",
       "tatsächliche Überschrift Kap.1": "tatsächliche Überschrift Kap.1",
       "1.1 Produktidentifikator": "1.1 Produktidentifikator",
       "1.2 Relevante identifizierte Verwendungen des Stoffs/Gemischs":
@@ -439,7 +439,7 @@ const GetVerbundData = ({ refresh }) => {
       "tatsächliche Überschrift Kap.16 (sonstige Angaben)":
         "tatsächliche Überschrift Kap.16 (sonstige Angaben)",
       "Kap.16 Rest (falls vorhanden)": "Kap.16 Rest (falls vorhanden)",
-      "Rest des SDB (falls vorhanden)": "-", // Not provided by API
+      "Rest des SDB (falls vorhanden)": "Rest des SDB (falls vorhanden)",
       Message: "Message",
       "Section-Missing-Count": "Section-Missing-Count",
     };
@@ -802,7 +802,7 @@ const GetVerbundData = ({ refresh }) => {
       "tatsächliche Überschrift Kap.7": "tatsächliche Überschrift Kap.7",
       "tatsächliche Überschrift Kap.8": "tatsächliche Überschrift Kap.8",
       "tatsächliche Überschrift Kap.9": "tatsächliche Überschrift Kap.9",
-      "Kopf (alles überhalb Kap.1)": "-", // This field is not provided by API, use "-" as per user requirement
+      "Kopf (alles überhalb Kap.1)": "Kopf\n(alles überhalb Kap.1)",
       "Rest des SDB (falls vorhanden)": "Rest des SDB (falls vorhanden)",
       "11.2 Angaben über sonstige Gefahren":
         "11.2 Angaben über sonstige Gefahren",

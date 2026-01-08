@@ -384,11 +384,6 @@ const Verbund = () => {
       return extractValue(content, "14\\.8");
     };
 
-    const extract15_1 = (data) => {
-      const content = data["tatsächliche Überschrift Kap.15"] || "";
-      return extractValue(content, "15\\.1");
-    };
-
     // Field mapping to align API response fields with expected headers
     const fieldMapping = {
       "Handelsname/Produktname/Produktidentifikator\n(aus 1.1)":
@@ -443,7 +438,7 @@ const Verbund = () => {
       "BA: Erste Hilfe_4": "BA: Erste Hilfe_4",
       "BA: Sachgerechte Entsorgung _13": "BA: Sachgerechte Entsorgung _13",
       "BA: Sachgerechte Entsorgung _14": "BA: Sachgerechte Entsorgung _14",
-      "Kopf (alles überhalb Kap.1)": "-", // This field is not provided by API, use "-" as per user requirement
+      "Kopf (alles überhalb Kap.1)": "Kopf\n(alles überhalb Kap.1)", 
       "tatsächliche Überschrift Kap.1": "tatsächliche Überschrift Kap.1",
       "1.1 Produktidentifikator": "1.1 Produktidentifikator",
       "1.2 Relevante identifizierte Verwendungen des Stoffs/Gemischs":
@@ -544,13 +539,13 @@ const Verbund = () => {
       "14.8 Sonstige Angaben": extract14_8,
       "Kap.14 Rest (falls vorhanden)": "Kap.14 Rest (falls vorhanden)",
       "tatsächliche Überschrift Kap.15": "tatsächliche Überschrift Kap.15",
-      "15.1 Sicherheits-, Gesundheits- und Umweltschutzvorschriften": "-", // Not provided by API
+      "15.1 Sicherheits-, Gesundheits- und Umweltschutzvorschriften": "15.1 Sicherheits-, Gesundheits- und Umweltschutzvorschriften",
       "15.2. Stoffsicherheitsbeurteilung": "15.2. Stoffsicherheitsbeurteilung",
       "Kap.15 Rest (falls vorhanden)": "Kap.15 Rest (falls vorhanden)",
       "tatsächliche Überschrift Kap.16 (sonstige Angaben)":
         "tatsächliche Überschrift Kap.16 (sonstige Angaben)",
       "Kap.16 Rest (falls vorhanden)": "Kap.16 Rest (falls vorhanden)",
-      "Rest des SDB (falls vorhanden)": "-", // Not provided by API
+      "Rest des SDB (falls vorhanden)": "Rest des SDB (falls vorhanden)",
       Message: "Message",
       "Section-Missing-Count": "Section-Missing-Count",
     };
