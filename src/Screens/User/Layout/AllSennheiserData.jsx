@@ -141,6 +141,7 @@ const AllSennheiserData = () => {
       "pH-Wert",
       "Gemische",
       "Zu überwachende Parameter",
+      "Arbeitsplatzgrenzwert",
       "SVHC",
       "CMR",
       "Kostenstellenfreigabe",
@@ -194,6 +195,7 @@ const AllSennheiserData = () => {
       "pH-Wert": "pH-Wert",
       Gemische: "Gemische",
       "Zu überwachende Parameter": "Zu überwachende Parameter",
+      Arbeitsplatzgrenzwert: "Arbeitsplatzgrenzwert",
       SVHC: "SVHC",
       CMR: "CMR",
       Kostenstellenfreigabe: "Kostenstellenfreigabe",
@@ -247,6 +249,7 @@ const AllSennheiserData = () => {
       "pH-Wert",
       "Gemische",
       "Zu überwachende Parameter",
+      "Arbeitsplatzgrenzwert",
       "SVHC",
       "CMR",
       "Kostenstellenfreigabe",
@@ -299,6 +302,7 @@ const AllSennheiserData = () => {
       "pH-Wert": "pH-Wert",
       Gemische: "Gemische",
       "Zu überwachende Parameter": "Zu überwachende Parameter",
+      Arbeitsplatzgrenzwert: "Arbeitsplatzgrenzwert",
       SVHC: "SVHC",
       CMR: "CMR",
       Kostenstellenfreigabe: "Kostenstellenfreigabe",
@@ -563,7 +567,9 @@ const AllSennheiserData = () => {
           )}
         </>
       ) : (
-        !loading && <p className="text-center text-gray-500">No sennheiser data found.</p>
+        !loading && (
+          <p className="text-center text-gray-500">No sennheiser data found.</p>
+        )
       )}
 
       {selectedData && (
