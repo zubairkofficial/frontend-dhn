@@ -243,7 +243,7 @@ const Verbund = () => {
       "BA: Erste Hilfe_4",
       "BA: Sachgerechte Entsorgung _13",
       "BA: Sachgerechte Entsorgung _14",
-      "Kopf (alles überhalb Kap.1)",
+      "Kopf\n(alles überhalb Kap.1.)",
       "tatsächliche Überschrift Kap.1",
       "1.1 Produktidentifikator",
       "1.2 Relevante identifizierte Verwendungen des Stoffs/Gemischs",
