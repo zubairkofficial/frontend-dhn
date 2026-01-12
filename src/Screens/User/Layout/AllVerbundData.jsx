@@ -153,8 +153,8 @@ const AllVerbundData = () => {
       "BA: Gefahrstoffbezeichnung_3",
       "BA: Gefahren für Mensch und Umwelt_2",
       "BA: Schutzmaßnahmen_8",
-      "BA: Verhalten im Gefahrenfall _5",
-      "BA: Verhalten im Gefahrenfall _6",
+      "BA: Verhalten im Gefahrenfall_5",
+      "BA: Verhalten im Gefahrenfall_6",
       "BA: Erste Hilfe_4",
       "BA: Sachgerechte Entsorgung _13",
       "BA: Sachgerechte Entsorgung _14",
@@ -363,12 +363,12 @@ const AllVerbundData = () => {
       "BA: Gefahren für Mensch und Umwelt_2":
         "BA: Gefahren für Mensch und Umwelt_2",
       "BA: Schutzmaßnahmen_8": "BA: Schutzmaßnahmen_8",
-      "BA: Verhalten im Gefahrenfall _5": "BA: Verhalten im Gefahrenfall _5",
-      "BA: Verhalten im Gefahrenfall _6": "BA: Verhalten im Gefahrenfall _6",
+      "BA: Verhalten im Gefahrenfall_5": "BA: Verhalten im Gefahrenfall_5",
+      "BA: Verhalten im Gefahrenfall_6": "BA: Verhalten im Gefahrenfall_6",
       "BA: Erste Hilfe_4": "BA: Erste Hilfe_4",
       "BA: Sachgerechte Entsorgung _13": "BA: Sachgerechte Entsorgung _13",
       "BA: Sachgerechte Entsorgung _14": "BA: Sachgerechte Entsorgung _14",
-      "Kopf (alles überhalb Kap.1)": "Kopf\n(alles überhalb Kap.1.)",
+      "Kopf\n(alles überhalb Kap.1.)": "Kopf\n(alles überhalb Kap.1.)",
       "tatsächliche Überschrift Kap.1": "tatsächliche Überschrift Kap.1",
       "1.1 Produktidentifikator": "1.1 Produktidentifikator",
       "1.2 Relevante identifizierte Verwendungen des Stoffs/Gemischs":
@@ -434,7 +434,7 @@ const AllVerbundData = () => {
       "10.3 Möglichkeit gefährlicher Reaktionen":
         "10.3 Möglichkeit gefährlicher Reaktionen",
       "10.4 Zu vermeidende Bedingungen": "10.4 Zu vermeidende Bedingungen",
-      "10.5 Unverträgliche Materialien": "10.5 Unverträgliche Materialien",
+      "10.5 Unverträgliche Materialen": "10.5 Unverträgliche Materialen",
       "10.6 Gefährliche Zersetzungsprodukte":
         "10.6 Gefährliche Zersetzungsprodukte",
       "Kap.10 Rest (falls vorhanden)": "Kap.10 Rest (falls vorhanden)",
@@ -546,8 +546,8 @@ const AllVerbundData = () => {
       "BA: Gefahrstoffbezeichnung_3",
       "BA: Gefahren für Mensch und Umwelt_2",
       "BA: Schutzmaßnahmen_8",
-      "BA: Verhalten im Gefahrenfall _5",
-      "BA: Verhalten im Gefahrenfall _6",
+      "BA: Verhalten im Gefahrenfall_5",
+      "BA: Verhalten im Gefahrenfall_6",
       "BA: Erste Hilfe_4",
       "BA: Sachgerechte Entsorgung _13",
       "BA: Sachgerechte Entsorgung _14",
@@ -755,12 +755,12 @@ const AllVerbundData = () => {
       "BA: Gefahren für Mensch und Umwelt_2":
         "BA: Gefahren für Mensch und Umwelt_2",
       "BA: Schutzmaßnahmen_8": "BA: Schutzmaßnahmen_8",
-      "BA: Verhalten im Gefahrenfall _5": "BA: Verhalten im Gefahrenfall _5",
-      "BA: Verhalten im Gefahrenfall _6": "BA: Verhalten im Gefahrenfall _6",
+      "BA: Verhalten im Gefahrenfall_5": "BA: Verhalten im Gefahrenfall_5",
+      "BA: Verhalten im Gefahrenfall_6": "BA: Verhalten im Gefahrenfall_6",
       "BA: Erste Hilfe_4": "BA: Erste Hilfe_4",
       "BA: Sachgerechte Entsorgung _13": "BA: Sachgerechte Entsorgung _13",
       "BA: Sachgerechte Entsorgung _14": "BA: Sachgerechte Entsorgung _14",
-      "Kopf (alles überhalb Kap.1)": "Kopf\n(alles überhalb Kap.1)",
+      "Kopf\n(alles überhalb Kap.1.)": "Kopf\n(alles überhalb Kap.1.)",
       "tatsächliche Überschrift Kap.1": "tatsächliche Überschrift Kap.1",
       "1.1 Produktidentifikator": "1.1 Produktidentifikator",
       "1.2 Relevante identifizierte Verwendungen des Stoffs/Gemischs":
@@ -826,7 +826,7 @@ const AllVerbundData = () => {
       "10.3 Möglichkeit gefährlicher Reaktionen":
         "10.3 Möglichkeit gefährlicher Reaktionen",
       "10.4 Zu vermeidende Bedingungen": "10.4 Zu vermeidende Bedingungen",
-      "10.5 Unverträgliche Materialen": "10.5 Unverträgliche Materialien",
+      "10.5 Unverträgliche Materialen": "10.5 Unverträgliche Materialen",
       "10.6 Gefährliche Zersetzungsprodukte":
         "10.6 Gefährliche Zersetzungsprodukte",
       "Kap.10 Rest (falls vorhanden)": "Kap.10 Rest (falls vorhanden)",
