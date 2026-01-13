@@ -355,6 +355,52 @@ const CustomerUserTable = () => {
   const handleViewAllProcessedData = (userId) => {
     navigate(`/user/all-processed-data/${userId}`);
   };
+
+  const handleToggleUserHistory = async (userId, historyEnabled) => {
+    try {
+      const response = await axios.post(
+        `${Helpers.apiUrl}toggle-user-history/${userId}`,
+        { history_enabled: historyEnabled },
+        Helpers.authHeaders
+      );
+
+      if (response.status === 200) {
+        // Update the user in the state
+        setUsers((prevUsers) =>
+          prevUsers.map((user) =>
+            user.id === userId
+              ? { ...user, history_enabled: historyEnabled }
+              : user
+          )
+        );
+        setFilteredUsers((prevUsers) =>
+          prevUsers.map((user) =>
+            user.id === userId
+              ? { ...user, history_enabled: historyEnabled }
+              : user
+          )
+        );
+        // Also update allChildUsers for global search
+        setAllChildUsers((prevUsers) =>
+          prevUsers.map((user) =>
+            user.id === userId
+              ? { ...user, history_enabled: historyEnabled }
+              : user
+          )
+        );
+        Helpers.toast(
+          "success",
+          `Historie ${historyEnabled ? "aktiviert" : "deaktiviert"}`
+        );
+      }
+    } catch (error) {
+      Helpers.toast(
+        "error",
+        "Fehler beim Aktualisieren der Historieeinstellungen"
+      );
+    }
+  };
+
   const indexOfLastUser = (currentPage + 1) * itemsPerPage;
   const indexOfFirstUser = currentPage * itemsPerPage;
   const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
@@ -717,6 +763,12 @@ const CustomerUserTable = () => {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       {Helpers.getTranslationValue("All Processed Data")}
                     </th>
+                    {Helpers.authUser &&
+                      Helpers.getItem("is_user_customer") === "1" && (
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Historie aktivieren
+                        </th>
+                      )}
                   </tr>
                 ) : (
                   <tr>
@@ -757,6 +809,12 @@ const CustomerUserTable = () => {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       {Helpers.getTranslationValue("All Processed Data")}
                     </th>
+                    {Helpers.authUser &&
+                      Helpers.getItem("is_user_customer") === "1" && (
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Historie aktivieren
+                        </th>
+                      )}
                   </tr>
                 )}
               </thead>
@@ -811,6 +869,29 @@ const CustomerUserTable = () => {
                             <FaEye className="text-black" />
                           </button>
                         </td>
+                        {Helpers.authUser &&
+                          Helpers.getItem("is_user_customer") === "1" && (
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                              <label className="inline-flex items-center">
+                                <input
+                                  type="checkbox"
+                                  className="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                  checked={user.history_enabled ?? true}
+                                  onChange={(e) =>
+                                    handleToggleUserHistory(
+                                      user.id,
+                                      e.target.checked
+                                    )
+                                  }
+                                />
+                                <span className="ml-2 text-sm">
+                                  {user.history_enabled ?? true
+                                    ? "Aktiviert"
+                                    : "Deaktiviert"}
+                                </span>
+                              </label>
+                            </td>
+                          )}
                       </tr>
                     ))
                   : currentUsers.map((user, index) => (
@@ -891,6 +972,29 @@ const CustomerUserTable = () => {
                             <FaEye className="text-black" />
                           </button>
                         </td>
+                        {Helpers.authUser &&
+                          Helpers.getItem("is_user_customer") === "1" && (
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                              <label className="inline-flex items-center">
+                                <input
+                                  type="checkbox"
+                                  className="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                  checked={user.history_enabled ?? true}
+                                  onChange={(e) =>
+                                    handleToggleUserHistory(
+                                      user.id,
+                                      e.target.checked
+                                    )
+                                  }
+                                />
+                                <span className="ml-2 text-sm">
+                                  {user.history_enabled ?? true
+                                    ? "Aktiviert"
+                                    : "Deaktiviert"}
+                                </span>
+                              </label>
+                            </td>
+                          )}
                       </tr>
                     ))}
               </tbody>
