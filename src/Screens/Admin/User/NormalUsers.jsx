@@ -41,9 +41,14 @@ const NormalUsers = () => {
           user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
           user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
           (user.services &&
-            user.services.join(", ").toLowerCase().includes(searchTerm.toLowerCase())) ||
+            user.services
+              .join(", ")
+              .toLowerCase()
+              .includes(searchTerm.toLowerCase())) ||
           (user.organization_name &&
-            user.organization_name.toLowerCase().includes(searchTerm.toLowerCase()))
+            user.organization_name
+              .toLowerCase()
+              .includes(searchTerm.toLowerCase()))
       )
     );
   }, [searchTerm, users]);
@@ -69,7 +74,6 @@ const NormalUsers = () => {
       setLoading(false);
     }
   };
-
 
   const handleShowModal = async (userId) => {
     setShowModal(true);
@@ -137,6 +141,44 @@ const NormalUsers = () => {
       setError(error.message);
     }
   };
+
+  const handleToggleUserHistory = async (userId, historyEnabled) => {
+    try {
+      const response = await axios.post(
+        `${Helpers.apiUrl}toggle-user-history/${userId}`,
+        { history_enabled: historyEnabled },
+        Helpers.authHeaders
+      );
+
+      if (response.status === 200) {
+        // Update the user in the state
+        setUsers((prevUsers) =>
+          prevUsers.map((user) =>
+            user.id === userId
+              ? { ...user, history_enabled: historyEnabled }
+              : user
+          )
+        );
+        setFilteredUsers((prevUsers) =>
+          prevUsers.map((user) =>
+            user.id === userId
+              ? { ...user, history_enabled: historyEnabled }
+              : user
+          )
+        );
+        Helpers.toast(
+          "success",
+          `Historie ${historyEnabled ? "aktiviert" : "deaktiviert"}`
+        );
+      }
+    } catch (error) {
+      Helpers.toast(
+        "error",
+        "Fehler beim Aktualisieren der Historieeinstellungen"
+      );
+    }
+  };
+
   const indexOfLastUser = (currentPage + 1) * itemsPerPage;
   const indexOfFirstUser = currentPage * itemsPerPage;
   const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
@@ -194,15 +236,15 @@ const NormalUsers = () => {
               ) : (
                 <>
                   {documentCount === undefined &&
-                    contractSolutionCount === undefined &&
-                    dataProcessCount === undefined &&
-                    freeDataProcessCount === undefined &&
-                    cloneDataProcessCount === undefined &&
-                    werthenbachCount === undefined &&
-                    scherenCount === undefined &&
-                    sennheiserCount === undefined &&
-                    verbundCount === undefined &&
-                    demoDataProcessCount === undefined ? (
+                  contractSolutionCount === undefined &&
+                  dataProcessCount === undefined &&
+                  freeDataProcessCount === undefined &&
+                  cloneDataProcessCount === undefined &&
+                  werthenbachCount === undefined &&
+                  scherenCount === undefined &&
+                  sennheiserCount === undefined &&
+                  verbundCount === undefined &&
+                  demoDataProcessCount === undefined ? (
                     <p className="text-gray-500">
                       Keine Werkzeugnutzung gefunden
                     </p>
@@ -282,7 +324,7 @@ const NormalUsers = () => {
                                 5
                               </td>
                               <td className="px-6 py-4 text-sm text-gray-600 font-bold">
-                              Klon der Sicherheitsdatenblattanalyse
+                                Klon der Sicherheitsdatenblattanalyse
                               </td>
                               <td className="px-6 py-4 text-sm text-gray-600 font-bold">
                                 {cloneDataProcessCount}
@@ -354,7 +396,7 @@ const NormalUsers = () => {
                               </td>
                             </tr>
                           )}
-                          </tbody>
+                        </tbody>
                       </table>
                     </div>
                   )}
@@ -388,7 +430,12 @@ const NormalUsers = () => {
             </div>
           </div>
           <div className="flex justify-end mb-5 space-x-4">
-            <button onClick={() => { navigate(-1) }} className="mt-4 btn p-2 m-1 bg-gray-500 hover:bg-gray-600 text-white rounded-md">
+            <button
+              onClick={() => {
+                navigate(-1);
+              }}
+              className="mt-4 btn p-2 m-1 bg-gray-500 hover:bg-gray-600 text-white rounded-md"
+            >
               {Helpers.getTranslationValue("Back")}
             </button>
           </div>
@@ -423,6 +470,12 @@ const NormalUsers = () => {
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Actions
                   </th>
+                  {Helpers.authUser &&
+                    parseInt(Helpers.authUser.user_type) === 1 && (
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Historie aktivieren
+                      </th>
+                    )}
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
@@ -469,6 +522,29 @@ const NormalUsers = () => {
                         <FaEye className="text-black" />
                       </button>
                     </td>
+                    {Helpers.authUser &&
+                      parseInt(Helpers.authUser.user_type) === 1 && (
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          <label className="inline-flex items-center">
+                            <input
+                              type="checkbox"
+                              className="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                              checked={user.history_enabled ?? true}
+                              onChange={(e) =>
+                                handleToggleUserHistory(
+                                  user.id,
+                                  e.target.checked
+                                )
+                              }
+                            />
+                            <span className="ml-2 text-sm">
+                              {user.history_enabled ?? true
+                                ? "Aktiviert"
+                                : "Deaktiviert"}
+                            </span>
+                          </label>
+                        </td>
+                      )}
                   </tr>
                 ))}
               </tbody>

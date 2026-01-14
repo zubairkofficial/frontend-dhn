@@ -97,6 +97,43 @@ const OrganizationUsers = () => {
     navigate(`/admin/normal-child-users/${id}`);
   };
 
+  const handleToggleUserHistory = async (userId, historyEnabled) => {
+    try {
+      const response = await axios.post(
+        `${Helpers.apiUrl}toggle-user-history/${userId}`,
+        { history_enabled: historyEnabled },
+        Helpers.authHeaders
+      );
+
+      if (response.status === 200) {
+        // Update the user in the state
+        setUsers((prevUsers) =>
+          prevUsers.map((user) =>
+            user.id === userId
+              ? { ...user, history_enabled: historyEnabled }
+              : user
+          )
+        );
+        setFilteredUsers((prevUsers) =>
+          prevUsers.map((user) =>
+            user.id === userId
+              ? { ...user, history_enabled: historyEnabled }
+              : user
+          )
+        );
+        Helpers.toast(
+          "success",
+          `Historie ${historyEnabled ? "aktiviert" : "deaktiviert"}`
+        );
+      }
+    } catch (error) {
+      Helpers.toast(
+        "error",
+        "Fehler beim Aktualisieren der Historieeinstellungen"
+      );
+    }
+  };
+
   const indexOfLastUser = (currentPage + 1) * itemsPerPage;
   const indexOfFirstUser = currentPage * itemsPerPage;
   const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
@@ -221,7 +258,7 @@ const OrganizationUsers = () => {
                           5
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-600 font-bold">
-                        Klon der Sicherheitsdatenblattanalyse
+                          Klon der Sicherheitsdatenblattanalyse
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-600 font-bold">
                           {selectedUser.cloneDataProcessCount}
@@ -270,7 +307,12 @@ const OrganizationUsers = () => {
             />
           </div>
           <div className="flex justify-end mb-5 space-x-4">
-            <button onClick={() => { navigate(-1) }} className="mt-4 btn p-2 m-1 bg-gray-500 hover:bg-gray-600 text-white rounded-md">
+            <button
+              onClick={() => {
+                navigate(-1);
+              }}
+              className="mt-4 btn p-2 m-1 bg-gray-500 hover:bg-gray-600 text-white rounded-md"
+            >
               {Helpers.getTranslationValue("Back")}
             </button>
           </div>
@@ -311,6 +353,12 @@ const OrganizationUsers = () => {
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     {Helpers.getTranslationValue("Users")}
                   </th>
+                  {Helpers.authUser &&
+                    parseInt(Helpers.authUser.user_type) === 1 && (
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Historie aktivieren
+                      </th>
+                    )}
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
@@ -335,7 +383,7 @@ const OrganizationUsers = () => {
                       {user.counter_limit}
                     </td>
                     <td className="px-6 py-4 text-center whitespace-nowrap text-sm text-gray-500">
-                      {user.all_organization_count ?? 'Nill'}
+                      {user.all_organization_count ?? "Nill"}
                     </td>
                     <td className="px-6 py-4 text-center whitespace-nowrap text-sm text-gray-500">
                       {user.allCount}
@@ -368,6 +416,29 @@ const OrganizationUsers = () => {
                         <FaUsers className="text-black" />
                       </button>
                     </td>
+                    {Helpers.authUser &&
+                      parseInt(Helpers.authUser.user_type) === 1 && (
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          <label className="inline-flex items-center">
+                            <input
+                              type="checkbox"
+                              className="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                              checked={user.history_enabled ?? true}
+                              onChange={(e) =>
+                                handleToggleUserHistory(
+                                  user.id,
+                                  e.target.checked
+                                )
+                              }
+                            />
+                            <span className="ml-2 text-sm">
+                              {user.history_enabled ?? true
+                                ? "Aktiviert"
+                                : "Deaktiviert"}
+                            </span>
+                          </label>
+                        </td>
+                      )}
                   </tr>
                 ))}
               </tbody>
