@@ -569,7 +569,7 @@ const Users = () => {
         </div>
       )}
       {showTotalModal && (
-        <div className="fixed inset-0 z-50 overflow-y-auto max-h-[90vh] flex items-center justify-center">
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="fixed inset-0 bg-gray-100 opacity-75"></div>
           <div className="relative bg-white rounded-lg shadow-lg w-full max-w-md p-6">
             <div className="flex justify-between items-center mb-4">
@@ -596,16 +596,16 @@ const Users = () => {
               </button>
             </div>
             <div className="p-4">
-              {totalModalUser.document_count === 0 &&
-              totalModalUser.contract_solution_count === 0 &&
-              totalModalUser.data_process_count === 0 &&
-              totalModalUser.free_data_process_count === 0 &&
-              totalModalUser.clone_data_process_count === 0 &&
-              totalModalUser.werthenbach_count === 0 &&
-              totalModalUser.scheren_count === 0 &&
-              totalModalUser.sennheiser_count === 0 &&
-              totalModalUser.verbund_count === 0 &&
-              totalModalUser.demo_data_process_count === 0 ? (
+              {totalModalUser.total_document_count === 0 &&
+              totalModalUser.total_contract_solution_count === 0 &&
+              totalModalUser.total_data_process_count === 0 &&
+              totalModalUser.total_free_data_process_count === 0 &&
+              totalModalUser.total_clone_data_process_count === 0 &&
+              totalModalUser.total_werthenbach_count === 0 &&
+              totalModalUser.total_scheren_count === 0 &&
+              totalModalUser.total_sennheiser_count === 0 &&
+              totalModalUser.total_verbund_count === 0 &&
+              totalModalUser.total_demo_data_process_count === 0 ? (
                 <p className="text-gray-500">Keine Werkzeugnutzung gefunden</p>
               ) : (
                 <div className="overflow-x-auto">
@@ -625,7 +625,7 @@ const Users = () => {
                     </thead>
                     <tbody>
                       {/* Display 0 if the tool is available but count is 0 */}
-                      {totalModalUser.document_count !== 0 && (
+                      {totalModalUser.total_document_count !== 0 && (
                         <tr className="hover:bg-gray-50">
                           <td className="px-6 py-4 border-b text-sm text-gray-600 font-bold">
                             1
@@ -634,11 +634,11 @@ const Users = () => {
                             Sthamer
                           </td>
                           <td className="px-6 py-4 border-b text-sm text-gray-600 font-bold">
-                            {totalModalUser.document_count}
+                            {totalModalUser.total_document_count}
                           </td>
                         </tr>
                       )}
-                      {totalModalUser.contract_solution_count !== 0 && (
+                      {totalModalUser.total_contract_solution_count !== 0 && (
                         <tr className="hover:bg-gray-50">
                           <td className="px-6 py-4 border-b text-sm text-gray-600 font-bold">
                             2
@@ -647,11 +647,11 @@ const Users = () => {
                             Contract Automation Solution
                           </td>
                           <td className="px-6 py-4 border-b text-sm text-gray-600 font-bold">
-                            {totalModalUser.contract_solution_count}
+                            {totalModalUser.total_contract_solution_count}
                           </td>
                         </tr>
                       )}
-                      {totalModalUser.data_process_count !== 0 && (
+                      {totalModalUser.total_data_process_count !== 0 && (
                         <tr className="hover:bg-gray-50">
                           <td className="px-6 py-4 border-b text-sm text-gray-600 font-bold">
                             3
@@ -660,11 +660,11 @@ const Users = () => {
                             Datenprozess
                           </td>
                           <td className="px-6 py-4 text-sm text-gray-600 font-bold">
-                            {totalModalUser.data_process_count}
+                            {totalModalUser.total_data_process_count}
                           </td>
                         </tr>
                       )}
-                      {totalModalUser.free_data_process_count !== 0 && (
+                      {totalModalUser.total_free_data_process_count !== 0 && (
                         <tr className="hover:bg-gray-50">
                           <td className="px-6 py-4 border-b text-sm text-gray-600 font-bold">
                             4
@@ -673,11 +673,11 @@ const Users = () => {
                             Kostenloser Datenprozess
                           </td>
                           <td className="px-6 py-4 text-sm text-gray-600 font-bold">
-                            {totalModalUser.free_data_process_count}
+                            {totalModalUser.total_free_data_process_count}
                           </td>
                         </tr>
                       )}
-                      {totalModalUser.clone_data_process_count !== 0 && (
+                      {totalModalUser.total_clone_data_process_count !== 0 && (
                         <tr className="hover:bg-gray-50">
                           <td className="px-6 py-4 border-b text-sm text-gray-600 font-bold">
                             5
@@ -686,11 +686,11 @@ const Users = () => {
                             Klon der Sicherheitsdatenblattanalyse
                           </td>
                           <td className="px-6 py-4 border-b text-sm text-gray-600 font-bold">
-                            {totalModalUser.clone_data_process_count}
+                            {totalModalUser.total_clone_data_process_count}
                           </td>
                         </tr>
                       )}
-                      {totalModalUser.werthenbach_count !== 0 && (
+                      {totalModalUser.total_werthenbach_count !== 0 && (
                         <tr className="hover:bg-gray-50">
                           <td className="px-6 py-4 border-b text-sm text-gray-600 font-bold">
                             6
@@ -699,11 +699,11 @@ const Users = () => {
                             Werthenbach
                           </td>
                           <td className="px-6 py-4 border-b text-sm text-gray-600 font-bold">
-                            {totalModalUser.werthenbach_count}
+                            {totalModalUser.total_werthenbach_count}
                           </td>
                         </tr>
                       )}  
-                      {totalModalUser.scheren_count !== 0 && (
+                      {totalModalUser.total_scheren_count !== 0 && (
                         <tr className="hover:bg-gray-50">
                           <td className="px-6 py-4 border-b text-sm text-gray-600 font-bold">
                             7
@@ -712,11 +712,11 @@ const Users = () => {
                             Scheren
                           </td>
                           <td className="px-6 py-4 border-b text-sm text-gray-600 font-bold">
-                            {totalModalUser.scheren_count}
+                            {totalModalUser.total_scheren_count}
                           </td>
                         </tr>
                       )}  
-                      {totalModalUser.sennheiser_count !== 0 && (
+                      {totalModalUser.total_sennheiser_count !== 0 && (
                         <tr className="hover:bg-gray-50">
                           <td className="px-6 py-4 border-b text-sm text-gray-600 font-bold">
                             8
@@ -725,11 +725,11 @@ const Users = () => {
                             Sennheiser
                           </td>
                           <td className="px-6 py-4 border-b text-sm text-gray-600 font-bold">
-                            {totalModalUser.sennheiser_count}
+                            {totalModalUser.total_sennheiser_count}
                           </td>
                         </tr>
                       )}  
-                      {totalModalUser.verbund_count !== 0 && (
+                      {totalModalUser.total_verbund_count !== 0 && (
                         <tr className="hover:bg-gray-50">
                           <td className="px-6 py-4 border-b text-sm text-gray-600 font-bold">
                             9
@@ -738,20 +738,17 @@ const Users = () => {
                             Verbund
                           </td>
                           <td className="px-6 py-4 border-b text-sm text-gray-600 font-bold">
-                            {totalModalUser.verbund_count}
+                            {totalModalUser.total_verbund_count}
                           </td>
                         </tr>
                       )}  
-                      {totalModalUser.demo_data_process_count !== 0 && (
+                      {totalModalUser.total_demo_data_process_count !== 0 && (
                         <tr className="hover:bg-gray-50">
                           <td className="px-6 py-4 border-b text-sm text-gray-600 font-bold">
                             10
                           </td>
                           <td className="px-6 py-4 border-b text-sm text-gray-600 font-bold">
-                            Demo Data Process
-                          </td>
-                          <td className="px-6 py-4 border-b text-sm text-gray-600 font-bold">
-                            {totalModalUser.demo_data_process_count}
+                            {totalModalUser.total_demo_data_process_count}
                           </td>
                         </tr>
                       )}  
