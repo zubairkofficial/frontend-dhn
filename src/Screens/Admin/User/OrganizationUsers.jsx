@@ -265,6 +265,58 @@ const OrganizationUsers = () => {
                         </td>
                       </tr>
                     )}
+                    {selectedUser.serviceIds.includes(8) && (
+                      <tr className="hover:bg-gray-50">
+                        <td className="px-6 py-4 text-sm text-gray-600 font-bold">
+                          6
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-600 font-bold">
+                          Werthenbach
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-600 font-bold">
+                          {selectedUser.werthenbachCount}
+                        </td>
+                      </tr>
+                    )}
+                    {selectedUser.serviceIds.includes(9) && (
+                      <tr className="hover:bg-gray-50">
+                        <td className="px-6 py-4 text-sm text-gray-600 font-bold">
+                          7
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-600 font-bold">
+                          Scheren
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-600 font-bold">
+                          {selectedUser.scherenCount}
+                        </td>
+                      </tr>
+                    )}
+                    {selectedUser.serviceIds.includes(10) && (
+                      <tr className="hover:bg-gray-50">
+                        <td className="px-6 py-4 text-sm text-gray-600 font-bold">
+                          8
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-600 font-bold">
+                          Sennheiser
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-600 font-bold">
+                          {selectedUser.sennheiserCount}
+                        </td>
+                      </tr>
+                    )}
+                    {selectedUser.serviceIds.includes(11) && (
+                      <tr className="hover:bg-gray-50">
+                        <td className="px-6 py-4 text-sm text-gray-600 font-bold">
+                          9
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-600 font-bold">
+                          Verbund
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-600 font-bold">
+                          {selectedUser.verbundCount}
+                        </td>
+                      </tr>
+                    )}
                     {selectedUser.serviceIds.includes(12) && (
                       <tr className="hover:bg-gray-50">
                         <td className="px-6 py-4 text-sm text-gray-600 font-bold">

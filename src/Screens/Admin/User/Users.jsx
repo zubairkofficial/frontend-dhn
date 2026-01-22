@@ -599,7 +599,13 @@ const Users = () => {
               {totalModalUser.total_document_count === 0 &&
               totalModalUser.total_contract_solution_count === 0 &&
               totalModalUser.total_data_process_count === 0 &&
-              totalModalUser.total_free_data_process_count === 0 ? (
+              totalModalUser.total_free_data_process_count === 0 &&
+              totalModalUser.total_clone_data_process_count === 0 &&
+              totalModalUser.total_werthenbach_count === 0 &&
+              totalModalUser.total_scheren_count === 0 &&
+              totalModalUser.total_sennheiser_count === 0 &&
+              totalModalUser.total_verbund_count === 0 &&
+              totalModalUser.total_demo_data_process_count === 0 ? (
                 <p className="text-gray-500">Keine Werkzeugnutzung gefunden</p>
               ) : (
                 <div className="overflow-x-auto">
@@ -671,6 +677,84 @@ const Users = () => {
                           </td>
                         </tr>
                       )}
+                      {totalModalUser.total_clone_data_process_count !== 0 && (
+                        <tr className="hover:bg-gray-50">
+                          <td className="px-6 py-4 border-b text-sm text-gray-600 font-bold">
+                            5
+                          </td>
+                          <td className="px-6 py-4 border-b text-sm text-gray-600 font-bold">
+                            Klon der Sicherheitsdatenblattanalyse
+                          </td>
+                          <td className="px-6 py-4 border-b text-sm text-gray-600 font-bold">
+                            {totalModalUser.total_clone_data_process_count}
+                          </td>
+                        </tr>
+                      )}
+                      {totalModalUser.total_werthenbach_count !== 0 && (
+                        <tr className="hover:bg-gray-50">
+                          <td className="px-6 py-4 border-b text-sm text-gray-600 font-bold">
+                            6
+                          </td>
+                          <td className="px-6 py-4 border-b text-sm text-gray-600 font-bold">
+                            Werthenbach
+                          </td>
+                          <td className="px-6 py-4 border-b text-sm text-gray-600 font-bold">
+                            {totalModalUser.total_werthenbach_count}
+                          </td>
+                        </tr>
+                      )}  
+                      {totalModalUser.total_scheren_count !== 0 && (
+                        <tr className="hover:bg-gray-50">
+                          <td className="px-6 py-4 border-b text-sm text-gray-600 font-bold">
+                            7
+                          </td>
+                          <td className="px-6 py-4 border-b text-sm text-gray-600 font-bold">
+                            Scheren
+                          </td>
+                          <td className="px-6 py-4 border-b text-sm text-gray-600 font-bold">
+                            {totalModalUser.total_scheren_count}
+                          </td>
+                        </tr>
+                      )}  
+                      {totalModalUser.total_sennheiser_count !== 0 && (
+                        <tr className="hover:bg-gray-50">
+                          <td className="px-6 py-4 border-b text-sm text-gray-600 font-bold">
+                            8
+                          </td>
+                          <td className="px-6 py-4 border-b text-sm text-gray-600 font-bold">
+                            Sennheiser
+                          </td>
+                          <td className="px-6 py-4 border-b text-sm text-gray-600 font-bold">
+                            {totalModalUser.total_sennheiser_count}
+                          </td>
+                        </tr>
+                      )}  
+                      {totalModalUser.total_verbund_count !== 0 && (
+                        <tr className="hover:bg-gray-50">
+                          <td className="px-6 py-4 border-b text-sm text-gray-600 font-bold">
+                            9
+                          </td>
+                          <td className="px-6 py-4 border-b text-sm text-gray-600 font-bold">
+                            Verbund
+                          </td>
+                          <td className="px-6 py-4 border-b text-sm text-gray-600 font-bold">
+                            {totalModalUser.total_verbund_count}
+                          </td>
+                        </tr>
+                      )}  
+                      {totalModalUser.total_demo_data_process_count !== 0 && (
+                        <tr className="hover:bg-gray-50">
+                          <td className="px-6 py-4 border-b text-sm text-gray-600 font-bold">
+                            10
+                          </td>
+                          <td className="px-6 py-4 border-b text-sm text-gray-600 font-bold">
+                            Demo Data Process
+                          </td>
+                          <td className="px-6 py-4 border-b text-sm text-gray-600 font-bold">
+                            {totalModalUser.total_demo_data_process_count}
+                          </td>
+                        </tr>
+                      )}  
                     </tbody>
                   </table>
                 </div>
