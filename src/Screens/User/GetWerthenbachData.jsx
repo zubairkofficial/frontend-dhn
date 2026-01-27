@@ -247,6 +247,7 @@ const GetWerthenbachData = ({ refresh }) => {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet("Filtered Data");
 
+    // Use the same headers as handleDownloadFile for consistency
     const headers = [
       "Produktname",
       "Hersteller",
@@ -254,6 +255,7 @@ const GetWerthenbachData = ({ refresh }) => {
       "Ausgabedatum bzw. letzte Änderung",
       "LG Klasse",
       "WGK(numerischer Wert)",
+      "Signalwort",
       "H Sätze durch Komma getrennt",
       "Flammpunkt (numerischer Wert)[°C]",
       "UN Nr",
@@ -263,6 +265,9 @@ const GetWerthenbachData = ({ refresh }) => {
       "Tunnelcode",
       "N.A.G./NOS technische Benennung (Gefahraus-löser)",
       "LQ (Spalte eingefügt)",
+      "Dichte",
+      "Aggregatzustand",
+      "Klassifizierungscode",
       "Hinweise/Bemerkungen/Sicherheitsbetrachtung (stoffspezifisch)",
       "Freigabe Störrfallbeauftragter",
       "Maßnahmen Lagerung Abschnitt 7.2",
@@ -281,7 +286,6 @@ const GetWerthenbachData = ({ refresh }) => {
       "Section - 10|10.5",
       "Section - 14",
       "Section - 15",
-
       "Section-Missing-Count",
       "Message",
     ];
@@ -325,6 +329,7 @@ const GetWerthenbachData = ({ refresh }) => {
       "Ausgabedatum bzw. letzte Änderung": "Ausgabedatum bzw. letzte Änderung",
       "LG Klasse": "LG Klasse",
       "WGK(numerischer Wert)": "WGK\n(numerischer Wert)",
+      Signalwort: "Signalwort",
       "H Sätze durch Komma getrennt": "H Sätze\ndurch Komma getrennt",
       "Flammpunkt (numerischer Wert)[°C]":
         "Flammpunkt\n(numerischer Wert)\n[°C]",
@@ -336,6 +341,9 @@ const GetWerthenbachData = ({ refresh }) => {
       "N.A.G./NOS technische Benennung (Gefahraus-löser)":
         "N.A.G./NOS\ntechnische Benennung\n(Gefahraus-löser)",
       "LQ (Spalte eingefügt)": "LQ (Spalte eingefügt)",
+      Dichte: "Dichte",
+      Aggregatzustand: "Aggregatzustand",
+      Klassifizierungscode: "Klassifizierungscode",
       "Hinweise/Bemerkungen/Sicherheitsbetrachtung (stoffspezifisch)":
         "Hinweise/Bemerkungen/Sicherheitsbetrachtung (stoffspezifisch)",
       "Freigabe Störrfallbeauftragter": "Freigabe Störrfallbeauftragter",
@@ -356,7 +364,6 @@ const GetWerthenbachData = ({ refresh }) => {
       "Section - 10|10.5": "Section - 10|10.5",
       "Section - 14": "Section - 14",
       "Section - 15": "Section - 15",
-
       "Section-Missing-Count": "Section-Missing-Count",
       Message: "Message",
     };
@@ -588,6 +595,11 @@ const GetWerthenbachData = ({ refresh }) => {
                   File Name: {truncateText(item.file_name)}
                 </p>
                 <p>Product Name: {truncateText(item.data["Produktname"])}</p>
+                {item.created_at && (
+                  <p className="text-sm text-gray-600 mt-1">
+                    Created: {new Date(item.created_at).toLocaleString()}
+                  </p>
+                )}
                 <div className="mt-2">
                   <span
                     className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
