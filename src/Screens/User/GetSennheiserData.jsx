@@ -289,8 +289,8 @@ const GetSennheiserData = ({ refresh }) => {
       "H Sätze durch Komma getrennt": "H Sätze durch Komma getrennt",
       "Einstufung des Stoffs oder Gemischs":
         "Einstufung des Stoffs oder Gemischs",
-      "Einstufung gemäß der (EG) Verordnung 1272/2008 in der geänderten Fassung.":
-        "Einstufung gemäß der (EG) Verordnung 1272/2008 in der geänderten Fassung.",
+      "Einstufung gemäß der (EG) Verordnung 1272/2008 in der geänderten Fassung":
+        "Einstufung gemäß der (EG) Verordnung 1272/2008 in der geänderten Fassung",
       Signalwort: "Signalwort",
       "Ergänzende Hinweise": "Ergänzende Hinweise",
       "P-Sätze": "P-Sätze",
@@ -518,6 +518,11 @@ const GetSennheiserData = ({ refresh }) => {
                     File Name: {truncateText(item.file_name)}
                   </p>
                   <p>Product Name: {truncateText(item.data["Produktname"])}</p>
+                  {item.created_at && (
+                    <p className="text-sm text-gray-600 mt-1">
+                      Created: {new Date(item.created_at).toLocaleString()}
+                    </p>
+                  )}
                 </div>
                 <div className="space-x-2">
                   <button
