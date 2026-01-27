@@ -889,6 +889,9 @@ const AllVerbundData = () => {
       const rowData = headers.map((header) => {
         const mappedField = fieldMapping[header];
         if (mappedField === "-") return "-";
+        if (typeof mappedField === "function") {
+          return mappedField(file.data);
+        }
         return file.data[mappedField] || "";
       });
       worksheet.addRow(rowData);
@@ -1053,6 +1056,11 @@ const AllVerbundData = () => {
                         ] || item.data["Produktname"]
                       )}
                     </p>
+                    {item.created_at && (
+                      <p className="text-sm text-gray-600 mt-1">
+                        Created: {new Date(item.created_at).toLocaleString()}
+                      </p>
+                    )}
                   </div>
                   <div className="space-x-2">
                     <button
