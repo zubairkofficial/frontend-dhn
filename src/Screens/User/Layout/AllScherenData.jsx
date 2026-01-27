@@ -536,6 +536,11 @@ const AllScherenData = () => {
                     <p>
                       Product Name: {truncateText(item.data["Produktname"])}
                     </p>
+                    {item.created_at && (
+                      <p className="text-sm text-gray-600 mt-1">
+                        Created: {new Date(item.created_at).toLocaleString()}
+                      </p>
+                    )}
                   </div>
                   <div className="space-x-2">
                     <button
