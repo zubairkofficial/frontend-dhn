@@ -226,11 +226,15 @@ const GetProcessedData = ({ refresh }) => {
       "Section-Missing-Count": "Section-Missing-Count",
     };
 
-    // Map data correctly using headerMapping
-    const rowData = headers.map(
-      (header) => fileData[headerMapping[header]] || ""
-    );
-    worksheet.addRow(rowData);
+    // Map data correctly using headerMapping (ensure values are strings for proper Excel parsing)
+    const rowData = headers.map((header) => {
+      const val = fileData[headerMapping[header]];
+      return val != null && typeof val === "object" ? JSON.stringify(val) : (val ?? "");
+    });
+    const dataRow = worksheet.addRow(rowData);
+    dataRow.eachCell((cell) => {
+      cell.alignment = { vertical: "middle", wrapText: true };
+    });
 
     // Adjust column widths
     worksheet.columns.forEach((column) => {
@@ -270,7 +274,7 @@ const GetProcessedData = ({ refresh }) => {
     }
 
     const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet("Filtered Data");
+    const worksheet = workbook.addWorksheet("Processed Data");
 
     const headers = [
       "Lagerkunde",
@@ -414,10 +418,19 @@ const GetProcessedData = ({ refresh }) => {
 
     // Add filtered data rows to the worksheet
     filteredData.forEach((file) => {
-      const rowData = headers.map(
-        (header) => file.data[headerMapping[header]] || ""
-      );
-      worksheet.addRow(rowData);
+      const rowData = headers.map((header) => {
+        const val = file.data[headerMapping[header]];
+        return val != null && typeof val === "object" ? JSON.stringify(val) : (val ?? "");
+      });
+      const newRow = worksheet.addRow(rowData);
+      newRow.eachCell((cell) => {
+        cell.alignment = { vertical: "middle", wrapText: true };
+      });
+    });
+
+    // Same column widths and parsing as single-file download
+    worksheet.columns.forEach((column) => {
+      column.width = 30;
     });
 
     const buffer = await workbook.xlsx.writeBuffer();
