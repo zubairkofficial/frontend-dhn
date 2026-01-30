@@ -444,16 +444,20 @@ const GetVerbundData = ({ refresh }) => {
       "Section-Missing-Count": "Section-Missing-Count",
     };
 
-    // Map data correctly using fieldMapping
+    // Map data correctly using fieldMapping (ensure values are strings for proper Excel parsing)
     const rowData = headers.map((header) => {
       const mappedField = fieldMapping[header];
       if (mappedField === "-") return "-";
       if (typeof mappedField === "function") {
         return mappedField(fileData);
       }
-      return fileData[mappedField] || "";
+      const val = fileData[mappedField];
+      return val != null && typeof val === "object" ? JSON.stringify(val) : (val ?? "");
     });
-    worksheet.addRow(rowData);
+    const dataRow = worksheet.addRow(rowData);
+    dataRow.eachCell((cell) => {
+      cell.alignment = { vertical: "middle", wrapText: true };
+    });
 
     // Adjust column widths
     worksheet.columns.forEach((column) => {
@@ -493,7 +497,7 @@ const GetVerbundData = ({ refresh }) => {
     }
 
     const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet("Filtered Data");
+    const worksheet = workbook.addWorksheet("Verbund Data");
 
     // Define headers in the standard order (same as handleDownloadFile)
     const headers = [
@@ -881,9 +885,13 @@ const GetVerbundData = ({ refresh }) => {
         if (typeof mappedField === "function") {
           return mappedField(file.data);
         }
-        return file.data[mappedField] || "";
+        const val = file.data[mappedField];
+        return val != null && typeof val === "object" ? JSON.stringify(val) : (val ?? "");
       });
       const newRow = worksheet.addRow(rowData);
+      newRow.eachCell((cell) => {
+        cell.alignment = { vertical: "middle", wrapText: true };
+      });
       const produktname =
         file.data["Handelsname/Produktname/Produktidentifikator\n(aus 1.1)"] ||
         file.data["Produktname"];
@@ -896,6 +904,11 @@ const GetVerbundData = ({ refresh }) => {
           };
         });
       }
+    });
+
+    // Same column widths and parsing as single-file download
+    worksheet.columns.forEach((column) => {
+      column.width = 30;
     });
 
     const buffer = await workbook.xlsx.writeBuffer();

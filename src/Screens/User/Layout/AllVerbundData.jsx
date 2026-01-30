@@ -488,9 +488,13 @@ const AllVerbundData = () => {
       if (typeof mappedField === "function") {
         return mappedField(fileData);
       }
-      return fileData[mappedField] || "";
+      const val = fileData[mappedField];
+      return val != null && typeof val === "object" ? JSON.stringify(val) : (val ?? "");
     });
-    worksheet.addRow(rowData);
+    const dataRow = worksheet.addRow(rowData);
+    dataRow.eachCell((cell) => {
+      cell.alignment = { vertical: "middle", wrapText: true };
+    });
 
     worksheet.columns.forEach((column) => {
       column.width = 30;
@@ -512,7 +516,7 @@ const AllVerbundData = () => {
 
   const handleDownloadAll = async () => {
     const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet("Filtered Data");
+    const worksheet = workbook.addWorksheet("Verbund Data");
 
     const headers = [
       "Handelsname/Produktname/Produktidentifikator\n(aus 1.1)",
@@ -892,9 +896,18 @@ const AllVerbundData = () => {
         if (typeof mappedField === "function") {
           return mappedField(file.data);
         }
-        return file.data[mappedField] || "";
+        const val = file.data[mappedField];
+        return val != null && typeof val === "object" ? JSON.stringify(val) : (val ?? "");
       });
-      worksheet.addRow(rowData);
+      const newRow = worksheet.addRow(rowData);
+      newRow.eachCell((cell) => {
+        cell.alignment = { vertical: "middle", wrapText: true };
+      });
+    });
+
+    // Same column widths and parsing as single-file download
+    worksheet.columns.forEach((column) => {
+      column.width = 30;
     });
 
     const buffer = await workbook.xlsx.writeBuffer();
