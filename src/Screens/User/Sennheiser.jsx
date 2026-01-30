@@ -304,14 +304,18 @@ const Sennheiser = () => {
 
     // Add data rows and apply coloring based on duplicates and missing sections
     allSennheiserData.forEach((fileData) => {
-      let rowData = headers.map(
-        (header) => fileData.data[headerMapping[header]] || ""
-      );
+      const rowData = headers.map((header) => {
+        const val = fileData.data[headerMapping[header]];
+        return val != null && typeof val === "object" ? JSON.stringify(val) : (val ?? "");
+      });
       const sectionMissingCount = parseInt(
         rowData[headers.indexOf("Section-Missing-Count")] || 0
       );
 
       const newRow = worksheet.addRow(rowData);
+      newRow.eachCell((cell) => {
+        cell.alignment = { vertical: "middle", wrapText: true };
+      });
       const produktname = fileData.data?.["Produktname"];
       const normalizedName = produktname
         ? produktname.toLowerCase().trim()

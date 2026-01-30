@@ -202,10 +202,14 @@ const AllSennheiserData = () => {
       "Section-Missing-Count": "Section-Missing-Count",
     };
 
-    const rowData = headers.map(
-      (header) => fileData[headerMapping[header]] || ""
-    );
-    worksheet.addRow(rowData);
+    const rowData = headers.map((header) => {
+      const val = fileData[headerMapping[header]];
+      return val != null && typeof val === "object" ? JSON.stringify(val) : (val ?? "");
+    });
+    const dataRow = worksheet.addRow(rowData);
+    dataRow.eachCell((cell) => {
+      cell.alignment = { vertical: "middle", wrapText: true };
+    });
 
     worksheet.columns.forEach((column) => {
       column.width = 30;
@@ -227,7 +231,7 @@ const AllSennheiserData = () => {
 
   const handleDownloadAll = async () => {
     const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet("Filtered Data");
+    const worksheet = workbook.addWorksheet("Sennheiser Data");
 
     const headers = [
       "ID Number",
@@ -385,6 +389,11 @@ const AllSennheiserData = () => {
           });
         }
       }
+    });
+
+    // Same column widths and parsing as single-file download
+    worksheet.columns.forEach((column) => {
+      column.width = 30;
     });
 
     const buffer = await workbook.xlsx.writeBuffer();
