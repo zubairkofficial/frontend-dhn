@@ -200,11 +200,15 @@ const GetWerthenbachData = ({ refresh }) => {
       Message: "Message",
     };
 
-    // Map data correctly using headerMapping
-    const rowData = headers.map(
-      (header) => fileData[headerMapping[header]] || ""
-    );
-    worksheet.addRow(rowData);
+    // Map data correctly using headerMapping (ensure values are strings for proper Excel parsing)
+    const rowData = headers.map((header) => {
+      const val = fileData[headerMapping[header]];
+      return val != null && typeof val === "object" ? JSON.stringify(val) : (val ?? "");
+    });
+    const dataRow = worksheet.addRow(rowData);
+    dataRow.eachCell((cell) => {
+      cell.alignment = { vertical: "middle", wrapText: true };
+    });
 
     // Adjust column widths
     worksheet.columns.forEach((column) => {
@@ -245,7 +249,7 @@ const GetWerthenbachData = ({ refresh }) => {
     }
 
     const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet("Filtered Data");
+    const worksheet = workbook.addWorksheet("Werthenbach Data");
 
     // Use the same headers as handleDownloadFile for consistency
     const headers = [
@@ -381,7 +385,7 @@ const GetWerthenbachData = ({ refresh }) => {
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     });
 
-    const fileName = `Processed_Data_${new Date()
+    const fileName = `Werthenbach_Data_${new Date()
       .toISOString()
       .slice(0, 10)}.xlsx`;
     saveAs(blob, fileName);
