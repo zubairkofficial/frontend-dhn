@@ -300,14 +300,18 @@ const Scheren = () => {
 
     // Add data rows and apply yellow fill if `Section-Missing-Count` > 0
     allScherenData.forEach((fileData) => {
-      let rowData = headers.map(
-        (header) => fileData.data[headerMapping[header]] || ""
-      );
+      const rowData = headers.map((header) => {
+        const val = fileData.data[headerMapping[header]];
+        return val != null && typeof val === "object" ? JSON.stringify(val) : (val ?? "");
+      });
       const sectionMissingCount = parseInt(
         rowData[headers.indexOf("Section-Missing-Count")] || 0
       );
 
       const newRow = worksheet.addRow(rowData);
+      newRow.eachCell((cell) => {
+        cell.alignment = { vertical: "middle", wrapText: true };
+      });
 
       // Apply yellow fill if `Section-Missing-Count` > 0
       if (sectionMissingCount > 0) {
