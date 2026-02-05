@@ -132,7 +132,7 @@ const Verbund = () => {
         const response = await axios.post(
           `${Helpers.apiUrl}verbund-data-process`,
           formData,
-          Helpers.authFileHeaders
+          { ...Helpers.authFileHeaders, timeout: 300000 }
         );
 
         if (response.status === 200 && response.data && response.data.data) {
