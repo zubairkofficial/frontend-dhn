@@ -45,6 +45,7 @@ const CustomerUserTable = () => {
   const [scherenCount, setScherenCount] = useState(null);
   const [sennheiserCount, setSennheiserCount] = useState(null);
   const [verbundCount, setVerbundCount] = useState(null);
+  const [surfachemCount, setSurfachemCount] = useState(null);
   const [loadingModal, setLoadingModal] = useState(true);
   const [modalError, setModalError] = useState(null);
 
@@ -91,6 +92,7 @@ const CustomerUserTable = () => {
     setScherenCount(null);
     setSennheiserCount(null);
     setVerbundCount(null);
+    setSurfachemCount(null);
     setModalError(null);
   };
   const userId = Helpers.authUser.id;
@@ -467,6 +469,7 @@ const CustomerUserTable = () => {
                   scherenCount === undefined &&
                   sennheiserCount === undefined &&
                   verbundCount === undefined &&
+                  surfachemCount === undefined &&
                   demoDataProcessCount === undefined ? (
                     <p className="text-gray-500">
                       Keine Werkzeugnutzung gefunden
@@ -603,6 +606,19 @@ const CustomerUserTable = () => {
                               </td>
                               <td className="px-6 py-4 text-sm text-gray-600 font-bold">
                                 {verbundCount}
+                              </td>
+                            </tr>
+                          )}
+                          {surfachemCount !== undefined && (
+                            <tr className="hover:bg-gray-50">
+                              <td className="px-6 py-4 border-b text-sm text-gray-600 font-bold">
+                                11
+                              </td>
+                              <td className="px-6 py-4 text-sm text-gray-600 font-bold">
+                                SDB2Excel (Surfachem)
+                              </td>
+                              <td className="px-6 py-4 text-sm text-gray-600 font-bold">
+                                {surfachemCount}
                               </td>
                             </tr>
                           )}

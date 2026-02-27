@@ -44,6 +44,7 @@ const Users = () => {
   const [scherenCount, setScherenCount] = useState(null);
   const [sennheiserCount, setSennheiserCount] = useState(null);
   const [verbundCount, setVerbundCount] = useState(null);
+  const [surfachemCount, setSurfachemCount] = useState(null);
   const [loadingModal, setLoadingModal] = useState(true);
   const [modalError, setModalError] = useState(null);
 
@@ -71,6 +72,7 @@ const Users = () => {
         setScherenCount(response.data.scheren_count);
         setSennheiserCount(response.data.sennheiser_count);
         setVerbundCount(response.data.verbund_count);
+        setSurfachemCount(response.data.surfachem_count);
         setDemoDataProcessCount(response.data.demo_data_process_count);
       } else {
         throw new Error("Failed to fetch user usage data");
@@ -93,6 +95,7 @@ const Users = () => {
     setScherenCount(null);
     setSennheiserCount(null);
     setVerbundCount(null);
+    setSurfachemCount(null);
     setDemoDataProcessCount(null);
     setModalError(null);
   };
@@ -399,6 +402,7 @@ const Users = () => {
                   scherenCount === undefined &&
                   sennheiserCount === undefined &&
                   verbundCount === undefined &&
+                  surfachemCount === undefined &&
                   demoDataProcessCount === undefined ? (
                     <p className="text-gray-500">
                       Keine Werkzeugnutzung gefunden
@@ -537,6 +541,19 @@ const Users = () => {
                               </td>
                             </tr>
                           )}
+                          {surfachemCount !== undefined && (
+                            <tr className="hover:bg-gray-50">
+                              <td className="px-6 py-4 border-b text-sm text-gray-600 font-bold">
+                                11
+                              </td>
+                              <td className="px-6 py-4 text-sm text-gray-600 font-bold">
+                                SDB2Excel (Surfachem)
+                              </td>
+                              <td className="px-6 py-4 text-sm text-gray-600 font-bold">
+                                {surfachemCount}
+                              </td>
+                            </tr>
+                          )}
                           {demoDataProcessCount !== undefined && (
                             <tr className="hover:bg-gray-50">
                               <td className="px-6 py-4 border-b text-sm text-gray-600 font-bold">
@@ -605,6 +622,7 @@ const Users = () => {
               totalModalUser.total_scheren_count === 0 &&
               totalModalUser.total_sennheiser_count === 0 &&
               totalModalUser.total_verbund_count === 0 &&
+              totalModalUser.total_surfachem_count === 0 &&
               totalModalUser.total_demo_data_process_count === 0 ? (
                 <p className="text-gray-500">Keine Werkzeugnutzung gefunden</p>
               ) : (
@@ -739,6 +757,19 @@ const Users = () => {
                           </td>
                           <td className="px-6 py-4 border-b text-sm text-gray-600 font-bold">
                             {totalModalUser.total_verbund_count}
+                          </td>
+                        </tr>
+                      )}  
+                      {totalModalUser.total_surfachem_count !== 0 && (
+                        <tr className="hover:bg-gray-50">
+                          <td className="px-6 py-4 border-b text-sm text-gray-600 font-bold">
+                            11
+                          </td>
+                          <td className="px-6 py-4 border-b text-sm text-gray-600 font-bold">
+                            SDB2Excel (Surfachem)
+                          </td>
+                          <td className="px-6 py-4 border-b text-sm text-gray-600 font-bold">
+                            {totalModalUser.total_surfachem_count}
                           </td>
                         </tr>
                       )}  

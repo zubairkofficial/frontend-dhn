@@ -317,6 +317,19 @@ const OrganizationUsers = () => {
                         </td>
                       </tr>
                     )}
+                    {selectedUser.serviceIds.includes(13) && (
+                      <tr className="hover:bg-gray-50">
+                        <td className="px-6 py-4 text-sm text-gray-600 font-bold">
+                          11
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-600 font-bold">
+                          SDB2Excel (Surfachem)
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-600 font-bold">
+                          {selectedUser.surfachemCount}
+                        </td>
+                      </tr>
+                    )}
                     {selectedUser.serviceIds.includes(12) && (
                       <tr className="hover:bg-gray-50">
                         <td className="px-6 py-4 text-sm text-gray-600 font-bold">

@@ -72,6 +72,8 @@ import AllSennheiserData from "./Screens/User/Layout/AllSennheiserData";
 import Sennheiser from "./Screens/User/Sennheiser";
 import AllVerbundData from "./Screens/User/Layout/AllVerbundData";
 import Verbund from "./Screens/User/Verbund";
+import Surfachem from "./Screens/User/Surfachem";
+import AllSurfachemData from "./Screens/User/Layout/AllSurfachemData";
 
 const Auth = ({ children, isAuth = true, isAdmin = false }) => {
   let user = Helpers.getItem("user", true);
@@ -392,6 +394,16 @@ const App = () => {
                 }
               />
             )}
+            {hasServiceAccess(13) && (
+              <Route
+                path="/surfachem"
+                element={
+                  <Auth>
+                    <Surfachem />
+                  </Auth>
+                }
+              />
+            )}
             {hasServiceAccess(5) && (
               <Route
                 path="/free-data-process"
@@ -431,6 +443,14 @@ const App = () => {
               element={
                 <Auth>
                   <AllVerbundData />
+                </Auth>
+              }
+            />
+            <Route
+              path="/user/all-surfachem-data/:userId"
+              element={
+                <Auth>
+                  <AllSurfachemData />
                 </Auth>
               }
             />
@@ -644,6 +664,14 @@ const App = () => {
               element={
                 <Auth isAdmin={true}>
                   <AllProcessedData />
+                </Auth>
+              }
+            />
+            <Route
+              path="all-surfachem-data/:userId"
+              element={
+                <Auth isAdmin={true}>
+                  <AllSurfachemData />
                 </Auth>
               }
             />

@@ -27,6 +27,7 @@ const OrganizationalUserTable = () => {
   const [scherenCount, setScherenCount] = useState(null);
   const [sennheiserCount, setSennheiserCount] = useState(null);
   const [verbundCount, setVerbundCount] = useState(null);
+  const [surfachemCount, setSurfachemCount] = useState(null);
   const [loadingModal, setLoadingModal] = useState(true);
   const [modalError, setModalError] = useState(null);
 
@@ -117,6 +118,7 @@ const OrganizationalUserTable = () => {
         setScherenCount(response.data.scheren_count);
         setSennheiserCount(response.data.sennheiser_count);
         setVerbundCount(response.data.verbund_count);
+        setSurfachemCount(response.data.surfachem_count);
         setDemoDataProcessCount(response.data.demo_data_process_count);
       } else {
         throw new Error("Failed to fetch user usage data");
@@ -218,8 +220,9 @@ const OrganizationalUserTable = () => {
                   werthenbachCount === undefined &&
                   scherenCount === undefined &&
                   sennheiserCount === undefined &&
-                  verbundCount === undefined &&
-                  demoDataProcessCount === undefined ? (
+                    verbundCount === undefined &&
+                    surfachemCount === undefined &&
+                    demoDataProcessCount === undefined ? (
                     <p className="text-gray-500">
                       Keine Werkzeugnutzung gefunden
                     </p>
@@ -354,6 +357,19 @@ const OrganizationalUserTable = () => {
                               </td>
                               <td className="px-6 py-4 text-sm text-gray-600 font-bold">
                                 {verbundCount}
+                              </td>
+                            </tr>
+                          )}
+                          {surfachemCount !== undefined && (
+                            <tr className="hover:bg-gray-50">
+                              <td className="px-6 py-4 border-b text-sm text-gray-600 font-bold">
+                                11
+                              </td>
+                              <td className="px-6 py-4 text-sm text-gray-600 font-bold">
+                                SDB2Excel (Surfachem)
+                              </td>
+                              <td className="px-6 py-4 text-sm text-gray-600 font-bold">
+                                {surfachemCount}
                               </td>
                             </tr>
                           )}

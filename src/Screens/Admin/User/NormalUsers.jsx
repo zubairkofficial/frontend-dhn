@@ -27,6 +27,7 @@ const NormalUsers = () => {
   const [scherenCount, setScherenCount] = useState(null);
   const [sennheiserCount, setSennheiserCount] = useState(null);
   const [verbundCount, setVerbundCount] = useState(null);
+  const [surfachemCount, setSurfachemCount] = useState(null);
   const [loadingModal, setLoadingModal] = useState(true);
   const [modalError, setModalError] = useState(null);
 
@@ -117,6 +118,7 @@ const NormalUsers = () => {
     setScherenCount(null);
     setSennheiserCount(null);
     setVerbundCount(null);
+    setSurfachemCount(null);
     setDemoDataProcessCount(null);
     setModalError(null);
   };
@@ -243,8 +245,9 @@ const NormalUsers = () => {
                   werthenbachCount === undefined &&
                   scherenCount === undefined &&
                   sennheiserCount === undefined &&
-                  verbundCount === undefined &&
-                  demoDataProcessCount === undefined ? (
+                    verbundCount === undefined &&
+                    surfachemCount === undefined &&
+                    demoDataProcessCount === undefined ? (
                     <p className="text-gray-500">
                       Keine Werkzeugnutzung gefunden
                     </p>
@@ -380,6 +383,19 @@ const NormalUsers = () => {
                               </td>
                               <td className="px-6 py-4 text-sm text-gray-600 font-bold">
                                 {verbundCount}
+                              </td>
+                            </tr>
+                          )}
+                          {surfachemCount !== undefined && (
+                            <tr className="hover:bg-gray-50">
+                              <td className="px-6 py-4 border-b text-sm text-gray-600 font-bold">
+                                11
+                              </td>
+                              <td className="px-6 py-4 text-sm text-gray-600 font-bold">
+                                SDB2Excel (Surfachem)
+                              </td>
+                              <td className="px-6 py-4 text-sm text-gray-600 font-bold">
+                                {surfachemCount}
                               </td>
                             </tr>
                           )}
