@@ -13,7 +13,6 @@
         "bootstrap": "^5.3.3",
         "buffer": "^6.0.3",
         "chart.js": "^4.4.3",
-        "dhn-digital": "file:",
         "exceljs": "^4.4.0",
         "file-saver": "^2.0.5",
         "notyf": "^3.10.0",
@@ -30,29 +29,28 @@
         "react-modal": "^3.16.1",
         "react-pro-sidebar": "^1.1.0",
         "react-router-dom": "^6.23.0",
-        "react-scripts": "^5.0.1",
         "react-select": "^5.8.0",
         "react-simple-captcha": "^9.3.1",
         "react-slick": "^0.30.2",
         "react-speech-recognition": "^3.10.0",
         "react-switch": "^7.0.0",
+        "regenerator-runtime": "^0.14.1",
         "slick-carousel": "^1.8.1",
         "styled-components": "^6.1.11",
         "web-vitals": "^2.1.4",
         "xlsx": "^0.18.5"
     },
     "scripts": {
-        "start": "react-scripts start",
-        "dev": "react-scripts start",
-        "build": "react-scripts build",
-        "test": "react-scripts test",
-        "eject": "react-scripts eject"
+        "start": "vite",
+        "dev": "vite",
+        "build": "vite build",
+        "preview": "vite preview",
+        "test": "echo \"Tests not configured\" && exit 0"
     },
-    "eslintConfig": {
-        "extends": [
-            "react-app",
-            "react-app/jest"
-        ]
+    "overrides": {
+        "react-html-parser": {
+            "react": "^18.3.1"
+        }
     },
     "browserslist": {
         "production": [
@@ -67,9 +65,10 @@
         ]
     },
     "devDependencies": {
-        "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+        "@vitejs/plugin-react": "^4.2.1",
         "autoprefixer": "^10.4.20",
         "postcss": "^8.4.47",
-        "tailwindcss": "^3.4.14"
+        "tailwindcss": "^3.4.14",
+        "vite": "^5.4.0"
     }
 }
