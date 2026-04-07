@@ -13,47 +13,10 @@ import { useHeader } from "../../Components/HeaderContext";
 import ExcelJS from "exceljs";
 import saveAs from "file-saver";
 import GetSurfachemData from "./GetSurfachemData";
-
-// Surfachem column order (exact as per correct order - Item Number first, Message last)
-const SURFACHEM_HEADERS = [
-  "Item Number",
-  "Artikelbezeichnung",
-  "Dateiname",
-  "Revision MSDS",
-  "Stand MSDS",
-  "Artikelbezeichnung SDS 1.1",
-  "RSPO MB/SG",
-  "Produkt SDS 1.1. Erste Nennung",
-  "UFI-Code",
-  "Lieferant",
-  "SDS Notfallnummer Punkt 1.4",
-  "CLP Symbole SDS 2.2",
-  "Signalwörter",
-  "Gefahrenhinweise (H-Sätze) SDS 2.2",
-  "Sicherheitshinweise P: Prävention SDS 2.2",
-  "Sicherheitshinweise P: Reaktion SDS 2.2",
-  "Sicherheitshinweise P: Lagerung SDS 2.2.",
-  "Sicherheitshinweise P: Entsorgung SDS 2.2",
-  "Zusätzliche Angaben auf dem Etikett EUH -Sätze (SDS2.2)",
-  "CAS Number",
-  "EG - Nr",
-  "REACH registriert",
-  "Bedingungen für Sichere Lagerung (SDS 7.2)",
-  "Lagerklasse (SDS 7.2)",
-  "Aggregatzustand",
-  "Flammpunkt",
-  "ADR-UN-Nummer",
-  "ADR-Versandbezeichnung",
-  "ADR-Transportgefahrenklasse",
-  "ADR-Verpackungsgruppe",
-  "ADR-Gefahrzettel",
-  "Wassergefährdungsklasse",
-  "Kategorie entzündbare Flüssigkeit",
-  "ChemVerbotsV",
-  "Kommentare",
-  "Section-Missing-Count",
-  "Message",
-];
+import {
+  SURFACHEM_HEADERS,
+  getSurfachemRowValues,
+} from "../../Config/surfachemColumns";
 
 const Surfachem = () => {
   const { setHeaderData } = useHeader();
@@ -239,12 +202,7 @@ const Surfachem = () => {
     setRefreshSurfachemData((prev) => !prev);
   };
 
-  const getRowData = (fileData) => {
-    return SURFACHEM_HEADERS.map((header) => {
-      const val = fileData[header];
-      return val != null && typeof val === "object" ? JSON.stringify(val) : (val ?? "");
-    });
-  };
+  const getRowData = (fileData) => getSurfachemRowValues(fileData);
 
   const handleDownload = async () => {
     const workbook = new ExcelJS.Workbook();

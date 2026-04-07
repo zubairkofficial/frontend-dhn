@@ -8,46 +8,12 @@ import { faEye, faDownload } from "@fortawesome/free-solid-svg-icons";
 import Modal from "react-modal";
 import ExcelJS from "exceljs";
 import saveAs from "file-saver";
-
-const SURFACHEM_HEADERS = [
-  "Item Number",
-  "Artikelbezeichnung",
-  "Dateiname",
-  "Revision MSDS",
-  "Stand MSDS",
-  "Artikelbezeichnung SDS 1.1",
-  "RSPO MB/SG",
-  "Produkt SDS 1.1. Erste Nennung",
-  "UFI-Code",
-  "Lieferant",
-  "SDS Notfallnummer Punkt 1.4",
-  "CLP Symbole SDS 2.2",
-  "Signalwörter",
-  "Gefahrenhinweise (H-Sätze) SDS 2.2",
-  "Sicherheitshinweise P: Prävention SDS 2.2",
-  "Sicherheitshinweise P: Reaktion SDS 2.2",
-  "Sicherheitshinweise P: Lagerung SDS 2.2.",
-  "Sicherheitshinweise P: Entsorgung SDS 2.2",
-  "Zusätzliche Angaben auf dem Etikett EUH -Sätze (SDS2.2)",
-  "CAS Number",
-  "EG - Nr",
-  "REACH registriert",
-  "Bedingungen für Sichere Lagerung (SDS 7.2)",
-  "Lagerklasse (SDS 7.2)",
-  "Aggregatzustand",
-  "Flammpunkt",
-  "ADR-UN-Nummer",
-  "ADR-Versandbezeichnung",
-  "ADR-Transportgefahrenklasse",
-  "ADR-Verpackungsgruppe",
-  "ADR-Gefahrzettel",
-  "Wassergefährdungsklasse",
-  "Kategorie entzündbare Flüssigkeit",
-  "ChemVerbotsV",
-  "Kommentare",
-  "Section-Missing-Count",
-  "Message",
-];
+import {
+  SURFACHEM_HEADERS,
+  getSurfachemRowValues,
+  getSurfachemCellValue,
+  getSurfachemProductLabel,
+} from "../../../Config/surfachemColumns";
 
 const AllSurfachemData = () => {
   const { userId } = useParams();
@@ -122,11 +88,7 @@ const AllSurfachemData = () => {
 
   const filteredData = getFilteredData();
 
-  const getRowData = (fileData) =>
-    SURFACHEM_HEADERS.map((header) => {
-      const val = fileData[header];
-      return val != null && typeof val === "object" ? JSON.stringify(val) : (val ?? "");
-    });
+  const getRowData = (fileData) => getSurfachemRowValues(fileData);
 
   const handleView = (data) => {
     setSelectedData(data);
@@ -178,14 +140,19 @@ const AllSurfachemData = () => {
     setLastDownload({ date: new Date().toISOString(), file: fileName });
   };
 
-  const productNameKey = SURFACHEM_HEADERS.find((h) => h.includes("Artikel")) || SURFACHEM_HEADERS[3];
   const truncateText = (text, maxLength = 70) => (typeof text !== "string" ? text : text.length > maxLength ? text.substring(0, maxLength) + "..." : text);
-  const renderTableRows = (data) => Object.entries(data).map(([key, value]) => (
-    <tr key={key} className="border-b">
-      <td className="p-3 font-medium text-gray-800">{key}</td>
-      <td className="p-3 text-gray-600">{typeof value === "string" || typeof value === "number" ? value : JSON.stringify(value)}</td>
-    </tr>
-  ));
+  const renderTableRows = (data) =>
+    SURFACHEM_HEADERS.map((header) => {
+      const value = getSurfachemCellValue(data, header);
+      const display =
+        typeof value === "string" || typeof value === "number" ? value : JSON.stringify(value);
+      return (
+        <tr key={header} className="border-b">
+          <td className="p-3 font-medium text-gray-800">{header}</td>
+          <td className="p-3 text-gray-600">{display}</td>
+        </tr>
+      );
+    });
 
   if (loading) return <p>Loading...</p>;
 
@@ -234,7 +201,7 @@ const AllSurfachemData = () => {
                 <li key={item.id} className="bg-gray-100 p-4 rounded-lg flex justify-between items-center shadow-sm">
                   <div>
                     <p className="font-semibold">File Name: {truncateText(item.file_name)}</p>
-                    <p>Product: {truncateText(item.data[productNameKey])}</p>
+                    <p>Product: {truncateText(getSurfachemProductLabel(item.data))}</p>
                     {item.created_at && <p className="text-sm text-gray-600 mt-1">Created: {new Date(item.created_at).toLocaleString()}</p>}
                   </div>
                   <div className="space-x-2">
