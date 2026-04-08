@@ -13,6 +13,11 @@ import { useHeader } from "../../Components/HeaderContext";
 import ExcelJS from "exceljs";
 import saveAs from "file-saver";
 import GetScherenData from "./GetScherenData";
+import {
+  SCHEREN_HEADERS,
+  getScherenRowValues,
+  SCHEREN_SECTION_MISSING_INDEX,
+} from "../../Config/scherenColumns";
 
 const Scheren = () => {
   const { setHeaderData } = useHeader();
@@ -195,49 +200,8 @@ const Scheren = () => {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet("Scheren Data");
 
-    // Define the custom headers in your desired order
-    const headers = [
-      "Produktname",
-      "Dateiname SDB",
-      "LG Klasse",
-      "WGK\n(numerischer Wert)",
-      "H Sätze & Kategorie\ndurch Komma getrennt",
-      "Flammpunkt\n(numerischer Wert)\n[°C]",
-      "UN Nr",
-      "Gefahrensymbole",
-      "Gefahrgutklasse (Länge beachten)",
-      "Verpackungsgruppe",
-      "Tunnelcode",
-      "N.A.G./NOS technische Benennung",
-      "Gefahrauslöser",
-      "technische Benennung englisch",
-      "Gefahrauslöser englisch",
-      "LQ (Spalte eingefügt)",
-      "Main Ingredients",
-      "Signalwort",
-      "P-Sätze",
-      "Störfallverordnung (Nr.)",
-      "Aggregatzustand",
-      "Transportgefahrenklassen",
-      "Umweltgefahren (ADR)",
-      "Umweltgefahren (IMDG)",
-      "Section - 1",
-      "Section - 2|2.2",
-      "Section - FirstPage",
-      "Section - 2",
-      "Section - 7|7.2--15",
-      "Section - 15",
-      "Section - 9|9.1",
-      "Section - 5|5.1",
-      "Section - 7|7.2",
-      "Section - 10|10.5",
-      "Section - 14",
-      "Section - 3",
-      "Section-Missing-Count",
-      "Message",
-    ];
+    const headers = SCHEREN_HEADERS;
 
-    // Add headers to the worksheet with styles
     worksheet.addRow(headers);
     worksheet.getRow(1).eachCell((cell) => {
       cell.font = { bold: true, size: 14 };
@@ -255,60 +219,14 @@ const Scheren = () => {
       };
     });
 
-    const headerMapping = {
-      Produktname: "Produktname",
-      "Dateiname SDB": "Dateiname SDB",
-      "LG Klasse": "LG Klasse",
-      "WGK\n(numerischer Wert)": "WGK\n(numerischer Wert)",
-      "H Sätze & Kategorie\ndurch Komma getrennt":
-        "H Sätze & Kategorie\ndurch Komma getrennt",
-      "Flammpunkt\n(numerischer Wert)\n[°C]":
-        "Flammpunkt\n(numerischer Wert)\n[°C]",
-      "UN Nr": "UN Nr",
-      Gefahrensymbole: "Gefahrensymbole",
-      "Gefahrgutklasse (Länge beachten)": "Gefahrgutklasse (Länge beachten)",
-      Verpackungsgruppe: "Verpackungsgruppe",
-      Tunnelcode: "Tunnelcode",
-      "N.A.G./NOS technische Benennung": "N.A.G./NOS technische Benennung",
-      Gefahrauslöser: "Gefahrauslöser",
-      "technische Benennung englisch": "technische Benennung englisch",
-      "Gefahrauslöser englisch": "Gefahrauslöser englisch",
-      "LQ (Spalte eingefügt)": "LQ (Spalte eingefügt)",
-      "Main Ingredients": "Main Ingredients",
-      Signalwort: "Signalwort",
-      "P-Sätze": "P-Sätze",
-      "Störfallverordnung (Nr.)": "Störfallverordnung (Nr.)",
-      Aggregatzustand: "Aggregatzustand",
-      Transportgefahrenklassen: "Transportgefahrenklassen",
-      "Umweltgefahren (ADR)": "Umweltgefahren (ADR)",
-      "Umweltgefahren (IMDG)": "Umweltgefahren (IMDG)",
-      "Section - 1": "Section - 1",
-      "Section - 2|2.2": "Section - 2|2.2",
-      "Section - FirstPage": "Section - FirstPage",
-      "Section - 2": "Section - 2",
-      "Section - 7|7.2--15": "Section - 7|7.2--15",
-      "Section - 15": "Section - 15",
-      "Section - 9|9.1": "Section - 9|9.1",
-      "Section - 5|5.1": "Section - 5|5.1",
-      "Section - 7|7.2": "Section - 7|7.2",
-      "Section - 10|10.5": "Section - 10|10.5",
-      "Section - 14": "Section - 14",
-      "Section - 3": "Section - 3",
-      "Section-Missing-Count": "Section-Missing-Count",
-      Message: "Message",
-    };
-
-    // Add data rows and apply yellow fill if `Section-Missing-Count` > 0
     allScherenData.forEach((fileData) => {
-      const rowData = headers.map((header) => {
-        const val = fileData.data[headerMapping[header]];
-        return val != null && typeof val === "object" ? JSON.stringify(val) : (val ?? "");
-      });
+      const rowValues = getScherenRowValues(fileData.data);
       const sectionMissingCount = parseInt(
-        rowData[headers.indexOf("Section-Missing-Count")] || 0
+        rowValues[SCHEREN_SECTION_MISSING_INDEX] || 0,
+        10
       );
 
-      const newRow = worksheet.addRow(rowData);
+      const newRow = worksheet.addRow(rowValues);
       newRow.eachCell((cell) => {
         cell.alignment = { vertical: "middle", wrapText: true };
       });

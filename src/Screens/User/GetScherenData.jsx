@@ -8,6 +8,10 @@ import Modal from "react-modal";
 import ExcelJS from "exceljs";
 import saveAs from "file-saver";
 import Helpers from "../../Config/Helpers";
+import {
+  SCHEREN_HEADERS,
+  getScherenRowValues,
+} from "../../Config/scherenColumns";
 
 Modal.setAppElement("#root");
 
@@ -84,49 +88,8 @@ const GetScherenData = ({ refresh }) => {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet("Scheren Data");
 
-    // Define headers in the desired order
-    const headers = [
-      "Produktname",
-      "Dateiname SDB",
-      "LG Klasse",
-      "WGK\n(numerischer Wert)",
-      "H Sätze & Kategorie\ndurch Komma getrennt",
-      "Flammpunkt\n(numerischer Wert)\n[°C]",
-      "UN Nr",
-      "Gefahrensymbole",
-      "Gefahrgutklasse (Länge beachten)",
-      "Verpackungsgruppe",
-      "Tunnelcode",
-      "N.A.G./NOS technische Benennung",
-      "Gefahrauslöser",
-      "technische Benennung englisch",
-      "Gefahrauslöser englisch",
-      "LQ (Spalte eingefügt)",
-      "Main Ingredients",
-      "Signalwort",
-      "P-Sätze",
-      "Störfallverordnung (Nr.)",
-      "Aggregatzustand",
-      "Transportgefahrenklassen",
-      "Umweltgefahren (ADR)",
-      "Umweltgefahren (IMDG)",
-      "Section - 1",
-      "Section - 2|2.2",
-      "Section - FirstPage",
-      "Section - 2",
-      "Section - 7|7.2--15",
-      "Section - 15",
-      "Section - 9|9.1",
-      "Section - 5|5.1",
-      "Section - 7|7.2",
-      "Section - 10|10.5",
-      "Section - 14",
-      "Section - 3",
-      "Section-Missing-Count",
-      "Message",
-    ];
+    const headers = SCHEREN_HEADERS;
 
-    // Add headers with styles
     worksheet.addRow(headers);
 
     worksheet.getRow(1).eachCell((cell) => {
@@ -149,56 +112,7 @@ const GetScherenData = ({ refresh }) => {
       };
     });
 
-    // Header Mapping - Your stored data uses different field names
-    const headerMapping = {
-      Produktname: "Produktname",
-      "Dateiname SDB": "Dateiname SDB",
-      "LG Klasse": "LG Klasse",
-      "WGK\n(numerischer Wert)": "WGK\n(numerischer Wert)",
-      "H Sätze & Kategorie\ndurch Komma getrennt":
-        "H Sätze & Kategorie\ndurch Komma getrennt",
-      "Flammpunkt\n(numerischer Wert)\n[°C]":
-        "Flammpunkt\n(numerischer Wert)\n[°C]",
-      "UN Nr": "UN Nr",
-      Gefahrensymbole: "Gefahrensymbole",
-      "Gefahrgutklasse (Länge beachten)": "Gefahrgutklasse (Länge beachten)",
-      Verpackungsgruppe: "Verpackungsgruppe",
-      Tunnelcode: "Tunnelcode",
-      "N.A.G./NOS technische Benennung": "N.A.G./NOS technische Benennung",
-      Gefahrauslöser: "Gefahrauslöser",
-      "technische Benennung englisch": "technische Benennung englisch",
-      "Gefahrauslöser englisch": "Gefahrauslöser englisch",
-      "LQ (Spalte eingefügt)": "LQ (Spalte eingefügt)",
-      "Main Ingredients": "Main Ingredients",
-      Signalwort: "Signalwort",
-      "P-Sätze": "P-Sätze",
-      "Störfallverordnung (Nr.)": "Störfallverordnung (Nr.)",
-      Aggregatzustand: "Aggregatzustand",
-      Transportgefahrenklassen: "Transportgefahrenklassen",
-      "Umweltgefahren (ADR)": "Umweltgefahren (ADR)",
-      "Umweltgefahren (IMDG)": "Umweltgefahren (IMDG)",
-      "Section - 1": "Section - 1",
-      "Section - 2|2.2": "Section - 2|2.2",
-      "Section - FirstPage": "Section - FirstPage",
-      "Section - 2": "Section - 2",
-      "Section - 7|7.2--15": "Section - 7|7.2--15",
-      "Section - 15": "Section - 15",
-      "Section - 9|9.1": "Section - 9|9.1",
-      "Section - 5|5.1": "Section - 5|5.1",
-      "Section - 7|7.2": "Section - 7|7.2",
-      "Section - 10|10.5": "Section - 10|10.5",
-      "Section - 14": "Section - 14",
-      "Section - 3": "Section - 3",
-      "Section-Missing-Count": "Section-Missing-Count",
-      Message: "Message",
-    };
-
-    // Map data correctly using headerMapping (ensure values are strings for proper Excel parsing)
-    const rowData = headers.map((header) => {
-      const val = fileData[headerMapping[header]];
-      return val != null && typeof val === "object" ? JSON.stringify(val) : (val ?? "");
-    });
-    const dataRow = worksheet.addRow(rowData);
+    const dataRow = worksheet.addRow(getScherenRowValues(fileData));
     dataRow.eachCell((cell) => {
       cell.alignment = { vertical: "middle", wrapText: true };
     });
@@ -243,46 +157,7 @@ const GetScherenData = ({ refresh }) => {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet("Scheren Data");
 
-    const headers = [
-      "Produktname",
-      "Dateiname SDB",
-      "LG Klasse",
-      "WGK\n(numerischer Wert)",
-      "H Sätze & Kategorie\ndurch Komma getrennt",
-      "Flammpunkt\n(numerischer Wert)\n[°C]",
-      "UN Nr",
-      "Gefahrensymbole",
-      "Gefahrgutklasse (Länge beachten)",
-      "Verpackungsgruppe",
-      "Tunnelcode",
-      "N.A.G./NOS technische Benennung",
-      "Gefahrauslöser",
-      "technische Benennung englisch",
-      "Gefahrauslöser englisch",
-      "LQ (Spalte eingefügt)",
-      "Main Ingredients",
-      "Signalwort",
-      "P-Sätze",
-      "Störfallverordnung (Nr.)",
-      "Aggregatzustand",
-      "Transportgefahrenklassen",
-      "Umweltgefahren (ADR)",
-      "Umweltgefahren (IMDG)",
-      "Section - 1",
-      "Section - 2|2.2",
-      "Section - FirstPage",
-      "Section - 2",
-      "Section - 7|7.2--15",
-      "Section - 15",
-      "Section - 9|9.1",
-      "Section - 5|5.1",
-      "Section - 7|7.2",
-      "Section - 10|10.5",
-      "Section - 14",
-      "Section - 3",
-      "Section-Missing-Count",
-      "Message",
-    ];
+    const headers = SCHEREN_HEADERS;
     worksheet.addRow(headers);
     worksheet.getRow(1).eachCell((cell) => {
       cell.font = { bold: true, size: 12 };
@@ -316,56 +191,9 @@ const GetScherenData = ({ refresh }) => {
       return;
     }
 
-    const headerMapping = {
-      Produktname: "Produktname",
-      "Dateiname SDB": "Dateiname SDB",
-      "LG Klasse": "LG Klasse",
-      "WGK\n(numerischer Wert)": "WGK\n(numerischer Wert)",
-      "H Sätze & Kategorie\ndurch Komma getrennt":
-        "H Sätze & Kategorie\ndurch Komma getrennt",
-      "Flammpunkt\n(numerischer Wert)\n[°C]":
-        "Flammpunkt\n(numerischer Wert)\n[°C]",
-      "UN Nr": "UN Nr",
-      Gefahrensymbole: "Gefahrensymbole",
-      "Gefahrgutklasse (Länge beachten)": "Gefahrgutklasse (Länge beachten)",
-      Verpackungsgruppe: "Verpackungsgruppe",
-      Tunnelcode: "Tunnelcode",
-      "N.A.G./NOS technische Benennung": "N.A.G./NOS technische Benennung",
-      Gefahrauslöser: "Gefahrauslöser",
-      "technische Benennung englisch": "technische Benennung englisch",
-      "Gefahrauslöser englisch": "Gefahrauslöser englisch",
-      "LQ (Spalte eingefügt)": "LQ (Spalte eingefügt)",
-      "Main Ingredients": "Main Ingredients",
-      Signalwort: "Signalwort",
-      "P-Sätze": "P-Sätze",
-      "Störfallverordnung (Nr.)": "Störfallverordnung (Nr.)",
-      Aggregatzustand: "Aggregatzustand",
-      Transportgefahrenklassen: "Transportgefahrenklassen",
-      "Umweltgefahren (ADR)": "Umweltgefahren (ADR)",
-      "Umweltgefahren (IMDG)": "Umweltgefahren (IMDG)",
-      "Section - 1": "Section - 1",
-      "Section - 2|2.2": "Section - 2|2.2",
-      "Section - FirstPage": "Section - FirstPage",
-      "Section - 2": "Section - 2",
-      "Section - 7|7.2--15": "Section - 7|7.2--15",
-      "Section - 15": "Section - 15",
-      "Section - 9|9.1": "Section - 9|9.1",
-      "Section - 5|5.1": "Section - 5|5.1",
-      "Section - 7|7.2": "Section - 7|7.2",
-      "Section - 10|10.5": "Section - 10|10.5",
-      "Section - 14": "Section - 14",
-      "Section - 3": "Section - 3",
-      "Section-Missing-Count": "Section-Missing-Count",
-      Message: "Message",
-    };
-
     // Add filtered data rows to the worksheet
     filteredData.forEach((file) => {
-      const rowData = headers.map((header) => {
-        const val = file.data[headerMapping[header]];
-        return val != null && typeof val === "object" ? JSON.stringify(val) : (val ?? "");
-      });
-      const newRow = worksheet.addRow(rowData);
+      const newRow = worksheet.addRow(getScherenRowValues(file.data));
       newRow.eachCell((cell) => {
         cell.alignment = { vertical: "middle", wrapText: true };
       });
