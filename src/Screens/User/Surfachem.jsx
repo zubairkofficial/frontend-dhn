@@ -15,7 +15,7 @@ import saveAs from "file-saver";
 import GetSurfachemData from "./GetSurfachemData";
 import {
   SURFACHEM_HEADERS,
-  getSurfachemRowValues,
+  getSurfachemExportRowArrays,
 } from "../../Config/surfachemColumns";
 
 const Surfachem = () => {
@@ -202,8 +202,6 @@ const Surfachem = () => {
     setRefreshSurfachemData((prev) => !prev);
   };
 
-  const getRowData = (fileData) => getSurfachemRowValues(fileData);
-
   const handleDownload = async () => {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet("SDB2Excel Surfachem");
@@ -226,10 +224,11 @@ const Surfachem = () => {
     });
 
     allSurfachemData.forEach((fileData) => {
-      const rowData = getRowData(fileData.data);
-      const newRow = worksheet.addRow(rowData);
-      newRow.eachCell((cell) => {
-        cell.alignment = { vertical: "middle", wrapText: true };
+      getSurfachemExportRowArrays(fileData.data).forEach((row) => {
+        const newRow = worksheet.addRow(row);
+        newRow.eachCell((cell) => {
+          cell.alignment = { vertical: "middle", wrapText: true };
+        });
       });
     });
 

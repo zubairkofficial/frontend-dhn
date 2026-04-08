@@ -10,9 +10,10 @@ import ExcelJS from "exceljs";
 import saveAs from "file-saver";
 import {
   SURFACHEM_HEADERS,
-  getSurfachemRowValues,
+  getSurfachemExportRowArrays,
   getSurfachemCellValue,
   getSurfachemProductLabel,
+  normalizeSurfachemSheetObjects,
 } from "../../../Config/surfachemColumns";
 
 const AllSurfachemData = () => {
@@ -88,7 +89,13 @@ const AllSurfachemData = () => {
 
   const filteredData = getFilteredData();
 
-  const getRowData = (fileData) => getSurfachemRowValues(fileData);
+  const addDataRowsToWorksheet = (worksheet, fileData) => {
+    getSurfachemExportRowArrays(fileData).forEach((row) => {
+      worksheet.addRow(row).eachCell((cell) => {
+        cell.alignment = { vertical: "middle", wrapText: true };
+      });
+    });
+  };
 
   const handleView = (data) => {
     setSelectedData(data);
@@ -105,7 +112,7 @@ const AllSurfachemData = () => {
       cell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FFD700" } };
       cell.border = { top: { style: "thin" }, left: { style: "thin" }, bottom: { style: "thin" }, right: { style: "thin" } };
     });
-    worksheet.addRow(getRowData(fileData)).eachCell((cell) => { cell.alignment = { vertical: "middle", wrapText: true }; });
+    addDataRowsToWorksheet(worksheet, fileData);
     worksheet.columns.forEach((col) => { col.width = 25; });
     const buffer = await workbook.xlsx.writeBuffer();
     saveAs(new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" }), `${fileName}.xlsx`);
@@ -129,8 +136,7 @@ const AllSurfachemData = () => {
       cell.border = { top: { style: "thin" }, left: { style: "thin" }, bottom: { style: "thin" }, right: { style: "thin" } };
     });
     dataToDownload.forEach((file) => {
-      const row = worksheet.addRow(getRowData(file.data));
-      row.eachCell((cell) => cell.alignment = { vertical: "middle", wrapText: true });
+      addDataRowsToWorksheet(worksheet, file.data);
     });
     worksheet.columns.forEach((col) => { col.width = 25; });
     const buffer = await workbook.xlsx.writeBuffer();
@@ -225,7 +231,22 @@ const AllSurfachemData = () => {
           <div className="overflow-auto max-h-[70vh]">
             <table className="w-full border-collapse border">
               <thead><tr className="bg-gray-200 border-b"><th className="p-3 text-left font-semibold text-gray-700">Key</th><th className="p-3 text-left font-semibold text-gray-700">Value</th></tr></thead>
-              <tbody>{renderTableRows(selectedData)}</tbody>
+              <tbody>
+                {normalizeSurfachemSheetObjects(selectedData).length === 0 ? (
+                  <tr className="border-b"><td colSpan={2} className="p-3 text-gray-500">No data</td></tr>
+                ) : (
+                  normalizeSurfachemSheetObjects(selectedData).map((sheet, idx, arr) => (
+                    <React.Fragment key={idx}>
+                      {arr.length > 1 && (
+                        <tr className="bg-gray-100 border-b">
+                          <td colSpan={2} className="p-3 font-semibold text-gray-800">Data sheet {idx + 1} of {arr.length}</td>
+                        </tr>
+                      )}
+                      {renderTableRows(sheet)}
+                    </React.Fragment>
+                  ))
+                )}
+              </tbody>
             </table>
           </div>
           <div className="mt-6 flex justify-end"><button onClick={() => setModalIsOpen(false)} className="bg-red-500 text-white py-2 px-6 rounded-lg">Close</button></div>

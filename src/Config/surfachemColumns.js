@@ -40,6 +40,54 @@ export const SURFACHEM_HEADERS = [
   "Section-Missing-Count",
 ];
 
+function isPlainObject(v) {
+  return v != null && typeof v === "object" && !Array.isArray(v);
+}
+
+/**
+ * API responses may be a single flat object, an array of sheet objects, or wrapped
+ * ({ data: [...] }). Arrays must be normalized or column lookups hit numeric keys only
+ * and Excel rows stay empty.
+ */
+export function normalizeSurfachemSheetObjects(fileData) {
+  if (fileData == null) return [];
+
+  if (typeof fileData === "string") {
+    try {
+      return normalizeSurfachemSheetObjects(JSON.parse(fileData));
+    } catch {
+      return [];
+    }
+  }
+
+  if (Array.isArray(fileData)) {
+    if (fileData.length === 0) return [];
+    if (fileData.every((x) => isPlainObject(x))) return fileData;
+    if (fileData.every((x) => Array.isArray(x))) {
+      return fileData.flatMap((inner) => normalizeSurfachemSheetObjects(inner));
+    }
+    const objects = fileData.filter((x) => isPlainObject(x));
+    if (objects.length) return objects;
+    return [];
+  }
+
+  if (!isPlainObject(fileData)) return [];
+
+  if (isPlainObject(fileData.data) && !Array.isArray(fileData.data)) {
+    return [fileData.data];
+  }
+
+  const nestedKeys = ["data", "sheets", "results", "rows", "documents"];
+  for (const k of nestedKeys) {
+    const inner = fileData[k];
+    if (Array.isArray(inner) && inner.length > 0 && inner.every((x) => isPlainObject(x))) {
+      return inner;
+    }
+  }
+
+  return [fileData];
+}
+
 /** For each canonical header, extra JSON keys to try (after the canonical key). */
 export const SURFACHEM_KEY_ALIASES = {
   "Chemische Bezeichnung / SDS 1.1": [
@@ -87,27 +135,47 @@ function firstResolvedValue(fileData, keys) {
 
 /**
  * Single cell value for a canonical Excel column, including legacy JSON keys.
+ * `sheet` must be a plain row object (not an array).
  */
-export function getSurfachemCellValue(fileData, header) {
-  if (!fileData || typeof fileData !== "object") return "";
+export function getSurfachemCellValue(sheet, header) {
+  if (!sheet || typeof sheet !== "object" || Array.isArray(sheet)) return "";
   const aliases = SURFACHEM_KEY_ALIASES[header] || [];
   const keys = [header, ...aliases];
-  return firstResolvedValue(fileData, keys);
+  return firstResolvedValue(sheet, keys);
 }
 
-/** One Excel row (strings/numbers) in SURFACHEM_HEADERS order. */
+/**
+ * First sheet only, in SURFACHEM_HEADERS order (e.g. legacy callers).
+ * Prefer getSurfachemExportRowArrays for Excel when the API returns multiple sheets.
+ */
 export function getSurfachemRowValues(fileData) {
-  return SURFACHEM_HEADERS.map((header) => getSurfachemCellValue(fileData, header) ?? "");
+  const sheets = normalizeSurfachemSheetObjects(fileData);
+  const obj = sheets[0];
+  if (!obj) return SURFACHEM_HEADERS.map(() => "");
+  return SURFACHEM_HEADERS.map((header) => getSurfachemCellValue(obj, header) ?? "");
+}
+
+/** One row per sheet (for API payloads that contain multiple SDS rows). */
+export function getSurfachemExportRowArrays(fileData) {
+  const sheets = normalizeSurfachemSheetObjects(fileData);
+  if (sheets.length === 0) {
+    return [SURFACHEM_HEADERS.map(() => "")];
+  }
+  return sheets.map((obj) =>
+    SURFACHEM_HEADERS.map((header) => getSurfachemCellValue(obj, header) ?? "")
+  );
 }
 
 /** Prefer SDS trade name, then article name, chemical line, filename. */
 export function getSurfachemProductLabel(fileData) {
-  if (!fileData || typeof fileData !== "object") return "";
+  const sheets = normalizeSurfachemSheetObjects(fileData);
+  const fileDataObj = sheets[0];
+  if (!fileDataObj) return "";
   const candidates = [
-    getSurfachemCellValue(fileData, "Artikelbezeichnung SDS 1.1"),
-    getSurfachemCellValue(fileData, "Artikelbezeichnung"),
-    getSurfachemCellValue(fileData, "Chemische Bezeichnung / SDS 1.1"),
-    getSurfachemCellValue(fileData, "Dateiname"),
+    getSurfachemCellValue(fileDataObj, "Artikelbezeichnung SDS 1.1"),
+    getSurfachemCellValue(fileDataObj, "Artikelbezeichnung"),
+    getSurfachemCellValue(fileDataObj, "Chemische Bezeichnung / SDS 1.1"),
+    getSurfachemCellValue(fileDataObj, "Dateiname"),
   ];
   for (const c of candidates) {
     if (c !== undefined && c !== null && String(c).trim() !== "") return c;

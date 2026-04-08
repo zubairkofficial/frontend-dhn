@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
@@ -10,9 +10,10 @@ import saveAs from "file-saver";
 import Helpers from "../../Config/Helpers";
 import {
   SURFACHEM_HEADERS,
-  getSurfachemRowValues,
+  getSurfachemExportRowArrays,
   getSurfachemCellValue,
   getSurfachemProductLabel,
+  normalizeSurfachemSheetObjects,
 } from "../../Config/surfachemColumns";
 
 Modal.setAppElement("#root");
@@ -74,7 +75,13 @@ const GetSurfachemData = ({ refresh }) => {
     });
   };
 
-  const getRowData = (fileData) => getSurfachemRowValues(fileData);
+  const addDataRowsToWorksheet = (worksheet, fileData) => {
+    getSurfachemExportRowArrays(fileData).forEach((row) => {
+      worksheet.addRow(row).eachCell((cell) => {
+        cell.alignment = { vertical: "middle", wrapText: true };
+      });
+    });
+  };
 
   const handleView = (data) => {
     setSelectedData(data);
@@ -93,8 +100,7 @@ const GetSurfachemData = ({ refresh }) => {
       cell.border = { top: { style: "thin" }, left: { style: "thin" }, bottom: { style: "thin" }, right: { style: "thin" } };
     });
 
-    const dataRow = worksheet.addRow(getRowData(fileData));
-    dataRow.eachCell((cell) => cell.alignment = { vertical: "middle", wrapText: true });
+    addDataRowsToWorksheet(worksheet, fileData);
 
     worksheet.columns.forEach((col) => { col.width = 25; });
 
@@ -124,9 +130,7 @@ const GetSurfachemData = ({ refresh }) => {
     });
 
     filteredData.forEach((file) => {
-      const rowData = getRowData(file.data);
-      const newRow = worksheet.addRow(rowData);
-      newRow.eachCell((cell) => cell.alignment = { vertical: "middle", wrapText: true });
+      addDataRowsToWorksheet(worksheet, file.data);
     });
 
     worksheet.columns.forEach((col) => { col.width = 25; });
@@ -220,7 +224,22 @@ const GetSurfachemData = ({ refresh }) => {
                   <th className="p-3 text-left font-semibold text-gray-700">Value</th>
                 </tr>
               </thead>
-              <tbody>{renderTableRows(selectedData)}</tbody>
+              <tbody>
+                {normalizeSurfachemSheetObjects(selectedData).length === 0 ? (
+                  <tr className="border-b"><td colSpan={2} className="p-3 text-gray-500">No data</td></tr>
+                ) : (
+                  normalizeSurfachemSheetObjects(selectedData).map((sheet, idx, arr) => (
+                    <Fragment key={idx}>
+                      {arr.length > 1 && (
+                        <tr className="bg-gray-100 border-b">
+                          <td colSpan={2} className="p-3 font-semibold text-gray-800">Data sheet {idx + 1} of {arr.length}</td>
+                        </tr>
+                      )}
+                      {renderTableRows(sheet)}
+                    </Fragment>
+                  ))
+                )}
+              </tbody>
             </table>
           </div>
           <div className="mt-6 flex justify-end">
