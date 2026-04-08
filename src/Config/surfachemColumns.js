@@ -133,6 +133,20 @@ function firstResolvedValue(fileData, keys) {
   return "";
 }
 
+/** GHS pictogram codes: match H-/P-phrases using ';' (API often returns comma-separated). */
+function normalizeClpGhsSeparators(value) {
+  if (typeof value !== "string") return value;
+  const trimmed = value.trim();
+  if (!trimmed) return value;
+  return trimmed
+    .split(/,\s*/)
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .join(";");
+}
+
+const CLP_SYMBOLE_HEADER = "CLP Symbole SDS 2.2";
+
 /**
  * Single cell value for a canonical Excel column, including legacy JSON keys.
  * `sheet` must be a plain row object (not an array).
@@ -141,7 +155,11 @@ export function getSurfachemCellValue(sheet, header) {
   if (!sheet || typeof sheet !== "object" || Array.isArray(sheet)) return "";
   const aliases = SURFACHEM_KEY_ALIASES[header] || [];
   const keys = [header, ...aliases];
-  return firstResolvedValue(sheet, keys);
+  const raw = firstResolvedValue(sheet, keys);
+  if (header === CLP_SYMBOLE_HEADER) {
+    return normalizeClpGhsSeparators(raw);
+  }
+  return raw;
 }
 
 /**
