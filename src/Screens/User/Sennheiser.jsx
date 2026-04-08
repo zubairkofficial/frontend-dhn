@@ -13,6 +13,12 @@ import { useHeader } from "../../Components/HeaderContext";
 import ExcelJS from "exceljs";
 import saveAs from "file-saver";
 import GetSennheiserData from "./GetSennheiserData";
+import {
+  SENNHEISER_HEADERS,
+  getSennheiserRowValues,
+  getSennheiserProduktnameKey,
+  SENNHEISER_SECTION_MISSING_INDEX,
+} from "../../Config/sennheiserColumns";
 
 const Sennheiser = () => {
   const { setHeaderData } = useHeader();
@@ -205,35 +211,8 @@ const Sennheiser = () => {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet("Sennheiser Data");
 
-    // Define the custom headers in your desired order
-    const headers = [
-      "ID Number",
-      "Dateiname SDB",
-      "Produktname",
-      "Hersteller",
-      "CAS Nummer bei reinen Stoffen",
-      "Ausgabedatum bzw. letzte Änderung",
-      "H Sätze durch Komma getrennt",
-      "Einstufung des Stoffs oder Gemischs",
-      "Einstufung gemäß der (EG) Verordnung 1272/2008 in der geänderten Fassung",
-      "Signalwort",
-      "Ergänzende Hinweise",
-      "P-Sätze",
-      "Sonstige Gefahren",
-      "LG Klasse",
-      "WGK(numerischer Wert)",
-      "Flammpunkt (numerischer Wert)",
-      "pH-Wert",
-      "Gemische",
-      "Zu überwachende Parameter",
-      "Arbeitsplatzgrenzwert",
-      "SVHC",
-      "CMR",
-      "Kostenstellenfreigabe",
-      "Section-Missing-Count",
-    ];
+    const headers = SENNHEISER_HEADERS;
 
-    // Add headers to the worksheet with styles
     worksheet.addRow(headers);
     worksheet.getRow(1).eachCell((cell) => {
       cell.font = { bold: true, size: 14 };
@@ -251,97 +230,58 @@ const Sennheiser = () => {
       };
     });
 
-    const headerMapping = {
-      "ID Number": "ID Number",
-      "Dateiname SDB": "Dateiname SDB",
-      Produktname: "Produktname",
-      Hersteller: "Hersteller",
-      "CAS Nummer bei reinen Stoffen": "CAS Nummer bei reinen Stoffen",
-      "Ausgabedatum bzw. letzte Änderung": "Ausgabedatum bzw. letzte Änderung",
-      "H Sätze durch Komma getrennt": "H Sätze durch Komma getrennt",
-      "Einstufung des Stoffs oder Gemischs":
-        "Einstufung des Stoffs oder Gemischs",
-      "Einstufung gemäß der (EG) Verordnung 1272/2008 in der geänderten Fassung":
-        "Einstufung gemäß der (EG) Verordnung 1272/2008 in der geänderten Fassung",
-      Signalwort: "Signalwort",
-      "Ergänzende Hinweise": "Ergänzende Hinweise",
-      "P-Sätze": "P-Sätze",
-      "Sonstige Gefahren": "Sonstige Gefahren",
-      "LG Klasse": "LG Klasse",
-      "WGK(numerischer Wert)": "WGK(numerischer Wert)",
-      "Flammpunkt (numerischer Wert)": "Flammpunkt (numerischer Wert)",
-      "pH-Wert": "pH-Wert",
-      Gemische: "Gemische",
-      "Zu überwachende Parameter": "Zu überwachende Parameter",
-      Arbeitsplatzgrenzwert: "Arbeitsplatzgrenzwert",
-      SVHC: "SVHC",
-      CMR: "CMR",
-      Kostenstellenfreigabe: "Kostenstellenfreigabe",
-      "Section-Missing-Count": "Section-Missing-Count",
-    };
-
-    const produktnameCounts = allSennheiserData.reduce((acc, fileData) => {
-      const produktname = fileData.data?.["Produktname"];
-      if (produktname) {
-        const normalizedName = produktname.toLowerCase().trim();
-        acc[normalizedName] = (acc[normalizedName] || 0) + 1;
+    const produktnameCounts = allSennheiserData.reduce((acc, fd) => {
+      const key = getSennheiserProduktnameKey(fd.data);
+      if (key) {
+        acc[key] = (acc[key] || 0) + 1;
       }
       return acc;
     }, {});
 
-    // Group data by Produktname to find duplicates and compare values
-    const groupedByProduktname = allSennheiserData.reduce((acc, fileData) => {
-      const produktname = fileData.data?.["Produktname"];
-      if (produktname) {
-        const normalizedName = produktname.toLowerCase().trim();
-        if (!acc[normalizedName]) {
-          acc[normalizedName] = [];
+    const groupedByProduktname = allSennheiserData.reduce((acc, fd) => {
+      const key = getSennheiserProduktnameKey(fd.data);
+      if (key) {
+        if (!acc[key]) {
+          acc[key] = [];
         }
-        acc[normalizedName].push(fileData);
+        acc[key].push(fd);
       }
       return acc;
     }, {});
 
-    // Add data rows and apply coloring based on duplicates and missing sections
     allSennheiserData.forEach((fileData) => {
-      const rowData = headers.map((header) => {
-        const val = fileData.data[headerMapping[header]];
-        return val != null && typeof val === "object" ? JSON.stringify(val) : (val ?? "");
-      });
+      const rowValues = getSennheiserRowValues(fileData.data);
       const sectionMissingCount = parseInt(
-        rowData[headers.indexOf("Section-Missing-Count")] || 0
+        rowValues[SENNHEISER_SECTION_MISSING_INDEX] || 0,
+        10
       );
 
-      const newRow = worksheet.addRow(rowData);
+      const newRow = worksheet.addRow(rowValues);
       newRow.eachCell((cell) => {
         cell.alignment = { vertical: "middle", wrapText: true };
       });
-      const produktname = fileData.data?.["Produktname"];
-      const normalizedName = produktname
-        ? produktname.toLowerCase().trim()
-        : "";
-      const isDuplicate = produktname && produktnameCounts[normalizedName] > 1;
+      const normalizedName = getSennheiserProduktnameKey(fileData.data);
+      const isDuplicate =
+        normalizedName && produktnameCounts[normalizedName] > 1;
 
-      // Apply blue fill if rows are duplicate
       if (isDuplicate) {
         newRow.eachCell((cell) => {
           cell.fill = {
             type: "pattern",
             pattern: "solid",
-            fgColor: { argb: "FFA5D5E3" }, // Light Blue #a5d5e3
+            fgColor: { argb: "FFA5D5E3" },
           };
         });
 
-        // Find other rows with same Produktname to compare values
         const duplicateRows = groupedByProduktname[normalizedName];
         if (duplicateRows.length > 1) {
-          // Compare each field and mark different values green
-          headers.forEach((header, columnIndex) => {
-            const currentValue = fileData.data[headerMapping[header]] || "";
+          headers.forEach((_, columnIndex) => {
+            const currentValue = rowValues[columnIndex];
             const hasDifferentValues = duplicateRows.some(
               (otherFile) =>
                 otherFile !== fileData &&
-                (otherFile.data[headerMapping[header]] || "") !== currentValue
+                getSennheiserRowValues(otherFile.data)[columnIndex] !==
+                  currentValue
             );
 
             if (hasDifferentValues) {
@@ -349,13 +289,12 @@ const Sennheiser = () => {
               cell.fill = {
                 type: "pattern",
                 pattern: "solid",
-                fgColor: { argb: "FFB5CD82" }, // Light Green #B5CD82
+                fgColor: { argb: "FFB5CD82" },
               };
             }
           });
         }
       } else if (sectionMissingCount > 0) {
-        // Apply yellow fill if `Section-Missing-Count` > 0
         newRow.eachCell((cell) => {
           cell.fill = {
             type: "pattern",
@@ -366,7 +305,6 @@ const Sennheiser = () => {
       }
     });
 
-    // Set column widths
     worksheet.columns = headers.map(() => ({ width: 30 }));
 
     // Write the workbook to a file
