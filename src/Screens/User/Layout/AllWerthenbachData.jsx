@@ -8,6 +8,10 @@ import { faEye, faDownload } from "@fortawesome/free-solid-svg-icons";
 import Modal from "react-modal";
 import ExcelJS from "exceljs";
 import saveAs from "file-saver";
+import {
+  WERTHENBACH_FULL_HEADERS,
+  getWerthenbachFullRowValues,
+} from "../../../Config/werthenbachColumns";
 
 const AllWerthenbachData = () => {
   const { userId } = useParams();
@@ -121,103 +125,7 @@ const AllWerthenbachData = () => {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet("Werthenbach Data");
 
-    const headers = [
-      "Produktname",
-      "Hersteller",
-      "Dateiname SDB",
-      "Version",
-      "SDB-Ausgabedatum bzw. letzte Änderung",
-      "CAS-Nummer(n)",
-      "Hauptbestandteile",
-      "Lagerklassen (LGK) nach TRGS 510",
-      "Gefahrensymbole (CLP/GHS)",
-      "WGK",
-      "Transport oder Umfüllen- Verpackungsgruppe",
-      "N.A.G./NOS technische Benennung (Gefahraus-löser)",
-      "H-Sätze (mit EUH) (durch Komma getrennt) (aus Kap.2)",
-      "H-Sätze (mit EUH) (durch Komma getrennt) (aus Gesamtdatei)",
-      "P-Sätze (durch Komma getrennt) (aus Kap.2)",
-      "P-Sätze (durch Komma getrennt) (aus Gesamtdatei)",
-      "Flammpunkt [°C]",
-      "Aggregatzustand",
-      "CLP/GHS-Symbolnummern",
-      "CMR",
-      "Diisocyanat",
-      "Hinweise/Bemerkungen/Sicherheitsbetrachtung (stoffspezifisch)",
-      "UN Nr",
-      "ADR-Klasse (Gefahrgutklasse)",
-      "Gefahr-Nr (Kemler-Zahl)",
-      "Transport-Mengenbegrenzung LQ",
-      "Transport-Tunnelcode",
-      "Kopf",
-      "1",
-      "1.1",
-      "1.2",
-      "1.3",
-      "1.4",
-      "2",
-      "2.1",
-      "2.2",
-      "2.3",
-      "3",
-      "3.1",
-      "3.2",
-      "4",
-      "4.1",
-      "4.2",
-      "4.3",
-      "5",
-      "5.1",
-      "5.2",
-      "5.3",
-      "6",
-      "6.1",
-      "6.2",
-      "6.3",
-      "6.4",
-      "7",
-      "7.1",
-      "7.2",
-      "7.3",
-      "8",
-      "8.1",
-      "8.2",
-      "9",
-      "9.1",
-      "9.2",
-      "10",
-      "10.1",
-      "10.2",
-      "10.3",
-      "10.4",
-      "10.5",
-      "10.6",
-      "11",
-      "11.1",
-      "12",
-      "12.1",
-      "12.2",
-      "12.3",
-      "12.4",
-      "12.5",
-      "12.6",
-      "13",
-      "13.1",
-      "14",
-      "14.1",
-      "14.2",
-      "14.3",
-      "14.4",
-      "14.5",
-      "14.6",
-      "14.7",
-      "15",
-      "15.1",
-      "15.2",
-      "16",
-      "Message",
-      "Section-Missing-Count",
-    ];
+    const headers = WERTHENBACH_FULL_HEADERS;
 
     worksheet.addRow(headers);
 
@@ -241,62 +149,9 @@ const AllWerthenbachData = () => {
       };
     });
 
-    const staticRow = Array(39).fill("");
-    worksheet.addRow(staticRow);
+    worksheet.addRow(Array(headers.length).fill(""));
 
-    const headerMapping = {
-      Produktname: "Produktname",
-      Hersteller: "Hersteller",
-      "Dateiname SDB": "Dateiname SDB",
-      Version: "Version",
-      "Ausgabedatum bzw. letzte Änderung": "Ausgabedatum bzw. letzte Änderung",
-      "LG Klasse": "LG Klasse",
-      "WGK(numerischer Wert)": "WGK\n(numerischer Wert)",
-      Signalwort: "Signalwort",
-      "H Sätze durch Komma getrennt": "H Sätze\ndurch Komma getrennt",
-      "Flammpunkt (numerischer Wert)[°C]":
-        "Flammpunkt\n(numerischer Wert)\n[°C]",
-      "UN Nr": "UN Nr",
-      Gefahrensymbole: "Gefahrensymbole",
-      "Gefahrgutklasse (Länge beachten)": "Gefahrgutklasse (Länge beachten)",
-      Verpackungsgruppe: "Verpackungsgruppe",
-      Tunnelcode: "Tunnelcode",
-      "N.A.G./NOS technische Benennung (Gefahraus-löser)":
-        "N.A.G./NOS\ntechnische Benennung\n(Gefahraus-löser)",
-      "LQ (Spalte eingefügt)": "LQ (Spalte eingefügt)",
-      Dichte: "Dichte",
-      Aggregatzustand: "Aggregatzustand",
-      Klassifizierungscode: "Klassifizierungscode",
-      "Hinweise/Bemerkungen/Sicherheitsbetrachtung (stoffspezifisch)":
-        "Hinweise/Bemerkungen/Sicherheitsbetrachtung (stoffspezifisch)",
-      "Freigabe Störrfallbeauftragter": "Freigabe Störrfallbeauftragter",
-      "Maßnahmen Lagerung Abschnitt 7.2": "Maßnahmen Lagerung\nAbschnitt 7.2",
-      "Zusammenlagerverbot Abschnitt 10.5":
-        "Zusammenlagerverbot\nAbschnitt 10.5",
-      "Main Ingredients": "Main Ingredients",
-      UFI: "UFI",
-      "Section - FirstPage": "Section - FirstPage",
-      "Section - 1": "Section - 1",
-      "Section - 2": "Section - 2",
-      "Section - 2|2.2": "Section - 2|2.2",
-      "Section - 3": "Section - 3",
-      "Section - 5|5.1": "Section - 5|5.1",
-      "Section - 7|7.2--15|15.1": "Section - 7|7.2--15",
-      "Section - 7|7.2": "Section - 7|7.2",
-      "Section - 9|9.1": "Section - 9|9.1",
-      "Section - 10|10.5": "Section - 10|10.5",
-
-      "Section - 14": "Section - 14",
-      "Section - 15": "Section - 15",
-      "Section-Missing-Count": "Section-Missing-Count",
-      Message: "Message",
-    };
-
-    const rowData = headers.map((header) => {
-      const val = fileData[headerMapping[header]];
-      return val != null && typeof val === "object" ? JSON.stringify(val) : (val ?? "");
-    });
-    const dataRow = worksheet.addRow(rowData);
+    const dataRow = worksheet.addRow(getWerthenbachFullRowValues(fileData));
     dataRow.eachCell((cell) => {
       cell.alignment = { vertical: "middle", wrapText: true };
     });
@@ -323,104 +178,7 @@ const AllWerthenbachData = () => {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet("Werthenbach Data");
 
-    // Use the same headers as handleDownloadFile for consistency
-    const headers = [
-      "Produktname",
-      "Hersteller",
-      "Dateiname SDB",
-      "Version",
-      "SDB-Ausgabedatum bzw. letzte Änderung",
-      "CAS-Nummer(n)",
-      "Hauptbestandteile",
-      "Lagerklassen (LGK) nach TRGS 510",
-      "Gefahrensymbole (CLP/GHS)",
-      "WGK",
-      "Transport oder Umfüllen- Verpackungsgruppe",
-      "N.A.G./NOS technische Benennung (Gefahraus-löser)",
-      "H-Sätze (mit EUH) (durch Komma getrennt) (aus Kap.2)",
-      "H-Sätze (mit EUH) (durch Komma getrennt) (aus Gesamtdatei)",
-      "P-Sätze (durch Komma getrennt) (aus Kap.2)",
-      "P-Sätze (durch Komma getrennt) (aus Gesamtdatei)",
-      "Flammpunkt [°C]",
-      "Aggregatzustand",
-      "CLP/GHS-Symbolnummern",
-      "CMR",
-      "Diisocyanat",
-      "Hinweise/Bemerkungen/Sicherheitsbetrachtung (stoffspezifisch)",
-      "UN Nr",
-      "ADR-Klasse (Gefahrgutklasse)",
-      "Gefahr-Nr (Kemler-Zahl)",
-      "Transport-Mengenbegrenzung LQ",
-      "Transport-Tunnelcode",
-      "Kopf",
-      "1",
-      "1.1",
-      "1.2",
-      "1.3",
-      "1.4",
-      "2",
-      "2.1",
-      "2.2",
-      "2.3",
-      "3",
-      "3.1",
-      "3.2",
-      "4",
-      "4.1",
-      "4.2",
-      "4.3",
-      "5",
-      "5.1",
-      "5.2",
-      "5.3",
-      "6",
-      "6.1",
-      "6.2",
-      "6.3",
-      "6.4",
-      "7",
-      "7.1",
-      "7.2",
-      "7.3",
-      "8",
-      "8.1",
-      "8.2",
-      "9",
-      "9.1",
-      "9.2",
-      "10",
-      "10.1",
-      "10.2",
-      "10.3",
-      "10.4",
-      "10.5",
-      "10.6",
-      "11",
-      "11.1",
-      "12",
-      "12.1",
-      "12.2",
-      "12.3",
-      "12.4",
-      "12.5",
-      "12.6",
-      "13",
-      "13.1",
-      "14",
-      "14.1",
-      "14.2",
-      "14.3",
-      "14.4",
-      "14.5",
-      "14.6",
-      "14.7",
-      "15",
-      "15.1",
-      "15.2",
-      "16",
-      "Message",
-      "Section-Missing-Count",
-    ];
+    const headers = WERTHENBACH_FULL_HEADERS;
 
     worksheet.addRow(headers);
     worksheet.getRow(1).eachCell((cell) => {
@@ -443,108 +201,8 @@ const AllWerthenbachData = () => {
       };
     });
 
-    const staticRow = Array(headers.length).fill("");
-    worksheet.addRow(staticRow);
+    worksheet.addRow(Array(headers.length).fill(""));
 
-    // Header mapping - map headers to actual data field names
-    const headerMapping = {
-      Produktname: "Produktname",
-      Hersteller: "Hersteller",
-      "Dateiname SDB": "Dateiname SDB",
-      Version: "Version",
-      "SDB-Ausgabedatum bzw. letzte Änderung": "SDB-Ausgabedatum bzw. letzte Änderung",
-      "CAS-Nummer(n)": "CAS-Nummer(n)",
-      "Hauptbestandteile": "Hauptbestandteile",
-      "Lagerklassen (LGK) nach TRGS 510": "Lagerklassen (LGK) nach TRGS 510",
-      "Gefahrensymbole (CLP/GHS)": "Gefahrensymbole (CLP/GHS)",
-      "WGK": "WGK",
-      "Transport oder Umfüllen- Verpackungsgruppe": "Transport oder Umfüllen- Verpackungsgruppe",
-      "N.A.G./NOS technische Benennung (Gefahraus-löser)": "N.A.G./NOS technische Benennung (Gefahraus-löser)",
-      "H-Sätze (mit EUH) (durch Komma getrennt) (aus Kap.2)": "H-Sätze (mit EUH) (durch Komma getrennt) (aus Kap.2)",
-      "H-Sätze (mit EUH) (durch Komma getrennt) (aus Gesamtdatei)": "H-Sätze (mit EUH) (durch Komma getrennt) (aus Gesamtdatei)",
-      "P-Sätze (durch Komma getrennt) (aus Kap.2)": "P-Sätze (durch Komma getrennt) (aus Kap.2)",
-      "P-Sätze (durch Komma getrennt) (aus Gesamtdatei)": "P-Sätze (durch Komma getrennt) (aus Gesamtdatei)",
-      "Flammpunkt [°C]": "Flammpunkt [°C]",
-      "Aggregatzustand": "Aggregatzustand",
-      "CLP/GHS-Symbolnummern": "CLP/GHS-Symbolnummern",
-      "CMR": "CMR",
-      "Diisocyanat": "Diisocyanat",
-      "Hinweise/Bemerkungen/Sicherheitsbetrachtung (stoffspezifisch)": "Hinweise/Bemerkungen/Sicherheitsbetrachtung (stoffspezifisch)",
-      "UN Nr": "UN Nr",
-      "ADR-Klasse (Gefahrgutklasse)": "ADR-Klasse (Gefahrgutklasse)",
-      "Gefahr-Nr (Kemler-Zahl)": "Gefahr-Nr (Kemler-Zahl)",
-      "Transport-Mengenbegrenzung LQ": "Transport-Mengenbegrenzung LQ",
-      "Transport-Tunnelcode": "Transport-Tunnelcode",
-      "Kopf": "Kopf",
-      "1": "1",
-      "1.1": "1.1",
-      "1.2": "1.2",
-      "1.3": "1.3",
-      "1.4": "1.4",
-      "2": "2",
-      "2.1": "2.1",
-      "2.2": "2.2",
-      "2.3": "2.3",
-      "3": "3",
-      "3.1": "3.1",
-      "3.2": "3.2",
-      "4": "4",
-      "4.1": "4.1",
-      "4.2": "4.2",
-      "4.3": "4.3",
-      "5": "5",
-      "5.1": "5.1",
-      "5.2": "5.2",
-      "5.3": "5.3",
-      "6": "6",
-      "6.1": "6.1",
-      "6.2": "6.2",
-      "6.3": "6.3",
-      "6.4": "6.4",
-      "7": "7",
-      "7.1": "7.1",
-      "7.2": "7.2",
-      "7.3": "7.3",
-      "8": "8",
-      "8.1": "8.1",
-      "8.2": "8.2",
-      "9": "9",
-      "9.1": "9.1",
-      "9.2": "9.2",
-      "10": "10",
-      "10.1": "10.1",
-      "10.2": "10.2",
-      "10.3": "10.3",
-      "10.4": "10.4",
-      "10.5": "10.5",
-      "10.6": "10.6",
-      "11": "11",
-      "11.1": "11.1",
-      "12": "12",
-      "12.1": "12.1",
-      "12.2": "12.2",
-      "12.3": "12.3",
-      "12.4": "12.4",
-      "12.5": "12.5",
-      "12.6": "12.6",
-      "13": "13",
-      "13.1": "13.1",
-      "14": "14",
-      "14.1": "14.1",
-      "14.2": "14.2",
-      "14.3": "14.3",
-      "14.4": "14.4",
-      "14.5": "14.5",
-      "14.6": "14.6",
-      "14.7": "14.7",
-      "15": "15",
-      "15.1": "15.1",
-      "15.2": "15.2",
-      "16": "16",
-      "Message": "Message",
-      "Section-Missing-Count": "Section-Missing-Count",
-    };
-    // Use the same filtering here as well
     const filteredDownloadData = getFilteredData();
 
     if (filteredDownloadData.length === 0) {
@@ -556,11 +214,7 @@ const AllWerthenbachData = () => {
     }
 
     filteredDownloadData.forEach((file) => {
-      const rowData = headers.map((header) => {
-        const val = file.data[headerMapping[header]];
-        return val != null && typeof val === "object" ? JSON.stringify(val) : (val ?? "");
-      });
-      const newRow = worksheet.addRow(rowData);
+      const newRow = worksheet.addRow(getWerthenbachFullRowValues(file.data));
       newRow.eachCell((cell) => {
         cell.alignment = { vertical: "middle", wrapText: true };
       });

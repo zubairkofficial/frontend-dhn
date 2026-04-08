@@ -8,6 +8,10 @@ import Modal from "react-modal";
 import ExcelJS from "exceljs";
 import saveAs from "file-saver";
 import Helpers from "../../Config/Helpers";
+import {
+  WERTHENBACH_COMPACT_HEADERS,
+  getWerthenbachCompactRowValues,
+} from "../../Config/werthenbachColumns";
 
 Modal.setAppElement("#root");
 
@@ -84,53 +88,8 @@ const GetWerthenbachData = ({ refresh }) => {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet("Werthenbach Data");
 
-    // Define headers in the desired order
-    const headers = [
-      "Produktname",
-      "Hersteller",
-      "Dateiname SDB",
-      "Version",
-      "Ausgabedatum bzw. letzte Änderung",
-      "LG Klasse",
-      "WGK(numerischer Wert)",
-      "Signalwort",
+    const headers = WERTHENBACH_COMPACT_HEADERS;
 
-      "H Sätze durch Komma getrennt",
-      "Flammpunkt (numerischer Wert)[°C]",
-      "UN Nr",
-      "Gefahrensymbole",
-      "Gefahrgutklasse (Länge beachten)",
-      "Verpackungsgruppe",
-      "Tunnelcode",
-      "N.A.G./NOS technische Benennung (Gefahraus-löser)",
-      "LQ (Spalte eingefügt)",
-      "Dichte",
-      "Aggregatzustand",
-      "Klassifizierungscode",
-      "Hinweise/Bemerkungen/Sicherheitsbetrachtung (stoffspezifisch)",
-      "Freigabe Störrfallbeauftragter",
-      "Maßnahmen Lagerung Abschnitt 7.2",
-      "Zusammenlagerverbot Abschnitt 10.5",
-      "Main Ingredients",
-      "UFI",
-      "Section - FirstPage",
-      "Section - 1",
-      "Section - 2",
-      "Section - 2|2.2",
-      "Section - 3",
-      "Section - 5|5.1",
-      "Section - 7|7.2--15|15.1",
-      "Section - 7|7.2",
-      "Section - 9|9.1",
-      "Section - 10|10.5",
-      "Section - 14",
-      "Section - 15",
-
-      "Section-Missing-Count",
-      "Message",
-    ];
-
-    // Add headers with styles
     worksheet.addRow(headers);
 
     worksheet.getRow(1).eachCell((cell) => {
@@ -153,60 +112,7 @@ const GetWerthenbachData = ({ refresh }) => {
       };
     });
 
-    // Header Mapping - Your stored data uses different field names
-    const headerMapping = {
-      Produktname: "Produktname",
-      Hersteller: "Hersteller",
-      "Dateiname SDB": "Dateiname SDB",
-      Version: "Version",
-      "Ausgabedatum bzw. letzte Änderung": "Ausgabedatum bzw. letzte Änderung",
-      "LG Klasse": "LG Klasse",
-      "WGK(numerischer Wert)": "WGK\n(numerischer Wert)",
-      Signalwort: "Signalwort",
-      "H Sätze durch Komma getrennt": "H Sätze\ndurch Komma getrennt",
-      "Flammpunkt (numerischer Wert)[°C]":
-        "Flammpunkt\n(numerischer Wert)\n[°C]",
-      "UN Nr": "UN Nr",
-      Gefahrensymbole: "Gefahrensymbole",
-      "Gefahrgutklasse (Länge beachten)": "Gefahrgutklasse (Länge beachten)",
-      Verpackungsgruppe: "Verpackungsgruppe",
-      Tunnelcode: "Tunnelcode",
-      "N.A.G./NOS technische Benennung (Gefahraus-löser)":
-        "N.A.G./NOS\ntechnische Benennung\n(Gefahraus-löser)",
-      "LQ (Spalte eingefügt)": "LQ (Spalte eingefügt)",
-      Dichte: "Dichte",
-      Aggregatzustand: "Aggregatzustand",
-      Klassifizierungscode: "Klassifizierungscode",
-      "Hinweise/Bemerkungen/Sicherheitsbetrachtung (stoffspezifisch)":
-        "Hinweise/Bemerkungen/Sicherheitsbetrachtung (stoffspezifisch)",
-      "Freigabe Störrfallbeauftragter": "Freigabe Störrfallbeauftragter",
-      "Maßnahmen Lagerung Abschnitt 7.2": "Maßnahmen Lagerung\nAbschnitt 7.2",
-      "Zusammenlagerverbot Abschnitt 10.5":
-        "Zusammenlagerverbot\nAbschnitt 10.5",
-      "Main Ingredients": "Main Ingredients",
-      UFI: "UFI",
-      "Section - FirstPage": "Section - FirstPage",
-      "Section - 1": "Section - 1",
-      "Section - 2": "Section - 2",
-      "Section - 2|2.2": "Section - 2|2.2",
-      "Section - 3": "Section - 3",
-      "Section - 5|5.1": "Section - 5|5.1",
-      "Section - 7|7.2--15|15.1": "Section - 7|7.2--15",
-      "Section - 7|7.2": "Section - 7|7.2",
-      "Section - 9|9.1": "Section - 9|9.1",
-      "Section - 10|10.5": "Section - 10|10.5",
-
-      "Section - 14": "Section - 14",
-      "Section - 15": "Section - 15",
-      "Section-Missing-Count": "Section-Missing-Count",
-      Message: "Message",
-    };
-
-    // Map data correctly using headerMapping (ensure values are strings for proper Excel parsing)
-    const rowData = headers.map((header) => {
-      const val = fileData[headerMapping[header]];
-      return val != null && typeof val === "object" ? JSON.stringify(val) : (val ?? "");
-    });
+    const rowData = getWerthenbachCompactRowValues(fileData);
     const dataRow = worksheet.addRow(rowData);
     dataRow.eachCell((cell) => {
       cell.alignment = { vertical: "middle", wrapText: true };
@@ -253,49 +159,7 @@ const GetWerthenbachData = ({ refresh }) => {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet("Werthenbach Data");
 
-    // Use the same headers as handleDownloadFile for consistency
-    const headers = [
-      "Produktname",
-      "Hersteller",
-      "Dateiname SDB",
-      "Version",
-      "Ausgabedatum bzw. letzte Änderung",
-      "LG Klasse",
-      "WGK(numerischer Wert)",
-      "Signalwort",
-      "H Sätze durch Komma getrennt",
-      "Flammpunkt (numerischer Wert)[°C]",
-      "UN Nr",
-      "Gefahrensymbole",
-      "Gefahrgutklasse (Länge beachten)",
-      "Verpackungsgruppe",
-      "Tunnelcode",
-      "N.A.G./NOS technische Benennung (Gefahraus-löser)",
-      "LQ (Spalte eingefügt)",
-      "Dichte",
-      "Aggregatzustand",
-      "Klassifizierungscode",
-      "Hinweise/Bemerkungen/Sicherheitsbetrachtung (stoffspezifisch)",
-      "Freigabe Störrfallbeauftragter",
-      "Maßnahmen Lagerung Abschnitt 7.2",
-      "Zusammenlagerverbot Abschnitt 10.5",
-      "Main Ingredients",
-      "UFI",
-      "Section - FirstPage",
-      "Section - 1",
-      "Section - 2",
-      "Section - 2|2.2",
-      "Section - 3",
-      "Section - 5|5.1",
-      "Section - 7|7.2--15|15.1",
-      "Section - 7|7.2",
-      "Section - 9|9.1",
-      "Section - 10|10.5",
-      "Section - 14",
-      "Section - 15",
-      "Section-Missing-Count",
-      "Message",
-    ];
+    const headers = WERTHENBACH_COMPACT_HEADERS;
     worksheet.addRow(headers);
     worksheet.getRow(1).eachCell((cell) => {
       cell.font = { bold: true, size: 12 };
@@ -329,59 +193,11 @@ const GetWerthenbachData = ({ refresh }) => {
       return;
     }
 
-    const headerMapping = {
-      Produktname: "Produktname",
-      Hersteller: "Hersteller",
-      "Dateiname SDB": "Dateiname SDB",
-      Version: "Version",
-      "Ausgabedatum bzw. letzte Änderung": "Ausgabedatum bzw. letzte Änderung",
-      "LG Klasse": "LG Klasse",
-      "WGK(numerischer Wert)": "WGK\n(numerischer Wert)",
-      Signalwort: "Signalwort",
-      "H Sätze durch Komma getrennt": "H Sätze\ndurch Komma getrennt",
-      "Flammpunkt (numerischer Wert)[°C]":
-        "Flammpunkt\n(numerischer Wert)\n[°C]",
-      "UN Nr": "UN Nr",
-      Gefahrensymbole: "Gefahrensymbole",
-      "Gefahrgutklasse (Länge beachten)": "Gefahrgutklasse (Länge beachten)",
-      Verpackungsgruppe: "Verpackungsgruppe",
-      Tunnelcode: "Tunnelcode",
-      "N.A.G./NOS technische Benennung (Gefahraus-löser)":
-        "N.A.G./NOS\ntechnische Benennung\n(Gefahraus-löser)",
-      "LQ (Spalte eingefügt)": "LQ (Spalte eingefügt)",
-      Dichte: "Dichte",
-      Aggregatzustand: "Aggregatzustand",
-      Klassifizierungscode: "Klassifizierungscode",
-      "Hinweise/Bemerkungen/Sicherheitsbetrachtung (stoffspezifisch)":
-        "Hinweise/Bemerkungen/Sicherheitsbetrachtung (stoffspezifisch)",
-      "Freigabe Störrfallbeauftragter": "Freigabe Störrfallbeauftragter",
-      "Maßnahmen Lagerung Abschnitt 7.2": "Maßnahmen Lagerung\nAbschnitt 7.2",
-      "Zusammenlagerverbot Abschnitt 10.5":
-        "Zusammenlagerverbot\nAbschnitt 10.5",
-      "Main Ingredients": "Main Ingredients",
-      UFI: "UFI",
-      "Section - FirstPage": "Section - FirstPage",
-      "Section - 1": "Section - 1",
-      "Section - 2": "Section - 2",
-      "Section - 2|2.2": "Section - 2|2.2",
-      "Section - 3": "Section - 3",
-      "Section - 5|5.1": "Section - 5|5.1",
-      "Section - 7|7.2--15|15.1": "Section - 7|7.2--15",
-      "Section - 7|7.2": "Section - 7|7.2",
-      "Section - 9|9.1": "Section - 9|9.1",
-      "Section - 10|10.5": "Section - 10|10.5",
-      "Section - 14": "Section - 14",
-      "Section - 15": "Section - 15",
-      "Section-Missing-Count": "Section-Missing-Count",
-      Message: "Message",
-    };
-
-    // Add filtered data rows to the worksheet
     filteredData.forEach((file) => {
-      const rowData = headers.map(
-        (header) => file.data[headerMapping[header]] || ""
-      );
-      worksheet.addRow(rowData);
+      const newRow = worksheet.addRow(getWerthenbachCompactRowValues(file.data));
+      newRow.eachCell((cell) => {
+        cell.alignment = { vertical: "middle", wrapText: true };
+      });
     });
 
     const buffer = await workbook.xlsx.writeBuffer();
