@@ -8,6 +8,11 @@ import { faEye, faDownload } from "@fortawesome/free-solid-svg-icons";
 import Modal from "react-modal";
 import ExcelJS from "exceljs";
 import saveAs from "file-saver";
+import {
+  PROCESSED_DATA_HEADERS,
+  getProcessedDataStaticRow,
+  getProcessedDataRowValues,
+} from "../../../Config/processedDataColumns";
 
 const AllProcessedData = () => {
   const { userId } = useParams();
@@ -121,45 +126,7 @@ const AllProcessedData = () => {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet("Processed Data");
 
-    const headers = [
-      "Lagerkunde",
-      "Artikel Nr.(Länge beachten)",
-      "Materialkurztext",
-      "Produktname",
-      "Hersteller",
-      "Dateiname SDB",
-      "Ausgabedatum bzw. letzte Änderung",
-      "LG Klasse",
-      "WGK(numerischer Wert)",
-      "H Sätze durch Komma getrennt",
-      "Flammpunkt (numerischer Wert)[°C]",
-      "Nr./Kategorie gem. Anhang I, 12. BImSchV 2017",
-      "UN Nr",
-      "Gefahrensymbole",
-      "Gefahrgutklasse (Länge beachten)",
-      "Verpackungsgruppe",
-      "Tunnelcode",
-      "N.A.G./NOS technische Benennung (Gefahraus-löser)",
-      "LQ (Spalte eingefügt)",
-      "Hinweise/Bemerkungen/Sicherheitsbetrachtung (stoffspezifisch)",
-      "Freigabe Störrfallbeauftragter",
-      "Maßnahmen Lagerung Abschnitt 7.2",
-      "Zusammenlagerverbot Abschnitt 10.5",
-      "Main Ingredients",
-      "Section - PreText",
-      "Section - 1",
-      "Section - 2",
-      "Section - 2|2.2",
-      "Section - 3",
-      "Section - 5|5.1",
-      "Section - 7|7.2--15|15.1",
-      "Section - 7|7.2",
-      "Section - 9|9.1",
-      "Section - 10|10.5",
-      "Section - 15",
-      "Section - 14",
-      "Section-Missing-Count",
-    ];
+    const headers = PROCESSED_DATA_HEADERS;
 
     worksheet.addRow(headers);
 
@@ -183,79 +150,9 @@ const AllProcessedData = () => {
       };
     });
 
-    const staticRow = [
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "14",
-      "1-HZWMSC",
-      "1-HZDWGK",
-      "3-HARIZIN",
-      "1-H2FLSP 3n",
-      "",
-      "1-HZUNNR 6n",
-      "2-HECODE",
-      "4-HMKLAS",
-      "4-HMVPAK",
-      "4-HMTNCD",
-      "1-HZGSDE / 4-HMGSDE",
-      "4-HMLQTP",
-    ];
-    worksheet.addRow(staticRow);
+    worksheet.addRow(getProcessedDataStaticRow());
 
-    const headerMapping = {
-      Lagerkunde: "Lagerkunde",
-      "Artikel Nr.(Länge beachten)": "Artikel Nr.\n(Länge beachten)",
-      Materialkurztext: "Materialkurztext",
-      Produktname: "Produktname",
-      Hersteller: "Hersteller",
-      "Dateiname SDB": "Dateiname SDB",
-      "Ausgabedatum bzw. letzte Änderung": "Ausgabedatum bzw. letzte Änderung",
-      "LG Klasse": "LG Klasse",
-      "WGK(numerischer Wert)": "WGK\n(numerischer Wert)",
-      "H Sätze durch Komma getrennt": "H Sätze\ndurch Komma getrennt",
-      "Flammpunkt (numerischer Wert)[°C]":
-        "Flammpunkt\n(numerischer Wert)\n[°C]",
-      "Nr./Kategorie gem. Anhang I, 12. BImSchV 2017":
-        "Nr./Kategorie gem. Anhang I, 12. BImSchV 2017",
-      "UN Nr": "UN Nr",
-      Gefahrensymbole: "Gefahrensymbole",
-      "Gefahrgutklasse (Länge beachten)": "Gefahrgutklasse (Länge beachten)",
-      Verpackungsgruppe: "Verpackungsgruppe",
-      Tunnelcode: "Tunnelcode",
-      "N.A.G./NOS technische Benennung (Gefahraus-löser)":
-        "N.A.G./NOS\ntechnische Benennung\n(Gefahraus-löser)",
-      "LQ (Spalte eingefügt)": "LQ (Spalte eingefügt)",
-      "Hinweise/Bemerkungen/Sicherheitsbetrachtung (stoffspezifisch)":
-        "Hinweise/Bemerkungen/Sicherheitsbetrachtung (stoffspezifisch)",
-      "Freigabe Störrfallbeauftragter": "Freigabe Störrfallbeauftragter",
-      "Maßnahmen Lagerung Abschnitt 7.2": "Maßnahmen Lagerung\nAbschnitt 7.2",
-      "Zusammenlagerverbot Abschnitt 10.5":
-        "Zusammenlagerverbot\nAbschnitt 10.5",
-      "Main Ingredients": "Main Ingredients",
-      "Section - PreText": "Section - PreText",
-      "Section - 1": "Section - 1",
-      "Section - 2": "Section - 2",
-      "Section - 2|2.2": "Section - 2|2.2",
-      "Section - 3": "Section - 3",
-      "Section - 5|5.1": "Section - 5|5.1",
-      "Section - 7|7.2--15|15.1": "Section - 7|7.2--15",
-      "Section - 7|7.2": "Section - 7|7.2",
-      "Section - 9|9.1": "Section - 9|9.1",
-      "Section - 10|10.5": "Section - 10|10.5",
-      "Section - 15": "Section - 15",
-      "Section - 14": "Section - 14",
-      "Section-Missing-Count": "Section-Missing-Count",
-    };
-
-    const rowData = headers.map((header) => {
-      const val = fileData[headerMapping[header]];
-      return val != null && typeof val === "object" ? JSON.stringify(val) : (val ?? "");
-    });
-    const dataRow = worksheet.addRow(rowData);
+    const dataRow = worksheet.addRow(getProcessedDataRowValues(fileData));
     dataRow.eachCell((cell) => {
       cell.alignment = { vertical: "middle", wrapText: true };
     });
@@ -282,45 +179,7 @@ const AllProcessedData = () => {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet("Filtered Data");
 
-    const headers = [
-      "Lagerkunde",
-      "Artikel Nr.(Länge beachten)",
-      "Materialkurztext",
-      "Produktname",
-      "Hersteller",
-      "Dateiname SDB",
-      "Ausgabedatum bzw. letzte Änderung",
-      "LG Klasse",
-      "WGK(numerischer Wert)",
-      "H Sätze durch Komma getrennt",
-      "Flammpunkt (numerischer Wert)[°C]",
-      "Nr./Kategorie gem. Anhang I, 12. BImSchV 2017",
-      "UN Nr",
-      "Gefahrensymbole",
-      "Gefahrgutklasse (Länge beachten)",
-      "Verpackungsgruppe",
-      "Tunnelcode",
-      "N.A.G./NOS technische Benennung (Gefahraus-löser)",
-      "LQ (Spalte eingefügt)",
-      "Hinweise/Bemerkungen/Sicherheitsbetrachtung (stoffspezifisch)",
-      "Freigabe Störrfallbeauftragter",
-      "Maßnahmen Lagerung Abschnitt 7.2",
-      "Zusammenlagerverbot Abschnitt 10.5",
-      "Main Ingredients",
-      "Section - PreText",
-      "Section - 1",
-      "Section - 2",
-      "Section - 2|2.2",
-      "Section - 3",
-      "Section - 5|5.1",
-      "Section - 7|7.2--15|15.1",
-      "Section - 7|7.2",
-      "Section - 9|9.1",
-      "Section - 10|10.5",
-      "Section - 15",
-      "Section - 14",
-      "Section-Missing-Count",
-    ];
+    const headers = PROCESSED_DATA_HEADERS;
 
     worksheet.addRow(headers);
     worksheet.getRow(1).eachCell((cell) => {
@@ -343,73 +202,7 @@ const AllProcessedData = () => {
       };
     });
 
-    const staticRow = [
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "14",
-      "1-HZWMSC",
-      "1-HZDWGK",
-      "3-HARIZIN",
-      "1-H2FLSP 3n",
-      "",
-      "1-HZUNNR 6n",
-      "2-HECODE",
-      "4-HMKLAS",
-      "4-HMVPAK",
-      "4-HMTNCD",
-      "1-HZGSDE / 4-HMGSDE",
-      "4-HMLQTP",
-    ];
-    worksheet.addRow(staticRow);
-
-    const headerMapping = {
-      Lagerkunde: "Lagerkunde",
-      "Artikel Nr.(Länge beachten)": "Artikel Nr.\n(Länge beachten)",
-      Materialkurztext: "Materialkurztext",
-      Produktname: "Produktname",
-      Hersteller: "Hersteller",
-      "Dateiname SDB": "Dateiname SDB",
-      "Ausgabedatum bzw. letzte Änderung": "Ausgabedatum bzw. letzte Änderung",
-      "LG Klasse": "LG Klasse",
-      "WGK(numerischer Wert)": "WGK\n(numerischer Wert)",
-      "H Sätze durch Komma getrennt": "H Sätze\ndurch Komma getrennt",
-      "Flammpunkt (numerischer Wert)[°C]":
-        "Flammpunkt\n(numerischer Wert)\n[°C]",
-      "Nr./Kategorie gem. Anhang I, 12. BImSchV 2017":
-        "Nr./Kategorie gem. Anhang I, 12. BImSchV 2017",
-      "UN Nr": "UN Nr",
-      Gefahrensymbole: "Gefahrensymbole",
-      "Gefahrgutklasse (Länge beachten)": "Gefahrgutklasse (Länge beachten)",
-      Verpackungsgruppe: "Verpackungsgruppe",
-      Tunnelcode: "Tunnelcode",
-      "N.A.G./NOS technische Benennung (Gefahraus-löser)":
-        "N.A.G./NOS\ntechnische Benennung\n(Gefahraus-löser)",
-      "LQ (Spalte eingefügt)": "LQ (Spalte eingefügt)",
-      "Hinweise/Bemerkungen/Sicherheitsbetrachtung (stoffspezifisch)":
-        "Hinweise/Bemerkungen/Sicherheitsbetrachtung (stoffspezifisch)",
-      "Freigabe Störrfallbeauftragter": "Freigabe Störrfallbeauftragter",
-      "Maßnahmen Lagerung Abschnitt 7.2": "Maßnahmen Lagerung\nAbschnitt 7.2",
-      "Zusammenlagerverbot Abschnitt 10.5":
-        "Zusammenlagerverbot\nAbschnitt 10.5",
-      "Main Ingredients": "Main Ingredients",
-      "Section - PreText": "Section - PreText",
-      "Section - 1": "Section - 1",
-      "Section - 2": "Section - 2",
-      "Section - 2|2.2": "Section - 2|2.2",
-      "Section - 3": "Section - 3",
-      "Section - 5|5.1": "Section - 5|5.1",
-      "Section - 7|7.2--15|15.1": "Section - 7|7.2--15",
-      "Section - 7|7.2": "Section - 7|7.2",
-      "Section - 9|9.1": "Section - 9|9.1",
-      "Section - 10|10.5": "Section - 10|10.5",
-      "Section - 15": "Section - 15",
-      "Section - 14": "Section - 14",
-      "Section-Missing-Count": "Section-Missing-Count",
-    };
+    worksheet.addRow(getProcessedDataStaticRow());
 
     // Use the same filtering here as well
     const filteredDownloadData = getFilteredData();
@@ -423,11 +216,7 @@ const AllProcessedData = () => {
     }
 
     filteredDownloadData.forEach((file) => {
-      const rowData = headers.map((header) => {
-        const val = file.data[headerMapping[header]];
-        return val != null && typeof val === "object" ? JSON.stringify(val) : (val ?? "");
-      });
-      const newRow = worksheet.addRow(rowData);
+      const newRow = worksheet.addRow(getProcessedDataRowValues(file.data));
       newRow.eachCell((cell) => {
         cell.alignment = { vertical: "middle", wrapText: true };
       });
