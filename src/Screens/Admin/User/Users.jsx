@@ -5,6 +5,7 @@ import Helpers from "../../../Config/Helpers";
 import axios from "axios";
 import { useHeader } from "../../../Components/HeaderContext";
 import Pagination from "../../../Components/Pagination";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
 const Users = () => {
   const { setHeaderData } = useHeader();
@@ -19,13 +20,14 @@ const Users = () => {
   const [customerAdmins, setCustomerAdmins] = useState([]);
   const [allUsers, setAllUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loadingAllUsers, setLoadingAllUsers] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [globalSearchTerm, setGlobalSearchTerm] = useState("");
   const [isGlobalSearch, setIsGlobalSearch] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
   const itemsPerPage = 10;
+  const [totalCustomerUsers, setTotalCustomerUsers] = useState(0);
   const location = useLocation();
   const navigate = useNavigate();
   const successMessage = location.state?.successMessage;
@@ -146,7 +148,11 @@ const Users = () => {
   }, [successMessage, navigate, location.pathname]);
 
   useEffect(() => {
-    fetchUsers();
+    fetchAllUsers()
+      .catch(() => {
+        // fetchAllUsers already handles internal errors
+      })
+      .finally(() => setLoadingAllUsers(false));
   }, []);
 
   // Filter users based on search terms
@@ -182,26 +188,37 @@ const Users = () => {
     setFilteredUsers(filtered);
   }, [searchTerm, globalSearchTerm, isGlobalSearch, customerAdmins, allUsers]);
 
-  // Fetch customer admins
-  const fetchCustomerAdmins = async () => {
-    try {
+  const customerAdminsQuery = useQuery({
+    queryKey: ["getAllCustomerUsers", currentPage, itemsPerPage],
+    queryFn: async () => {
       const response = await axios.get(
         `${Helpers.apiUrl}getAllCustomerUsers`,
-        Helpers.authHeaders
+        {
+          ...Helpers.authHeaders,
+          params: { page: currentPage + 1, per_page: itemsPerPage },
+        }
       );
-      if (response.status !== 200) {
-        throw new Error(Helpers.getTranslationValue("users_fetch_error"));
-      }
-      const usersData = Array.isArray(response.data.customer_users)
-        ? response.data.customer_users
-        : [];
-      setCustomerAdmins(usersData);
-      return usersData;
-    } catch (error) {
-      setError(error.message);
-      throw error;
+      return response.data;
+    },
+    placeholderData: keepPreviousData,
+  });
+
+  useEffect(() => {
+    if (!customerAdminsQuery.data) return;
+
+    const usersData = Array.isArray(customerAdminsQuery.data.customer_users)
+      ? customerAdminsQuery.data.customer_users
+      : [];
+    setCustomerAdmins(usersData);
+
+    const total = Number(customerAdminsQuery.data.pagination?.total);
+    setTotalCustomerUsers(Number.isFinite(total) ? total : usersData.length);
+
+    // Default list (no local search + not global search) should show current page
+    if (!isGlobalSearch && (!searchTerm || searchTerm.trim() === "")) {
+      setFilteredUsers(usersData);
     }
-  };
+  }, [customerAdminsQuery.data, isGlobalSearch, searchTerm]);
 
   // Fetch all users for global search
   const fetchAllUsers = async () => {
@@ -231,26 +248,10 @@ const Users = () => {
     }
   };
 
-  // Fetch both datasets on component load
-  const fetchUsers = async () => {
-    setLoading(true);
-    try {
-      const [customerAdminsData] = await Promise.all([
-        fetchCustomerAdmins(),
-        fetchAllUsers(),
-      ]);
-      // Set default filtered users to customer admins
-      setFilteredUsers(customerAdminsData);
-    } catch (error) {
-      setError(error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleGlobalSearch = (searchValue) => {
     setGlobalSearchTerm(searchValue);
     setIsGlobalSearch(true);
+    setCurrentPage(0);
 
     // If search is empty, switch back to customer admins view
     if (!searchValue || searchValue.trim() === "") {
@@ -262,6 +263,7 @@ const Users = () => {
   const handleLocalSearch = (searchValue) => {
     setSearchTerm(searchValue);
     setIsGlobalSearch(false);
+    setCurrentPage(0);
 
     // If search is empty, show all customer admins
     if (!searchValue || searchValue.trim() === "") {
@@ -308,9 +310,21 @@ const Users = () => {
   const handleViewAllProcessedData = (userId) => {
     navigate(`/admin/all-processed-data/${userId}`);
   };
+
+  const isServerPaging = !isGlobalSearch && (!searchTerm || searchTerm.trim() === "");
   const indexOfLastUser = (currentPage + 1) * itemsPerPage;
   const indexOfFirstUser = currentPage * itemsPerPage;
-  const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
+  const currentUsers = isServerPaging
+    ? filteredUsers
+    : filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
+
+  const loading = customerAdminsQuery.isPending || loadingAllUsers;
+  const derivedError =
+    error ||
+    customerAdminsQuery.error?.message ||
+    (customerAdminsQuery.isError
+      ? Helpers.getTranslationValue("users_fetch_error")
+      : null);
 
   if (loading) {
     return (
@@ -320,10 +334,10 @@ const Users = () => {
     );
   }
 
-  if (error) {
+  if (derivedError) {
     return (
       <div className="text-blue-500">
-        {Helpers.getTranslationValue("error")}: {error}
+        {Helpers.getTranslationValue("error")}: {derivedError}
       </div>
     );
   }
@@ -1029,7 +1043,7 @@ const Users = () => {
 
         <Pagination
           currentPage={currentPage}
-          totalItems={filteredUsers.length}
+          totalItems={isServerPaging ? totalCustomerUsers : filteredUsers.length}
           itemsPerPage={itemsPerPage}
           onPageChange={(page) => setCurrentPage(page)}
         />
