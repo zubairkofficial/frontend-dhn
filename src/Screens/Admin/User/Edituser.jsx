@@ -21,6 +21,8 @@ const EditUser = () => {
     email: "",
     org_id: "",
     services: [],
+    counterLimit: "",
+    expirationDate: "2099-12-31",
     history_enabled: true,
   });
   const navigate = useNavigate();
@@ -45,6 +47,12 @@ const EditUser = () => {
         email: response.data.user.email,
         services: response.data.user.services,
         org_id: response.data.user.org_id,
+        counterLimit:
+          typeof response.data.user.counter_limit === "number" ||
+          typeof response.data.user.counter_limit === "string"
+            ? response.data.user.counter_limit
+            : "",
+        expirationDate: response.data.user.expiration_date || "2099-12-31",
         history_enabled: response.data.user.history_enabled ?? true,
       });
       setLoading(false);
@@ -69,9 +77,38 @@ const EditUser = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      const normalizedCounterLimit =
+        formData.counterLimit === "" || formData.counterLimit === null
+          ? null
+          : Number(formData.counterLimit);
+
+      const payload = {
+        ...formData,
+        ...(normalizedCounterLimit === null || Number.isNaN(normalizedCounterLimit)
+          ? {}
+          : {
+              // send both for compatibility with backend expectations
+              counterLimit: normalizedCounterLimit,
+              counter_limit: normalizedCounterLimit,
+            }),
+        ...(formData.expirationDate
+          ? {
+              expirationDate: formData.expirationDate,
+              expiration_date: formData.expirationDate,
+            }
+          : {}),
+      };
+
+      // Backend endpoints differ: counter updates are handled by `update-customer-user`
+      // in this project, while `updateUser` often only updates profile fields.
+      const updateUrl =
+        user?.counter_limit !== undefined || user?.expiration_date !== undefined
+          ? `${Helpers.apiUrl}update-customer-user/${id}`
+          : `${Helpers.apiUrl}updateUser/${id}`;
+
       const response = await axios.post(
-        `${Helpers.apiUrl}updateUser/${id}`,
-        formData,
+        updateUrl,
+        payload,
         Helpers.authHeaders
       );
       if (response.status !== 200) throw new Error(Helpers.getTranslationValue('user_not_found'));
@@ -178,6 +215,45 @@ const EditUser = () => {
                       className="text-base"
                     />
                   </div>
+                  {(user?.counter_limit !== undefined ||
+                    user?.expiration_date !== undefined) && (
+                    <div className="mt-4 space-y-4">
+                      <div>
+                        <label
+                          htmlFor="counterLimit"
+                          className="block text-sm font-medium text-gray-700"
+                        >
+                          Anzahl verfügbarer Dokumente (Paketvolumen)
+                        </label>
+                        <input
+                          id="counterLimit"
+                          name="counterLimit"
+                          type="number"
+                          min={0}
+                          placeholder="Geben Sie das Zählerlimit ein"
+                          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
+                          value={formData.counterLimit}
+                          onChange={handleChange}
+                        />
+                      </div>
+                      <div>
+                        <label
+                          htmlFor="expirationDate"
+                          className="block text-sm font-medium text-gray-700"
+                        >
+                          Verbrauch bis max Datum
+                        </label>
+                        <input
+                          id="expirationDate"
+                          name="expirationDate"
+                          type="date"
+                          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
+                          value={formData.expirationDate}
+                          onChange={handleChange}
+                        />
+                      </div>
+                    </div>
+                  )}
                   {formData.services.includes(2) && (
                     <div>
                       <label
@@ -273,6 +349,27 @@ const EditUser = () => {
                           .join(", ")}
                       </dd>
                     </div>
+                    {(user?.counter_limit !== undefined ||
+                      user?.expiration_date !== undefined) && (
+                      <>
+                        <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                          <dt className="text-sm font-medium text-gray-500">
+                            {Helpers.getTranslationValue("Zählerlimit")}
+                          </dt>
+                          <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+                            {user.counter_limit ?? "-"}
+                          </dd>
+                        </div>
+                        <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                          <dt className="text-sm font-medium text-gray-500">
+                            Verbrauch bis max Datum
+                          </dt>
+                          <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+                            {user.expiration_date ?? "-"}
+                          </dd>
+                        </div>
+                      </>
+                    )}
                   </dl>
                 </div>
                 <div className="flex justify-end space-x-3">

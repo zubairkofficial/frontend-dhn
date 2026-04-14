@@ -163,7 +163,7 @@ const AddUser = () => {
               expirationDate: user?.selectedOrgUser?.expiration_date ?? "2099-12-31",
             }
             : {
-              counterLimit: selectedCustomer?.counter_limit ?? "super-admin",
+              counterLimit: selectedCustomer?.counter_limit ?? 0,
               expirationDate: selectedCustomer?.expiration_date ?? "2099-12-31",
             }),
         };
