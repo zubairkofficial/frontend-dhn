@@ -4,11 +4,21 @@ import "notyf/notyf.min.css";
 class Helpers {
   static localhost = "http://127.0.0.1:8000";
   static server = "https://dhn.services/backend";
-  static testServer = "https://dhntestapi.cyberifyportfolio.com";
-  static basePath = `${this.localhost}`;
-  static apiUrl = `${this.basePath}/api/`;
 
-  static authUser = JSON.parse(localStorage.getItem("user") ?? "{}");
+  // Vite envs:
+  // - `.env.development` is used by `npm run dev`
+  // - `.env.production` is used by `npm run build`
+  static get basePath() {
+    return import.meta.env?.VITE_BASE_PATH || this.server;
+  }
+
+  static get apiUrl() {
+    return `${this.basePath}/api/`;
+  }
+
+  static get authUser() {
+    return JSON.parse(localStorage.getItem("user") ?? "{}");
+  }
 
   static serverImage = (name) => {
     return `${this.basePath}/${name}`;
@@ -18,19 +28,23 @@ class Helpers {
     return token;
   };
 
-  static authHeaders = {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${this.getToken()}`,
-    },
-  };
+  static get authHeaders() {
+    return {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${this.getToken()}`,
+      },
+    };
+  }
 
-  static authFileHeaders = {
-    headers: {
-      "Content-Type": "multipart/form-data",
-      Authorization: `Bearer ${this.getToken()}`,
-    },
-  };
+  static get authFileHeaders() {
+    return {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${this.getToken()}`,
+      },
+    };
+  }
 
   static getItem = (data, isJson = false) => {
     if (isJson) {
