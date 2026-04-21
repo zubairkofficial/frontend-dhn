@@ -3,12 +3,14 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
-  // server: {
-  //   port: 3000,
-  //   open: true,
-  // },
-  // build: {
-  //   outDir: 'build',
-  //   sourcemap: false,
-  // },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor_react: ['react', 'react-dom', 'react-router-dom'],
+          vendor_data: ['@tanstack/react-query', 'axios'],
+        },
+      },
+    },
+  },
 });

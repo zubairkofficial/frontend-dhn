@@ -1,79 +1,80 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import axios from "axios";
 import { BrowserRouter, Navigate, Routes, Route, Link } from "react-router-dom";
-import AdminLayout from "./Screens/Admin/Layout/Layout";
-import AddOrganizationalUser from "./Screens/User/AddUser/AddOrganizationalUser";
 import { HeaderProvider } from "./Components/HeaderContext";
-import Users from "./Screens/Admin/User/Users";
 import Helpers from "./Config/Helpers";
-import Login from "./Screens/Auth/Login";
-import Adduser from "./Screens/Admin/User/AddUser/Adduser";
-import Edituser from "./Screens/Admin/User/Edituser";
-import UserDashboard from "./Screens/User/Dashboard";
-import UserLayout from "./Screens/User/Layout/Layout";
-import FileUpload from "./Screens/User/Fileupload";
-import ChangePass from "./Screens/User/ChangePass";
-import Voice from "./Screens/User/Voice";
-import SentEmails from "./Screens/User/SentEmails";
-import Transcription from "./Screens/User/Transcription";
-import ResendEmail from "./Screens/User/ResendEmail";
-import Services from "./Screens/Admin/Service/Services";
-import AddService from "./Screens/Admin/Service/AddService";
-import EditService from "./Screens/Admin/Service/EditService";
-import Orgs from "./Screens/Admin/Organization/Orgs";
-import AddOrg from "./Screens/Admin/Organization/AddOrg";
-import EditOrg from "./Screens/Admin/Organization/EditOrg";
-import Trans from "./Screens/Admin/Translation/Translations";
-import AddTrans from "./Screens/Admin/Translation/AddTrans";
-import EditTrans from "./Screens/Admin/Translation/EditTrans";
-import ContractAutomationSolution from "./Screens/User/ContractAutomationSolution";
-import Tools from "./Screens/Admin/Tools/Tools";
-import AddTool from "./Screens/Admin/Tools/AddTool";
-import EditTool from "./Screens/Admin/Tools/EditTool";
-import DataProcess from "./Screens/User/DataProcess";
-import CloneDataProcess from "./Screens/User/CloneDataProcess";
-import DemoDataProcess from "./Screens/User/DemoDataProcess";
-import ChangeLogo from "./Screens/User/ChangeLogo";
-import Settings from "./Screens/User/Settings";
-import OrganizationalUserTable from "./Components/OrganizationalUserTable";
-import { useState } from "react";
-import OrganizationUsers from "./Screens/Admin/User/OrganizationUsers";
-import EditOrganizationalUser from "./Screens/User/EditOrganizationalUser";
-import Register from "./Screens/Auth/Register";
-import AddCustomerAdmin from "./Screens/User/AddUser/AddCustomerAdmin";
-import CustomerUserTable from "./Components/CustomerUserTable";
-import CustomerChildTable from "./Components/CustomerChildTable";
-import NormalUsers from "./Screens/Admin/User/NormalUsers";
-import LoginCustomer from "./Screens/Auth/LoginCustomer";
-import AllUsers from "./Screens/Admin/User/AllUsers";
-import LinkUsers from "./Screens/Admin/User/LinkUsers";
-import FreeDataProcess from "./Screens/User/FreeDataProcess";
-import InstructionsPage from "./Screens/Admin/Instruction/InstructionsPage";
-import InstructionForm from "./Screens/Admin/Instruction/InstructionForm";
-import SettingsPage from "./Screens/Admin/Setting/SettingsPage";
-import SettingForm from "./Screens/Admin/Setting/SettingForm";
-import DeliveryBills from "./Screens/User/DeliveryBills";
-import InvoiceDetails from "./Screens/User/InvoiceDetails";
-import PastInvoices from "./Screens/User/PastInvoices";
-import InvoiceRecords from "./Screens/User/InvoiceRecords";
-import DetialsWithDate from "./Screens/User/DetialsWithDate";
-import EditCustomerUser from "./Screens/User/AddUser/EditCustomerUser";
-import EditOrganizationalUserPage from "./Screens/User/AddUser/EditOrganizationalUser";
-import ResetUserPassword from "./Screens/Admin/User/ResetUserPassword";
-import ResetOrganizationalUserPassword from "./Screens/Admin/User/AddUser/ResetOrganizationalUserPassword";
-import ResetNormalUserPassword from "./Screens/Admin/User/AddUser/ResetNormalUserPassword";
-import GetProcessedData from "./Screens/User/GetProcessedData";
-import AllProcessedData from "./Screens/User/Layout/AllProcessedData";
-import Werthenbach from "./Screens/User/Werthenbach";
-import AllWerthenbach from "./Screens/User/Layout/AllWerthenbachData";
-import Scheren from "./Screens/User/Scheren";
-import AllScherenData from "./Screens/User/Layout/AllScherenData";
-import AllSennheiserData from "./Screens/User/Layout/AllSennheiserData";
-import Sennheiser from "./Screens/User/Sennheiser";
-import AllVerbundData from "./Screens/User/Layout/AllVerbundData";
-import Verbund from "./Screens/User/Verbund";
-import Surfachem from "./Screens/User/Surfachem";
-import AllSurfachemData from "./Screens/User/Layout/AllSurfachemData";
+import {
+  AdminLayout,
+  AddOrganizationalUser,
+  Users,
+  Login,
+  Adduser,
+  Edituser,
+  UserDashboard,
+  UserLayout,
+  FileUpload,
+  ChangePass,
+  Voice,
+  SentEmails,
+  Transcription,
+  ResendEmail,
+  Services,
+  AddService,
+  EditService,
+  Orgs,
+  AddOrg,
+  EditOrg,
+  Trans,
+  AddTrans,
+  EditTrans,
+  ContractAutomationSolution,
+  Tools,
+  AddTool,
+  EditTool,
+  DataProcess,
+  CloneDataProcess,
+  DemoDataProcess,
+  ChangeLogo,
+  Settings,
+  OrganizationalUserTable,
+  OrganizationUsers,
+  EditOrganizationalUser,
+  Register,
+  AddCustomerAdmin,
+  CustomerUserTable,
+  CustomerChildTable,
+  NormalUsers,
+  LoginCustomer,
+  AllUsers,
+  LinkUsers,
+  FreeDataProcess,
+  InstructionsPage,
+  InstructionForm,
+  SettingsPage,
+  SettingForm,
+  DeliveryBills,
+  InvoiceDetails,
+  PastInvoices,
+  InvoiceRecords,
+  DetialsWithDate,
+  EditCustomerUser,
+  EditOrganizationalUserPage,
+  ResetUserPassword,
+  ResetOrganizationalUserPassword,
+  ResetNormalUserPassword,
+  GetProcessedData,
+  AllProcessedData,
+  Werthenbach,
+  AllWerthenbach,
+  Scheren,
+  AllScherenData,
+  AllSennheiserData,
+  Sennheiser,
+  AllVerbundData,
+  Verbund,
+  Surfachem,
+  AllSurfachemData,
+} from "./lazyScreens";
 
 const Auth = ({ children, isAuth = true, isAdmin = false }) => {
   let user = Helpers.getItem("user", true);
@@ -87,7 +88,7 @@ const Auth = ({ children, isAuth = true, isAdmin = false }) => {
   if (loginTime) {
     let minutesPassed = Math.floor((currentTime - loginTime) / (1000 * 60));
 
-    // Session expiration check: Expire after 30 minutes
+    // Session expiration: idle window (minutes)
     if (minutesPassed > 60) {
       localStorage.clear();
       Helpers.toast(
@@ -138,18 +139,12 @@ const Auth = ({ children, isAuth = true, isAdmin = false }) => {
 };
 
 const NotFound = () => {
-  useEffect(() => {
-    const user = Helpers.authUser;
-    const token = Helpers.getItem("token");
+  const user = Helpers.authUser;
+  const token = Helpers.getItem("token");
 
-    if (!user || !token) {
-      <Navigate to="/login" />;
-    } else if (parseInt(user.user_type) === 1) {
-      <Navigate to="/admin/dashboard" />;
-    } else {
-      <Navigate to="/" />;
-    }
-  }, []);
+  if (!user || !token) {
+    return <Navigate to="/login" replace />;
+  }
 
   return (
     <section className="bg-no-repeat bg-cover bg-notfound-light">
@@ -158,7 +153,7 @@ const NotFound = () => {
           <img src="/assets/images/illustration/404.svg" alt="" />
           <div className="flex justify-center mt-10">
             <Link
-              to="/"
+              to={parseInt(user.user_type, 10) === 1 ? "/admin/dashboard" : "/"}
               className="bg-success-300 text-sm font-bold text-white rounded-lg px-10 py-3"
             >
               Go Back
@@ -221,6 +216,13 @@ const App = () => {
   return (
     <BrowserRouter>
       <HeaderProvider>
+        <Suspense
+          fallback={
+            <div className="d-flex justify-content-center align-items-center min-vh-100">
+              <span className="text-muted">Loading…</span>
+            </div>
+          }
+        >
         <Routes>
           <Route
             path="/login"
@@ -544,7 +546,6 @@ const App = () => {
                     </Auth>
                   }
                 />
-                ;
                 <Route
                   path="/reset-normal-user-password/:id"
                   element={
@@ -553,7 +554,6 @@ const App = () => {
                     </Auth>
                   }
                 />
-                ;
                 <Route
                   path="/org-user-table"
                   element={
@@ -848,6 +848,7 @@ const App = () => {
 
           <Route path="*" element={<NotFound />} />
         </Routes>
+        </Suspense>
       </HeaderProvider>
     </BrowserRouter>
   );
