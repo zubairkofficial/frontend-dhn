@@ -1,15 +1,9 @@
 $(function () {
   //search
   $(document).on("keydown", (e) => {
-    switch (e.key) {
-      case "k":
-      case "Control":
-        e.preventDefault();
-        e.stopPropagation();
-        break;
-    }
-    ``;
     if (e.key === "k" && e.ctrlKey) {
+      e.preventDefault();
+      e.stopPropagation();
       $("#search").trigger("focus");
     }
   });
@@ -24,14 +18,9 @@ $(function () {
   });
   //drawer key access
   $(document).on("keydown", (e) => {
-    switch (e.key) {
-      case "b":
-      case "Control":
-        e.preventDefault();
-        e.stopPropagation();
-        break;
-    }
     if (e.key === "b" && e.ctrlKey) {
+      e.preventDefault();
+      e.stopPropagation();
       const checkClassExits = $(".layout-wrapper");
       if (checkClassExits.hasClass("active")) {
         checkClassExits.removeClass("active");
