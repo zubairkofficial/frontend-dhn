@@ -5,6 +5,7 @@ import Avatar from "react-avatar";
 import axios from "axios";
 import userAvatar from "../Admin/User/user.png";
 import Helpers from "../../Config/Helpers";
+import { SERVICE_LINK } from "../../constants/serviceLinks";
 import { useHeader } from "../../Components/HeaderContext";
 
 const EditOrganizationalUser = () => {
@@ -115,6 +116,15 @@ const EditOrganizationalUser = () => {
     (option) => option.value == formData.org_id
   );
 
+  const hasVoiceServiceSelected = formData.services.some((serviceId) => {
+    const svc = services.find((s) => s.id === serviceId);
+    return (
+      svc &&
+      Helpers.normalizeServiceLink(svc.link) ===
+        Helpers.normalizeServiceLink(SERVICE_LINK.VOICE)
+    );
+  });
+
   if (loading)
     return (
       <div className="flex justify-center items-center h-screen">
@@ -206,7 +216,7 @@ const EditOrganizationalUser = () => {
                       className="text-base"
                     />
                   </div>
-                  {formData.services.includes(2) && (
+                  {hasVoiceServiceSelected && (
                     <div>
                       <label
                         htmlFor="org"

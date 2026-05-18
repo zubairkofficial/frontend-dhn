@@ -3,6 +3,7 @@ import axios from "axios";
 import { BrowserRouter, Navigate, Routes, Route, Link } from "react-router-dom";
 import { HeaderProvider } from "./Components/HeaderContext";
 import Helpers from "./Config/Helpers";
+import { SERVICE_LINK } from "./constants/serviceLinks";
 import {
   AdminLayout,
   AddOrganizationalUser,
@@ -194,13 +195,6 @@ const App = () => {
     fetchTranslations();
   }, []);
 
-  const hasServiceAccess = (serviceId) => {
-    const user = Helpers.authUser;
-    if (user && user.services) {
-      return user.services.includes(serviceId);
-    }
-    return false;
-  };
   const fetchTranslations = async () => {
     try {
       const response = await axios.get(
@@ -259,7 +253,7 @@ const App = () => {
               }
             />
 
-            {hasServiceAccess(1) && (
+            {Helpers.hasServiceLink(Helpers.authUser, SERVICE_LINK.FILE_UPLOAD) && (
               <Route
                 path="/fileupload"
                 element={
@@ -269,7 +263,7 @@ const App = () => {
                 }
               />
             )}
-            {hasServiceAccess(2) && (
+            {Helpers.hasServiceLink(Helpers.authUser, SERVICE_LINK.VOICE) && (
               <>
                 <Route
                   path="/voice"
@@ -305,7 +299,10 @@ const App = () => {
                 />
               </>
             )}
-            {hasServiceAccess(3) && (
+            {Helpers.hasServiceLink(
+              Helpers.authUser,
+              SERVICE_LINK.CONTRACT_AUTOMATION
+            ) && (
               <Route
                 path="/contract_automation_solution"
                 element={
@@ -315,7 +312,7 @@ const App = () => {
                 }
               />
             )}
-            {hasServiceAccess(4) && (
+            {Helpers.hasServiceLink(Helpers.authUser, SERVICE_LINK.DATA_PROCESS) && (
               <>
                 <Route
                   path="/data_process"
@@ -335,7 +332,10 @@ const App = () => {
                 />
               </>
             )}
-            {hasServiceAccess(7) && (
+            {Helpers.hasServiceLink(
+              Helpers.authUser,
+              SERVICE_LINK.CLONE_DATA_PROCESS
+            ) && (
               <Route
                 path="/clone_data_process"
                 element={
@@ -345,7 +345,10 @@ const App = () => {
                 }
               />
             )}
-            {hasServiceAccess(12) && (
+            {Helpers.hasServiceLink(
+              Helpers.authUser,
+              SERVICE_LINK.DEMO_DATA_PROCESS
+            ) && (
               <Route
                 path="/demo_data_process"
                 element={
@@ -356,7 +359,7 @@ const App = () => {
               />
             )}
 
-            {hasServiceAccess(8) && (
+            {Helpers.hasServiceLink(Helpers.authUser, SERVICE_LINK.WERTHENBACH) && (
               <Route
                 path="/werthenbach"
                 element={
@@ -366,7 +369,7 @@ const App = () => {
                 }
               />
             )}
-            {hasServiceAccess(9) && (
+            {Helpers.hasServiceLink(Helpers.authUser, SERVICE_LINK.SCHEREN) && (
               <Route
                 path="/scheren"
                 element={
@@ -376,7 +379,7 @@ const App = () => {
                 }
               />
             )}
-            {hasServiceAccess(10) && (
+            {Helpers.hasServiceLink(Helpers.authUser, SERVICE_LINK.SENNHEISER) && (
               <Route
                 path="/sennheiser"
                 element={
@@ -386,7 +389,7 @@ const App = () => {
                 }
               />
             )}
-            {hasServiceAccess(11) && (
+            {Helpers.hasServiceLink(Helpers.authUser, SERVICE_LINK.VERBUND) && (
               <Route
                 path="/verbund"
                 element={
@@ -396,7 +399,7 @@ const App = () => {
                 }
               />
             )}
-            {hasServiceAccess(13) && (
+            {Helpers.hasServiceLink(Helpers.authUser, SERVICE_LINK.SURFACHEM) && (
               <Route
                 path="/surfachem"
                 element={
@@ -406,7 +409,10 @@ const App = () => {
                 }
               />
             )}
-            {hasServiceAccess(5) && (
+            {Helpers.hasServiceLink(
+              Helpers.authUser,
+              SERVICE_LINK.FREE_DATA_PROCESS
+            ) && (
               <Route
                 path="/free-data-process"
                 element={

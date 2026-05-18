@@ -34,9 +34,6 @@ const Dashboard = () => {
   //   }
   // }, []);
 
-  // Fetch the user services (assumes it's stored in Helpers.authUser)
-  const userServices = Helpers.authUser?.services || [];
-
   useEffect(() => {
     fetchServices();
   }, []);
@@ -61,13 +58,9 @@ const Dashboard = () => {
     }
   };
 
-  const isServiceEnabled = (serviceId) => {
-    return userServices.includes(serviceId);
-  };
-
-  // Filter services to only show those that are enabled for the user
+  // Match dashboard tiles to the user's entitlements via stable `services.link` (and legacy id fallback in Helpers).
   const filteredServices = services.filter((service) =>
-    isServiceEnabled(service.id)
+    Helpers.hasServiceLink(Helpers.authUser, service.link)
   );
 
   return (

@@ -1,5 +1,6 @@
 import { Notyf } from "notyf";
 import "notyf/notyf.min.css";
+import { LEGACY_SERVICE_ID_TO_LINK } from "../constants/serviceLinks";
 
 class Helpers {
   static localhost = "http://127.0.0.1:8000";
@@ -185,6 +186,40 @@ class Helpers {
       return 0;
     }
   };
+
+  /** Normalize `services.link` values for comparison (DB casing may vary). */
+  static normalizeServiceLink(link) {
+    return String(link ?? "").trim().toLowerCase();
+  }
+
+  /**
+   * Check access using `user.service_links` from the API, or legacy `users.services` ids.
+   * @param {object|null|undefined} user
+   * @param {string} link — must match `services.link` (see constants/serviceLinks.js)
+   */
+  static hasServiceLink(user, link) {
+    if (!user || link == null || link === "") {
+      return false;
+    }
+    const target = Helpers.normalizeServiceLink(link);
+    if (Array.isArray(user.service_links) && user.service_links.length > 0) {
+      return user.service_links.some(
+        (l) => Helpers.normalizeServiceLink(l) === target
+      );
+    }
+    if (Array.isArray(user.services) && user.services.length > 0) {
+      for (const id of user.services) {
+        const mapped = LEGACY_SERVICE_ID_TO_LINK[id];
+        if (
+          mapped != null &&
+          Helpers.normalizeServiceLink(mapped) === target
+        ) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
 }
 
 export default Helpers;
