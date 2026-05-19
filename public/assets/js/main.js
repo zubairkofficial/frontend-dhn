@@ -1,12 +1,34 @@
 $(function () {
-  //search
-  $(document).on("keydown", (e) => {
-    if (e.key === "k" && e.ctrlKey) {
-      e.preventDefault();
-      e.stopPropagation();
-      $("#search").trigger("focus");
+  function isTypingContext(el) {
+    if (!el || el.nodeType !== 1) return false;
+    var tag = el.tagName.toUpperCase();
+    if (
+      tag === "INPUT" ||
+      tag === "TEXTAREA" ||
+      tag === "SELECT" ||
+      el.isContentEditable
+    ) {
+      return true;
     }
+    var role = el.getAttribute && el.getAttribute("role");
+    if (role && role.toLowerCase() === "textbox") return true;
+    return el.closest ? !!el.closest("[contenteditable=\"true\"]") : false;
+  }
+
+  function hasShortcutModifier(e) {
+    return e.ctrlKey === true || e.metaKey === true;
+  }
+
+  // search: Ctrl/Cmd + K focuses search; skip when typing in a field (avoids blocked keys).
+  $(document).on("keydown", (e) => {
+    if (isTypingContext(e.target)) return;
+    if (e.key !== "k" && e.key !== "K") return;
+    if (!hasShortcutModifier(e)) return;
+    e.preventDefault();
+    e.stopPropagation();
+    $("#search").trigger("focus");
   });
+
   //drawer
   $(".drawer-btn").on("click", () => {
     const checkClassExits = $(".layout-wrapper");
@@ -16,17 +38,19 @@ $(function () {
       checkClassExits.addClass("active");
     }
   });
-  //drawer key access
+
+  // drawer: Ctrl/Cmd + B toggles layout; skip when typing in a field.
   $(document).on("keydown", (e) => {
-    if (e.key === "b" && e.ctrlKey) {
-      e.preventDefault();
-      e.stopPropagation();
-      const checkClassExits = $(".layout-wrapper");
-      if (checkClassExits.hasClass("active")) {
-        checkClassExits.removeClass("active");
-      } else {
-        checkClassExits.addClass("active");
-      }
+    if (isTypingContext(e.target)) return;
+    if (e.key !== "b" && e.key !== "B") return;
+    if (!hasShortcutModifier(e)) return;
+    e.preventDefault();
+    e.stopPropagation();
+    const checkClassExits = $(".layout-wrapper");
+    if (checkClassExits.hasClass("active")) {
+      checkClassExits.removeClass("active");
+    } else {
+      checkClassExits.addClass("active");
     }
   });
 });
